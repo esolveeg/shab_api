@@ -30,8 +30,6 @@ func (h *Handler) ProjectRead(c echo.Context) error {
 		fmt.Println(err)
 	}
 	project, err := h.projectRepo.ProjectRead(id)
-	project.Img = config.Config("BASE_URL") + project.Img
-	project.Logo = config.Config("BASE_URL") + project.Logo
 
 	// imgs
 	imgs := strings.Split(project.Imgs, ",")
@@ -202,6 +200,9 @@ func ScanProjectCreateReq(c echo.Context, logo string, img string, file string, 
 	req.Phone = c.FormValue("Phone")
 	req.File = file
 	req.Email = c.FormValue("Email")
+	req.Website = c.FormValue("Website")
+	req.Instagram = c.FormValue("Instagram")
+	req.Twitter = c.FormValue("Twitter")
 	return *req
 
 }

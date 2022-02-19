@@ -1,6 +1,7 @@
 package repo
 
 import (
+	"fmt"
 	"shab/config"
 	"shab/model"
 	"shab/utils"
@@ -86,19 +87,28 @@ func (pr *ProjectRepo) ProjectRead(id uint64) (*model.Project, error) {
 		&project.File,
 		&project.Email,
 		&project.Featured,
+		&project.Website,
+		&project.Instagram,
+		&project.Twitter,
 	)
 
 	if err != nil {
 		utils.NewError(err)
 		return nil, err
 	}
+	project.Img = config.Config("BASE_URL") + project.Img
+	project.Logo = config.Config("BASE_URL") + project.Logo
+	project.File = config.Config("BASE_URL") + project.File
+
+	fmt.Println(project)
+	fmt.Println("project")
 
 	return &project, nil
 }
 
 func (pr *ProjectRepo) ProjectsCreate(req model.ProjectCreateReq) (uint, error) {
 	var id uint
-	err := pr.db.Raw("CALL ProjectsCreate(?,?,?,?,?,?,?,?,?,?,?,?,?,?);",
+	err := pr.db.Raw("CALL ProjectsCreate(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);",
 		req.Userid,
 		req.CategoryId,
 		req.CityId,
@@ -113,6 +123,9 @@ func (pr *ProjectRepo) ProjectsCreate(req model.ProjectCreateReq) (uint, error) 
 		req.Phone,
 		req.File,
 		req.Email,
+		req.Website,
+		req.Instagram,
+		req.Twitter,
 	).Row().Scan(&id)
 
 	if err != nil {
@@ -124,7 +137,7 @@ func (pr *ProjectRepo) ProjectsCreate(req model.ProjectCreateReq) (uint, error) 
 
 func (pr *ProjectRepo) ProjectsUpdate(req model.ProjectCreateReq, id uint64) (uint, error) {
 	var resp uint
-	err := pr.db.Raw("CALL ProjectUpdate(?,?,?,?,?,?,?,?,?,?,?,?,?,?);",
+	err := pr.db.Raw("CALL ProjectUpdate(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);",
 		id,
 		req.CategoryId,
 		req.CityId,
@@ -139,6 +152,9 @@ func (pr *ProjectRepo) ProjectsUpdate(req model.ProjectCreateReq, id uint64) (ui
 		req.Phone,
 		req.File,
 		req.Email,
+		req.Website,
+		req.Instagram,
+		req.Twitter,
 	).Row().Scan(&resp)
 
 	if err != nil {
