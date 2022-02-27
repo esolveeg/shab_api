@@ -1,4 +1,4 @@
-USE alshab;
+USE alshab_staging;
 
 ALTER TABLE projects
 ADD COLUMN `website` VARCHAR(250),
