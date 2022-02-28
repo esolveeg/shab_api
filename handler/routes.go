@@ -47,7 +47,7 @@ func (h *Handler) Register(v1 *echo.Group) {
 	articles.GET("/:id", h.ArticleRead)
 
 	// events
-	api.POST("/events", h.EventsListByCategorySearch)
+	api.POST("/events", h.EventsListAll)
 	api.GET("/events/:id", h.EventRead)
 
 	// services
@@ -71,7 +71,7 @@ func (h *Handler) Register(v1 *echo.Group) {
 
 	api.POST("/upload", h.Upload)
 	api.GET("/home", h.HomeGetAllData)
-	api.GET("/videos", h.VideosListAll)
+	api.GET("/videos", h.VideosListByCategory)
 	api.GET("/cats/:type", h.CatsListByType)
 	api.GET("/cities", h.CitiesListAll)
 

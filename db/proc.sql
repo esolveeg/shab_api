@@ -327,9 +327,9 @@ CREATE PROCEDURE EventsList(IN featured BOOLEAN)
 BEGIN
 
     IF featured THEN
-	SELECT e.id ,e.title,e.img ,IFNULL(e.breif,"") ,day(e.date) d,month(e.date) m,year(e.date) y, e.price ,e.featured ,e.created_at ,  c.name cat_name , c.id cat_id  FROM events e JOIN categories c on e.category_id = c.id WHERE e.featured = 1 AND  e.deleted_at IS NULL;
+	SELECT e.id ,e.title,e.img ,IFNULL(e.breif,"") ,day(e.date) d,month(e.date) m,year(e.date) y, e.price ,e.featured ,e.created_at ,  c.name cat_name , c.id cat_id  FROM events e JOIN categories c on e.category_id = c.id WHERE e.featured = 1 AND  e.deleted_at IS NULL ORDER BY e.date DESC;
     ELSE 
-	SELECT e.id ,e.title,e.img ,IFNULL(e.breif,"") ,day(e.date) d,month(e.date) m,year(e.date) y, e.price ,e.featured ,e.created_at ,  c.name cat_name , c.id cat_id  FROM events e JOIN categories c on e.category_id = c.id WHERE  e.deleted_at IS NULL;
+	SELECT e.id ,e.title,e.img ,IFNULL(e.breif,"") ,day(e.date) d,month(e.date) m,year(e.date) y, e.price ,e.featured ,e.created_at ,  c.name cat_name , c.id cat_id  FROM events e JOIN categories c on e.category_id = c.id WHERE  e.deleted_at IS NULL ORDER BY e.date DESC;
 
     END IF;
 END //
@@ -467,11 +467,12 @@ DELIMITER ;
 
 
 DROP PROCEDURE IF EXISTS VideosList;
+DROP PROCEDURE IF EXISTS VideosListByCategory;
 
 DELIMITER //
-CREATE  PROCEDURE `VideosList`()
+CREATE  PROCEDURE `VideosListByCategory`(IN ICategory INT)
 BEGIN
-    SELECT * FROM videos;
+    SELECT * FROM videos WHERE (CASE WHEN ICategory = 0 THEN '1' ELSE category_id = ICategory END);
 END//
 DELIMITER ;
 

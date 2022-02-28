@@ -7,8 +7,8 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func (h *Handler) VideosListAll(c echo.Context) error {
-	r, err := h.videoRepo.ListAll()
+func (h *Handler) VideosListByCategory(c echo.Context) error {
+	r, err := h.videoRepo.ListByCategory(c.QueryParam("category"))
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
 	}

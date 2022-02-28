@@ -18,9 +18,9 @@ func NewVideoRepo(db *gorm.DB) VideoRepo {
 	}
 }
 
-func (ur *VideoRepo) ListAll() (*[]model.Video, error) {
+func (ur *VideoRepo) ListByCategory(cat string) (*[]model.Video, error) {
 	var videos []model.Video
-	rows, err := ur.db.Raw("CALL VideosList();").Rows()
+	rows, err := ur.db.Raw("CALL VideosListByCategory(?);", cat).Rows()
 	defer rows.Close()
 	for rows.Next() {
 		var video model.Video
@@ -29,6 +29,7 @@ func (ur *VideoRepo) ListAll() (*[]model.Video, error) {
 			&video.Name,
 			&video.Url,
 			&video.Image,
+			&video.Category_id,
 		)
 		video.Image = config.Config("BASE_URL") + video.Image
 
