@@ -47,7 +47,7 @@ func (ur *UserRepo) Register(req *model.UserRegisterRequest) (*[]model.User, err
 }
 
 func (ur *UserRepo) Update(Id uint, req *model.UserRegisterRequest) (*[]model.User, error) {
-	rows, err := ur.db.Raw("CALL UserUpdate(? , ? , ? , ?,? , ? , ?,?,? , ? , ? , ? , ?);",
+	rows, err := ur.db.Raw("CALL UserUpdate(? ,?, ? , ? , ? , ? , ?  , ? , ? , ? , ?);",
 		Id,
 		req.Name,
 		req.Name_ar,
@@ -55,12 +55,10 @@ func (ur *UserRepo) Update(Id uint, req *model.UserRegisterRequest) (*[]model.Us
 		req.Password,
 		req.Serial,
 		req.Role_id,
+		req.City_id,
 		req.Img,
 		req.Phone,
 		req.Breif,
-		req.Website,
-		req.Instagram,
-		req.Twitter,
 	).Rows()
 	if err != nil {
 		utils.NewError(err)
@@ -91,9 +89,6 @@ func (ur *UserRepo) GetByEmailOrPhone(emailOrPhone string) (*model.User, error) 
 		&user.Role_id,
 		&user.Phone,
 		&user.Breif,
-		&user.Website,
-		&user.Instagram,
-		&user.Twitter,
 		&user.Role,
 		&user.Color,
 		&user.Password,
@@ -119,9 +114,6 @@ func (ur *UserRepo) GetById(id uint) (*model.User, error) {
 		&user.Role_id,
 		&user.Phone,
 		&user.Breif,
-		&user.Website,
-		&user.Instagram,
-		&user.Twitter,
 		&user.Role,
 		&user.Color,
 	)
@@ -149,9 +141,6 @@ func scanUserResult(rows *sql.Rows) (*[]model.User, error) {
 			&rec.Role_id,
 			&rec.Phone,
 			&rec.Breif,
-			&rec.Website,
-			&rec.Instagram,
-			&rec.Twitter,
 			&rec.Role,
 			&rec.Color,
 		)

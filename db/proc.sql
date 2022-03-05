@@ -16,10 +16,7 @@ CREATE PROCEDURE UserCreate(
     IN Iserial varchar(250),
     IN Irole_id INT,
     IN Iphone VARCHAR(250),
-    IN Ibreif TEXT(250),
-    IN Iwebsite VARCHAR(250),
-    IN Iinstagram VARCHAR(250),
-    IN Itwitter VARCHAR(250)
+    IN Ibreif TEXT(250)
 ) BEGIN
 INSERT INTO
     users (
@@ -30,10 +27,7 @@ INSERT INTO
         serial,
         role_id,
         phone,
-        breif,
-        website,
-        instagram,
-        twitter
+        breif
     )
 VALUES
     (
@@ -45,10 +39,7 @@ VALUES
         Iserial,
         Irole_id,
         Iphone,
-        Ibreif,
-        Iwebsite,
-        Iinstagram,
-        Itwitter
+        Ibreif
     );
 
 END // 
@@ -73,9 +64,6 @@ BEGIN
         u.role_id,
         u.phone,
         IFNULL(u.breif,""),
-        IFNULL(u.website , ""),
-        IFNULL(u.instagram , ""),
-        IFNULL(u.twitter , ""),
         r.name role,
         r.color
         FROM users u
@@ -131,9 +119,6 @@ END IF;
         u.role_id,
         u.phone,
         IFNULL(u.breif,""),
-        IFNULL(u.website , ""),
-        IFNULL(u.instagram , ""),
-        IFNULL(u.twitter , ""),
         r.name role,
         r.color
         FROM users u
@@ -446,9 +431,6 @@ END IF;
         u.role_id,
         u.phone,
         IFNULL(u.breif , "") breif,
-        IFNULL(u.website,"") website,
-        IFNULL(u.instagram,"") instagram,
-        IFNULL(u.twitter,"") twitter,
         r.name role,
         r.color,
         u.password
@@ -716,12 +698,10 @@ CREATE PROCEDURE UserUpdate(
     IN Ipassword varchar(250),
     IN Iserial varchar(250),
     IN Irole_id INT,
+    IN Icity_id INT,
     IN Iimg TEXT,
     IN Iphone VARCHAR(250),
-    IN Ibreif TEXT(250),
-    IN Iwebsite VARCHAR(250),
-    IN Iinstagram VARCHAR(250),
-    IN Itwitter VARCHAR(250)
+    IN Ibreif TEXT(250)
 ) BEGIN
 
 UPDATE
@@ -732,13 +712,11 @@ SET
     u.email =  CASE WHEN Iemail = "" THEN u.email ELSE Iemail END ,
     u.password = CASE WHEN IPassword = "" THEN u.password ELSE IPassword END,
     u.serial = Iserial,
-    u.role_id = CASE WHEN Irole_id = "" THEN u.role_id ELSE Irole_id END,
+    u.role_id = CASE WHEN Irole_id = 0 THEN u.role_id ELSE Irole_id END,
+    u.city_id = CASE WHEN Icity_id = 0 THEN u.city_id ELSE Icity_id END,
     u.img = CASE WHEN Iimg = "" THEN u.img ELSE Iimg END,
     u.phone = Iphone,
-    u.breif = CASE WHEN Ibreif = "" THEN u.breif ELSE Ibreif END ,
-    u.website = CASE WHEN Iwebsite = "" THEN u.website ELSE Iwebsite END,
-    u.instagram = CASE WHEN Iinstagram = "" THEN u.instagram ELSE Iinstagram END,
-    u.twitter = CASE WHEN Itwitter = "" THEN u.twitter ELSE Itwitter END
+    u.breif = CASE WHEN Ibreif = "" THEN u.breif ELSE Ibreif END 
 WHERE
     u.id = id;
 
@@ -942,5 +920,39 @@ BEGIN
     SELECT id,name,icon from services;
 END//
 DELIMITER ;
+
+
+
+DROP PROCEDURE IF EXISTS ServiceCreate;
+
+DELIMITER //
+CREATE  PROCEDURE `ServiceCreate`(IName VARCHAR(100) , IIcon VARCHAR(100))
+BEGIN
+    INSERT INTO services ( name,icon) VALUES(IName , IIcon);
+    SELECT LAST_INSERT_ID(); 
+END//
+DELIMITER ;
+
+
+DROP PROCEDURE IF EXISTS ServiceUpdate;
+
+DELIMITER //
+CREATE  PROCEDURE `ServiceUpdate`(IId INT , IName VARCHAR(100) , IIcon VARCHAR(100))
+BEGIN
+    UPDATE  services SET name = IName ,icon = IIcon WHERE id = IId;
+    SELECT 1 updated;
+END//
+DELIMITER ;
+
+DROP PROCEDURE IF EXISTS ServiceDelete;
+
+DELIMITER //
+CREATE  PROCEDURE `ServiceDelete`(IId INT )
+BEGIN
+    DELETE FROM services WHERE id = IId;
+    SELECT 1 deleted;
+END//
+DELIMITER ;
+
 
 

@@ -627,12 +627,9 @@ INSERT INTO
         role_id,
         phone,
         breif,
-        website,
-        instagram,
         points,
         featured,
-        active,
-        twitter
+        active
     )
 VALUES
     (
@@ -645,12 +642,9 @@ VALUES
         1,
         '0546617668',
         'لوريم ايبسوم دولار سيت أميت ,كونسيكتيتور أدايبا يسكينج أليايت,سيت دو أيوسمود تيمبور أنكايديديونتيوت لابوري ات دولار ماجنا أليكيوا .',
-        'http://a-mohamed.com',
-        'http://instagram.com',
         230,
         FALSE,
-        TRUE,
-        'http://twitter.com'
+        TRUE
     ),
     (
         'nadya el khoshromy',
@@ -662,12 +656,9 @@ VALUES
         2,
         '0546617667',
         'يوت انيم أد مينيم فينايم,كيواس نوستريد أكسير سيتاشن يللأمكو لابورأس نيسي يت أليكيوب أكس أيا كوممودو كونسيكيوات ',
-        'http://nadia.com',
-        'http://instagram.com',
         345,
         FALSE,
-        TRUE,
-        'http://twitter.com'
+        TRUE
     ),
     (
         'Mashal Ali Albrgs',
@@ -679,12 +670,10 @@ VALUES
         3,
         '0546617666',
         'يواس أيوتي أريري دولار إن ريبريهينديرأيت فوليوبتاتي فيلايت أيسسي كايلليوم دولار أيو فيجايت نيولا باراياتيور',
-        'http://mashal.com',
-        'http://instagram.com',
         460,
         FALSE,
-        TRUE,
-        'http://twitter.com'
+        TRUE
+       
     ),
      (
         'sahar salem elhotamy',
@@ -696,12 +685,9 @@ VALUES
         3,
         '0546617665',
         'يواس أيوتي أريري دولار إن ريبريهينديرأيت فوليوبتاتي فيلايت أيسسي كايلليوم دولار أيو فيجايت نيولا باراياتيور',
-        'http://sahar.com',
-        'http://instagram.com',
         460,
         TRUE,
-        TRUE,
-        'http://twitter.com'
+        TRUE
     ),
      (
         'ahmed mohamed moustafa',
@@ -713,12 +699,9 @@ VALUES
         3,
         '0546617664',
         'يواس أيوتي أريري دولار إن ريبريهينديرأيت فوليوبتاتي فيلايت أيسسي كايلليوم دولار أيو فيجايت نيولا باراياتيور',
-        'http://abdallah.com',
-        'http://instagram.com',
         460,
         TRUE,
-        TRUE,
-        'http://twitter.com'
+        TRUE
     ),
     (
         'Hashm ahmed safy',
@@ -730,12 +713,9 @@ VALUES
         3,
         '0546617663',
         'يواس أيوتي أريري دولار إن ريبريهينديرأيت فوليوبتاتي فيلايت أيسسي كايلليوم دولار أيو فيجايت نيولا باراياتيور',
-        'http://hashem.com',
-        'http://instagram.com',
         460,
         TRUE,
-        TRUE,
-        'http://twitter.com'
+        TRUE
     ),
      (
         'ayed ouda alharby',
@@ -747,12 +727,9 @@ VALUES
         3,
         '0546617662',
         'يواس أيوتي أريري دولار إن ريبريهينديرأيت فوليوبتاتي فيلايت أيسسي كايلليوم دولار أيو فيجايت نيولا باراياتيور',
-        'http://ayed.com',
-        'http://instagram.com',
         460,
         TRUE,
-        TRUE,
-        'http://twitter.com'
+        TRUE
     ),
      (
         'sara essam zahed',
@@ -764,12 +741,9 @@ VALUES
         3,
         '0546617661',
         'يواس أيوتي أريري دولار إن ريبريهينديرأيت فوليوبتاتي فيلايت أيسسي كايلليوم دولار أيو فيجايت نيولا باراياتيور',
-        'http://sara.com',
-        'http://instagram.com',
         460,
         TRUE,
-        TRUE,
-        'http://twitter.com'
+        TRUE
     )
     ;
 

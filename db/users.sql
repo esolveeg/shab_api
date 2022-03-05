@@ -1575,3 +1575,6 @@ UPDATE users SET img = 'assets/بدر جزاء العتيبي.jpeg' WHERE phone 
 UPDATE users SET img = 'assets/الحرتومي.jpg' WHERE phone = '0542778996';
 UPDATE users SET img = 'assets/الحرتومي.jpg' WHERE phone = '0542778996';
 UPDATE users SET img = 'assets/اسامه.jpg' WHERE phone = '0501663722';
+
+
+UPDATE users SET points = (SELECT price FROM roles WHERE id = role_id)

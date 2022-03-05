@@ -81,7 +81,6 @@ func (h *Handler) RegisterUser(c echo.Context) error {
 func (h *Handler) CurrentUserUpdate(c echo.Context) error {
 	id := userIDFromToken(c)
 	req := new(model.UserRegisterRequest)
-	fmt.Println(req.Img)
 	if err := c.Bind(req); err != nil {
 		return c.JSON(http.StatusUnprocessableEntity, utils.NewError(err))
 	}
@@ -141,9 +140,6 @@ func newUserResponse(u *model.User) *model.UserResponse {
 	r.User.Role_id = u.Role_id
 	r.User.Phone = u.Phone
 	r.User.Breif = u.Breif
-	r.User.Website = u.Website
-	r.User.Instagram = u.Instagram
-	r.User.Twitter = u.Twitter
 	r.User.Role = u.Role
 	r.User.Color = u.Color
 	r.User.Admin = u.Admin

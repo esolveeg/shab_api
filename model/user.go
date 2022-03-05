@@ -14,6 +14,7 @@ type UserRegisterRequest struct {
 	Password  string
 	Phone     string
 	Role_id   uint
+	City_id   uint
 	Breif     string
 	Website   string
 	Twitter   string
@@ -35,21 +36,19 @@ type UserResponse struct {
 }
 
 type User struct {
-	Id        uint
-	Admin     bool
-	Name      string
-	Name_ar   string
-	Email     string
-	Img       string
-	Serial    string
-	Points    uint
-	Role_id   uint
-	Phone     string
-	Breif     string
-	Website   string
-	Instagram string
-	Twitter   string
-	Role      string
-	Color     string
-	Password  string
+	Id       uint
+	Admin    bool
+	Name     string
+	Name_ar  string
+	Email    string
+	Img      string
+	Serial   string
+	Points   uint
+	Role_id  uint
+	City_id  uint
+	Phone    string
+	Breif    string
+	Role     string
+	Color    string
+	Password string
 }

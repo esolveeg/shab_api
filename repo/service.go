@@ -37,3 +37,33 @@ func (ur *ServiceRepo) ListAllServicces() (*[]model.Service, error) {
 	}
 	return &resp, nil
 }
+
+func (ur *ServiceRepo) CreateService(req model.Service) (*int, error) {
+	var resp int
+	err := ur.db.Raw("CALL ServiceCreate(? , ?) ", req.Name, req.Icon).Row().Scan(&resp)
+	if err != nil {
+		utils.NewError(err)
+		return &resp, err
+	}
+	return &resp, nil
+}
+
+func (ur *ServiceRepo) UpdateService(req model.Service) (*int, error) {
+	var resp int
+	err := ur.db.Raw("CALL ServiceUpdate(?,? , ?) ", req.Id, req.Name, req.Icon).Row().Scan(&resp)
+	if err != nil {
+		utils.NewError(err)
+		return &resp, err
+	}
+	return &resp, nil
+}
+
+func (ur *ServiceRepo) DeleteService(id string) (*int, error) {
+	var resp int
+	err := ur.db.Raw("CALL ServiceDelete(?) ", id).Row().Scan(&resp)
+	if err != nil {
+		utils.NewError(err)
+		return &resp, err
+	}
+	return &resp, nil
+}

@@ -29,6 +29,8 @@ func (h *Handler) Register(v1 *echo.Group) {
 	users.GET("/ryadeen", h.UserListRyadeen)
 	users.PUT("/:id", h.UserUpdate)
 
+	//email routes
+	api.POST("/email", h.SendEmail)
 	//auth routes
 	api.POST("/login", h.Login)
 	api.POST("/register", h.RegisterUser)
@@ -53,6 +55,9 @@ func (h *Handler) Register(v1 *echo.Group) {
 	// services
 
 	api.GET("/services", h.ServicesListAll)
+	api.POST("/services", h.ServiceCreate)
+	api.PUT("/services", h.ServiceUpdate)
+	api.DELETE("/services/:id", h.ServiceDelete)
 
 	// rich text routes
 	rich := api.Group("/rich")
