@@ -39,5 +39,5 @@ func main() {
 		consultuntsRepo,
 	)
 	h.Register(v1)
-	r.Logger.Fatal(r.Start(":5000"))
+	r.Logger.Fatal(r.Start(":6000"))
 }
