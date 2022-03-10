@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+	"shab/config"
 	"shab/db"
 	"shab/handler"
 	"shab/repo"
@@ -39,5 +41,6 @@ func main() {
 		consultuntsRepo,
 	)
 	h.Register(v1)
-	r.Logger.Fatal(r.Start(":5000"))
+	port := fmt.Sprintf(":%s", config.Config("PORT"))
+	r.Logger.Fatal(r.Start(port))
 }
