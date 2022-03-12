@@ -679,8 +679,31 @@ DELIMITER ;
 
 
 
+UserReset
 
 
+DROP PROCEDURE IF EXISTS UserReset;
+
+
+
+DELIMITER // 
+
+
+
+CREATE PROCEDURE UserReset(
+    IN id int,
+    IN Ipassword varchar(250)
+) BEGIN
+
+UPDATE
+    users u
+SET
+    u.password = IPassword 
+WHERE
+    u.id = id;
+
+    SELECT 1 updated;
+END //
 
 DROP PROCEDURE IF EXISTS UserUpdate;
 

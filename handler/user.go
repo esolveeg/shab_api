@@ -103,6 +103,27 @@ func (h *Handler) UserUpdate(c echo.Context) error {
 	return c.JSON(http.StatusOK, "updated")
 }
 
+func (h *Handler) UserSendResetEmail(c echo.Context) error {
+	send := utils.SendEmail(c.Param("email"))
+	fmt.Println(send)
+	return c.JSON(http.StatusOK, "sent")
+}
+
+func (h *Handler) UserResetPassword(c echo.Context) error {
+	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
+	req := new(model.UserResetRequest)
+	if err := c.Bind(req); err != nil {
+		return c.JSON(http.StatusUnprocessableEntity, utils.NewError(err))
+	}
+	fmt.Println(id)
+	fmt.Println("id")
+	u, err := h.userRepo.Reset(uint(id), req)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
+	}
+	return c.JSON(http.StatusOK, u)
+}
+
 func (h *Handler) Login(c echo.Context) error {
 	req := new(model.UserLoginRequest)
 	if err := c.Bind(req); err != nil {

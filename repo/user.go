@@ -74,6 +74,25 @@ func (ur *UserRepo) Update(Id uint, req *model.UserRegisterRequest) (*[]model.Us
 	return result, nil
 }
 
+func (ur *UserRepo) Reset(Id uint, req *model.UserResetRequest) (bool, error) {
+	var resp bool
+	err := ur.db.Raw("CALL UserReset(? ,?);",
+		Id,
+		req.Password,
+	).Row().Scan(&resp)
+	if err != nil {
+		utils.NewError(err)
+		return false, err
+	}
+
+	if err != nil {
+		utils.NewError(err)
+		return false, err
+	}
+
+	return resp, nil
+}
+
 func (ur *UserRepo) GetByEmailOrPhone(emailOrPhone string) (*model.User, error) {
 	var user model.User
 	fmt.Println(emailOrPhone)
