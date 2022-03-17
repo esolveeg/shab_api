@@ -21,7 +21,7 @@ func SendEmail(email string) bool {
 	m.SetHeader("Subject", "Gomail test subject")
 
 	// Set E-Mail body. You can set plain text or html with text/html
-	m.SetBody("text/html", "<a href='http://localhost:4000/?restId=1'>http://localhost:4000/?restId=1</a>")
+	m.SetBody("text/html", "<a href='http://localhost:4000/?restId=1'>http://localhost:4000/?restEmail=1</a>")
 
 	// Settings for SMTP server
 	d := gomail.NewDialer("smtp.gmail.com", 587, "a.darwish.dev@gmail.com", "asd@asd@9517532468")

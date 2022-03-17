@@ -110,14 +110,11 @@ func (h *Handler) UserSendResetEmail(c echo.Context) error {
 }
 
 func (h *Handler) UserResetPassword(c echo.Context) error {
-	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	req := new(model.UserResetRequest)
 	if err := c.Bind(req); err != nil {
 		return c.JSON(http.StatusUnprocessableEntity, utils.NewError(err))
 	}
-	fmt.Println(id)
-	fmt.Println("id")
-	u, err := h.userRepo.Reset(uint(id), req)
+	u, err := h.userRepo.Reset(c.Param("email"), req)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
 	}

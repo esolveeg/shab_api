@@ -365,6 +365,7 @@ DELIMITER ;
 
 DROP PROCEDURE IF EXISTS ProjectUpdate;
 
+
 DELIMITER //
 CREATE PROCEDURE ProjectUpdate(
     IN Iid INT,
@@ -380,7 +381,10 @@ CREATE PROCEDURE ProjectUpdate(
     IN Ilocation TEXT,
     IN Iphone VARCHAR(250),
     IN Ifile VARCHAR(250),
-    IN Iemail VARCHAR(250)
+    IN Iemail VARCHAR(250),
+    IN Iwebsite VARCHAR(250),
+    IN Iinstagram VARCHAR(250),
+    IN Itwitter VARCHAR(250)
 ) BEGIN
 UPDATE
     projects
@@ -389,23 +393,25 @@ SET
     city_id = Icity_id,
     title = Ititle,
     status = Istatus,
-    img = Iimg,
-    imgs = Iimgs,
-    logo = Ilogo,
+    img = CASE WHEN Iimg = "" THEN img ELSE Iimg END ,
+    imgs = CASE WHEN Iimgs = "" THEN imgs ELSE Iimgs END ,
+    logo = CASE WHEN Ilogo = "" THEN logo ELSE Ilogo END ,
     fund = Ifund,
     breif = Ibreif,
     location = Ilocation,
     phone = Iphone,
-    file = Ifile,
-    email = Iemail
-
-
+    file =  CASE WHEN Ifile = "" THEN file ELSE Ifile END ,
+    email = Iemail,
+    website = Iwebsite,
+    instagram = Iinstagram,
+    twitter = Itwitter
     WHERE id = Iid;
 
     SELECT LAST_INSERT_ID();
 
 END //
 DELIMITER ;
+
 
 DROP PROCEDURE IF EXISTS UserRead;
 
@@ -526,9 +532,7 @@ END IF;
 
 DELIMITER ;
 
-
 DROP PROCEDURE IF EXISTS ProjectRead;
-
 DELIMITER //
 CREATE  PROCEDURE `ProjectRead`(IN Iid INT)
 BEGIN
@@ -549,7 +553,10 @@ BEGIN
         p.phone,
         IFNULL(p.file , '') file,
         p.email,
-        p.featured
+        p.featured,
+        IFNULL(p.website , '') website,
+        IFNULL(p.instagram , '') instagram,
+        IFNULL(p.twitter , '') twitter
      FROM projects p 
         JOIN users u ON u.id = p.user_id
         JOIN cities ci ON ci.id = p.city_id
@@ -558,7 +565,6 @@ BEGIN
      WHERE p.id = Iid;
 END//
 DELIMITER ;
-
 
 
 
@@ -676,33 +682,19 @@ END//
 DELIMITER ;
 
 
-
-
-
-UserReset
-
-
 DROP PROCEDURE IF EXISTS UserReset;
-
-
-
 DELIMITER // 
-
-
-
 CREATE PROCEDURE UserReset(
-    IN id int,
+    IN Iemail varchar(250),
     IN Ipassword varchar(250)
 ) BEGIN
-
 UPDATE
-    users u
+    users
 SET
-    u.password = IPassword 
+    password = IPassword 
 WHERE
-    u.id = id;
-
-    SELECT 1 updated;
+    email = Iemail;
+    SELECT 1 reseted;
 END //
 
 DROP PROCEDURE IF EXISTS UserUpdate;
@@ -850,7 +842,6 @@ DELIMITER ;
 
 
 
-
 DROP PROCEDURE IF EXISTS ProjectsCreate;
 
 DELIMITER //
@@ -868,7 +859,10 @@ CREATE  PROCEDURE `ProjectsCreate`(
     IN Ilocation TEXT,
     IN Iphone VARCHAR(250),
     IN Ifile VARCHAR(250),
-    IN Iemail VARCHAR(250)
+    IN Iemail VARCHAR(250),
+    IN Iwebsite VARCHAR(250),
+    IN Iinstagram VARCHAR(250),
+    IN Itwitter VARCHAR(250)
 )
 BEGIN
 INSERT INTO
@@ -886,7 +880,10 @@ INSERT INTO
         location,
         phone,
         file,
-        email
+        email,
+        website,
+        instagram,
+        twitter
     )
 VALUES
     (
@@ -903,7 +900,10 @@ VALUES
         Ilocation,
         Iphone,
         Ifile,
-        Iemail
+        Iemail,
+        Iwebsite,
+        Iinstagram,
+        Itwitter
     );
 
 

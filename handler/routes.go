@@ -28,7 +28,7 @@ func (h *Handler) Register(v1 *echo.Group) {
 	users.GET("/:id", h.UserFindById)
 	users.GET("/ryadeen", h.UserListRyadeen)
 	users.PUT("/:id", h.UserUpdate)
-	users.PUT("/reset/:id", h.UserResetPassword)
+	users.PUT("/reset/:email", h.UserResetPassword)
 	users.PUT("/reset/email/:email", h.UserSendResetEmail)
 
 	//email routes

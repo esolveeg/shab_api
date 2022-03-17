@@ -178,6 +178,9 @@ CREATE TABLE projects(
     `file` VARCHAR(250) NULL,
     `email` VARCHAR(250),
     `featured` BOOLEAN DEFAULT 0,
+    `website` VARCHAR(250),
+    `instagram` VARCHAR(250),
+    `twitter` VARCHAR(250);
     `created_at` datetime DEFAULT now(),
     `deleted_at` datetime
 ) ENGINE = INNODB;
