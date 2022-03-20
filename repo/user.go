@@ -74,10 +74,10 @@ func (ur *UserRepo) Update(Id uint, req *model.UserRegisterRequest) (*[]model.Us
 	return result, nil
 }
 
-func (ur *UserRepo) Reset(Email string, req *model.UserResetRequest) (bool, error) {
+func (ur *UserRepo) Reset(req *model.UserResetRequest) (bool, error) {
 	var resp bool
 	err := ur.db.Raw("CALL UserReset(? ,?);",
-		Email,
+		req.Email,
 		req.Password,
 	).Row().Scan(&resp)
 	if err != nil {

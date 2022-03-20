@@ -104,17 +104,32 @@ func (h *Handler) UserUpdate(c echo.Context) error {
 }
 
 func (h *Handler) UserSendResetEmail(c echo.Context) error {
-	send := utils.SendEmail(c.Param("email"))
-	fmt.Println(send)
+	const MySecret string = "abc&1*~#^2^#s0^=)^^7%b34"
+	req := new(model.UserSendResetEmailRequest)
+	if err := c.Bind(req); err != nil {
+		return c.JSON(http.StatusUnprocessableEntity, utils.NewError(err))
+	}
+
+	// encrypt the email
+	encEmail, err := utils.Encrypt(req.Email, MySecret)
+	if err != nil {
+		fmt.Println("error encrypting your classified text: ", err)
+	}
+	url := fmt.Sprintf("%s?resetEmail=%s", req.Url, encEmail)
+	_ = utils.SendEmail(req.Email, url)
+	// fmt.Println(send)
 	return c.JSON(http.StatusOK, "sent")
 }
 
 func (h *Handler) UserResetPassword(c echo.Context) error {
+	const MySecret string = "abc&1*~#^2^#s0^=)^^7%b34"
 	req := new(model.UserResetRequest)
 	if err := c.Bind(req); err != nil {
 		return c.JSON(http.StatusUnprocessableEntity, utils.NewError(err))
 	}
-	u, err := h.userRepo.Reset(c.Param("email"), req)
+
+	req.Email, _ = utils.Decrypt(req.Email, MySecret)
+	u, err := h.userRepo.Reset(req)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
 	}

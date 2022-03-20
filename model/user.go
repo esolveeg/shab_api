@@ -5,10 +5,12 @@ type UserLoginRequest struct {
 	Password string
 }
 type UserResetRequest struct {
+	Email    string
 	Password string
 }
 type UserSendResetEmailRequest struct {
 	Email string
+	Url   string
 }
 
 type UserRegisterRequest struct {

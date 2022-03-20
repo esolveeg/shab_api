@@ -1,9 +1,9 @@
 
-DROP DATABASE IF EXISTS alshab_staging;
+DROP DATABASE IF EXISTS alshab;
 
-CREATE DATABASE alshab_staging CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE DATABASE alshab CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
-USE alshab_staging;
+USE alshab;
 
 DROP TABLE IF EXISTS cities;
 
@@ -180,7 +180,7 @@ CREATE TABLE projects(
     `featured` BOOLEAN DEFAULT 0,
     `website` VARCHAR(250),
     `instagram` VARCHAR(250),
-    `twitter` VARCHAR(250);
+    `twitter` VARCHAR(250),
     `created_at` datetime DEFAULT now(),
     `deleted_at` datetime
 ) ENGINE = INNODB;

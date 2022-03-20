@@ -7,7 +7,7 @@ import (
 	gomail "gopkg.in/mail.v2"
 )
 
-func SendEmail(email string) bool {
+func SendEmail(email string, url string) bool {
 
 	m := gomail.NewMessage()
 
@@ -15,13 +15,14 @@ func SendEmail(email string) bool {
 	m.SetHeader("From", "a.dariwsh.dev@gmail.com")
 
 	// Set E-Mail receivers
-	m.SetHeader("To", "ahmed.ashraf.devv@gmail.com")
+	m.SetHeader("To", email)
 
 	// Set E-Mail subject
-	m.SetHeader("Subject", "Gomail test subject")
+	m.SetHeader("Subject", "استرجاع كلمة مرور  حساب الشاب الريادي")
 
 	// Set E-Mail body. You can set plain text or html with text/html
-	m.SetBody("text/html", "<a href='http://localhost:4000/?restId=1'>http://localhost:4000/?restEmail=1</a>")
+	link := fmt.Sprintf("<h2>اضغط علي الرابط التالي لاستعادة كلمة المرور</h2><br><a href='%s'>%s</a>", url, url)
+	m.SetBody("text/html", link)
 
 	// Settings for SMTP server
 	d := gomail.NewDialer("smtp.gmail.com", 587, "a.darwish.dev@gmail.com", "asd@asd@9517532468")
