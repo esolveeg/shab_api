@@ -1,4 +1,4 @@
-USE alshab_staging;
+USE alshab;
 
 INSERT INTO
     users (

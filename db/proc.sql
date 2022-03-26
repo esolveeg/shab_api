@@ -1039,3 +1039,58 @@ loop_label:  LOOP
 
 END//
 DELIMITER ;
+
+
+      
+
+
+
+
+DROP PROCEDURE IF EXISTS NotificationCreate;
+
+DELIMITER //
+
+CREATE PROCEDURE NotificationCreate(IN Ititle VARCHAR(250) , IN Ibreif TEXT , IN Iurl VARCHAR(250) )
+BEGIN
+DECLARE x INT;
+DECLARE max INT;
+DECLARE u_id INT;
+DECLARE n_id INT;
+
+INSERT INTO notifications (
+    title,
+    breif,
+    link
+) VALUES (
+    Ititle,
+    Ibreif,
+    Iurl
+);
+
+SET n_id = (SELECT LAST_INSERT_ID());
+
+
+SET x = 0;
+SET max = (SELECT (COUNT(*)) FROM users WHERE "admin" = 1);
+
+loop_label:  LOOP
+		IF  x > max THEN 
+			LEAVE  loop_label;
+		END  IF;
+        SET u_id = (SELECT id FROM users WHERE admin = 1 LIMIT 1 OFFSET x);
+
+        INSERT INTO user_notifications (
+            user_id,
+            notification_id
+        ) VALUES (
+            u_id,
+            n_id
+        );
+         
+		SET  x = x + 1;
+       
+	END LOOP;
+
+END//
+DELIMITER ;
+

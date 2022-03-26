@@ -213,4 +213,27 @@ CREATE TABLE user_events(
     points int UNSIGNED default 0
 ) ENGINE = INNODB;
 
-#seeds
+
+
+
+DROP TABLE IF EXISTS notifications;
+
+CREATE TABLE notifications(
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    
+    `title` VARCHAR(250),
+    `breif` TEXT,
+    `link` VARCHAR(250),
+   
+    created_at datetime DEFAULT now()
+) ENGINE = INNODB;
+
+DROP TABLE IF EXISTS user_notifications;
+
+CREATE TABLE user_notifications(
+    user_id INT,
+    CONSTRAINT fk_user_notifications_user FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE RESTRICT ON UPDATE RESTRICT,
+    notification_id INT,
+    CONSTRAINT fk_user_notifications_notification FOREIGN KEY(notification_id) REFERENCES notifications(id) ON DELETE RESTRICT ON UPDATE RESTRICT,
+    seen_at datetime
+) ENGINE = INNODB;
