@@ -16,6 +16,7 @@ func (h *Handler) Register(v1 *echo.Group) {
 	// auth routes
 	auth := api.Group("/me", jwtMiddleware)
 	auth.GET("", h.Me)
+	auth.GET("/notifications", h.CurrentUserNotifications)
 	auth.PUT("", h.CurrentUserUpdate)
 
 	// roles routes

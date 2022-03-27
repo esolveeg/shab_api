@@ -73,7 +73,6 @@ func (ur *UserRepo) Update(Id uint, req *model.UserRegisterRequest) (*[]model.Us
 
 	return result, nil
 }
-
 func (ur *UserRepo) Reset(req *model.UserResetRequest) (bool, error) {
 	var resp bool
 	err := ur.db.Raw("CALL UserReset(? ,?);",
@@ -93,6 +92,27 @@ func (ur *UserRepo) Reset(req *model.UserResetRequest) (bool, error) {
 	return resp, nil
 }
 
+func (ur *UserRepo) GetNotificationsById(id uint) (*[]model.Notification, error) {
+	var resp []model.Notification
+	rows, err := ur.db.Raw("CALL NotificationsByUserId(?);", id).Rows()
+	if err != nil {
+		utils.NewError(err)
+		return nil, err
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var notification model.Notification
+		rows.Scan(
+			&notification.Title,
+			&notification.Breif,
+			&notification.Link,
+		)
+
+		resp = append(resp, notification)
+	}
+
+	return &resp, nil
+}
 func (ur *UserRepo) GetByEmailOrPhone(emailOrPhone string) (*model.User, error) {
 	var user model.User
 	fmt.Println(emailOrPhone)

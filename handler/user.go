@@ -13,6 +13,16 @@ import (
 func (h *Handler) ValidateUser(c echo.Context) error {
 	return c.JSON(http.StatusOK, true)
 }
+
+
+func (h *Handler) CurrentUserNotifications(c echo.Context) error {
+	id := userIDFromToken(c)
+	u, err := h.userRepo.GetNotificationsById(id)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
+	}
+	return c.JSON(http.StatusOK, u)
+}
 func (h *Handler) Me(c echo.Context) error {
 	id := userIDFromToken(c)
 	fmt.Println(id)

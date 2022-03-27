@@ -1,4 +1,4 @@
-USE alshab;
+USE alshab_staging;
 
 # procedures\\
 #/// users////
@@ -995,6 +995,7 @@ DECLARE Iserial INT;
 DECLARE Iname VARCHAR(250);
 DECLARE Iname_ar VARCHAR(250);
 DECLARE Iemail VARCHAR(250);
+DECLARE Iimg VARCHAR(250);
 DECLARE Irole_id INT;
 DECLARE Icity_id INT;
 DECLARE Iphone VARCHAR(250);
@@ -1012,6 +1013,7 @@ loop_label:  LOOP
         SET Iname = (SELECT alshab.users.name FROM  alshab.users WHERE id = x);
         SET Iname_ar = (SELECT alshab.users.name_ar FROM  alshab.users WHERE id = x);
         SET Iemail = (SELECT alshab.users.email FROM  alshab.users WHERE id = x);
+        SET Iimg = (SELECT alshab.users.img FROM  alshab.users WHERE id = x);
         SET Irole_id = (SELECT alshab.users.role_id FROM  alshab.users WHERE id = x);
         SET Icity_id = (SELECT alshab.users.city_id FROM  alshab.users WHERE id = x);
         SET Iphone = (SELECT alshab.users.phone FROM  alshab.users WHERE id = x);
@@ -1020,16 +1022,20 @@ loop_label:  LOOP
                 serial,
                 name,
                 name_ar,
+                email,
                 role_id,
                 city_id,
+                img,
                 phone,
                 password
             ) VALUES (
                 Iserial,
                 Iname,
                 Iname_ar,
+                Iemail,
                 Irole_id,
                 Icity_id,
+                Iimg,
                 Iphone,
                 Ipassword
             );
@@ -1094,3 +1100,15 @@ loop_label:  LOOP
 END//
 DELIMITER ;
 
+DROP PROCEDURE IF EXISTS NotificationsByUserId;
+
+DELIMITER //
+CREATE  PROCEDURE `NotificationsByUserId`(IId INT )
+BEGIN
+    SELECT Title , Breif , Link FROM notifications n
+    JOIN user_notifications un 
+    ON n.id = un.notification_id 
+    WHERE un.user_id = IId;
+    
+END//
+DELIMITER ;
