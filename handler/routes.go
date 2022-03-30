@@ -31,6 +31,7 @@ func (h *Handler) Register(v1 *echo.Group) {
 	users.PUT("/:id", h.UserUpdate)
 	users.PUT("/reset/email", h.UserSendResetEmail)
 	users.PUT("/reset", h.UserResetPassword)
+	users.POST("/service/:id", h.UserRequestService, jwtMiddleware)
 
 	//email routes
 	//auth routes

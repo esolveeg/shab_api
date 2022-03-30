@@ -43,6 +43,33 @@ func (h *Handler) UserFindById(c echo.Context) error {
 	return c.JSON(http.StatusOK, u)
 }
 
+func (h *Handler) UserRequestService(c echo.Context) error {
+	req := new(model.UserServiceRequest)
+	var err error
+	req.User = userIDFromToken(c)
+	req.Service, err = strconv.ParseUint(c.Param("id"), 10, 32)
+	req.Breif = c.FormValue("Breif")
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
+	}
+	u, err := h.userRepo.RequestService(req)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
+	}
+	fmt.Println(req)
+	fmt.Println("reqqqq")
+	n := &model.Notification{
+		Title: "طلب خدمة",
+		Breif: req.Breif,
+		Link:  fmt.Sprintf("users/services/%d", *u),
+	}
+
+	_, err = h.notificationRepo.Create(n)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
+	}
+	return c.JSON(http.StatusOK, u)
+}
 func (h *Handler) UserListRyadeen(c echo.Context) error {
 	users, err := h.userRepo.ListRyadeen()
 	if err != nil {
@@ -90,11 +117,10 @@ func (h *Handler) RegisterUser(c echo.Context) error {
 		Link:  fmt.Sprintf("users/approve/%d", *u),
 	}
 
-	notify, err := h.notificationRepo.Create(n)
+	_, err = h.notificationRepo.Create(n)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
 	}
-	fmt.Println(notify)
 	return c.JSON(http.StatusOK, u)
 }
 
@@ -105,6 +131,14 @@ func (h *Handler) CurrentUserUpdate(c echo.Context) error {
 		return c.JSON(http.StatusUnprocessableEntity, utils.NewError(err))
 	}
 	_, err := h.userRepo.Update(id, req)
+	if req.Img != "" {
+		n := &model.Notification{
+			Title: "طلب تغير صورة",
+			Breif: fmt.Sprintf("طلب تغير صورة  من قبل %s", req.Name_ar),
+			Link:  fmt.Sprintf("users/img/approve/%d", id),
+		}
+		_, err = h.notificationRepo.Create(n)
+	}
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
 	}

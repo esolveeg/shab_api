@@ -1500,39 +1500,9 @@ INSERT INTO
 )
 ;
 
-#adimn
-INSERT INTO
-    users (
-        serial,
-        name,
-        name_ar,
-        role_id,
-        city_id,
-        phone,
-        email,
-        password,
-        admin
-      
-    )
-    VALUES
-    (
-    20111,
-    "مسؤول",
-    "admin",
-    3,
-    1,
-    "0500000000",
-    "admin@alshabalriyadi.net",
-    "123456",
-    1
-    
-);
+
 
 UPDATE users SET active = 1;
-
-
-
-
 
 UPDATE users SET img = 'assets/وليد عيد.jpg' WHERE phone = '0553663458';
 UPDATE users SET img = 'assets/لؤي عبدالجواد.jpeg' WHERE phone = '0530333555';

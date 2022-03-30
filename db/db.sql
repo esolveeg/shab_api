@@ -237,3 +237,15 @@ CREATE TABLE user_notifications(
     CONSTRAINT fk_user_notifications_notification FOREIGN KEY(notification_id) REFERENCES notifications(id) ON DELETE RESTRICT ON UPDATE RESTRICT,
     seen_at datetime
 ) ENGINE = INNODB;
+
+
+DROP TABLE IF EXISTS user_services;
+
+CREATE TABLE user_services(
+    user_id INT,
+    CONSTRAINT user_services_user FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE RESTRICT ON UPDATE RESTRICT,
+    service_id INT,
+    CONSTRAINT user_services_service FOREIGN KEY(service_id) REFERENCES services(id) ON DELETE RESTRICT ON UPDATE RESTRICT,
+    seen_at datetime
+) ENGINE = INNODB;
+

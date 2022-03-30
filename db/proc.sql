@@ -133,6 +133,21 @@ END IF;
     END//
 DELIMITER ;
 
+
+
+
+
+DROP PROCEDURE IF EXISTS UserServiceCreate;
+
+DELIMITER //
+CREATE  PROCEDURE `UserServiceCreate`(userId INT , serviceId int)
+BEGIN
+   INSERT INTO user_services (user_id , service_id) VALUES (userId , serviceId);
+   SELECT LAST_INSERT_ID() id ;
+    
+END//
+DELIMITER ;
+
 # articles
 DROP PROCEDURE IF EXISTS ArticleDelete;
 DELIMITER // 
@@ -1030,6 +1045,7 @@ loop_label:  LOOP
                 city_id,
                 img,
                 phone,
+                active,
                 password
             ) VALUES (
                 Iserial,
@@ -1040,6 +1056,7 @@ loop_label:  LOOP
                 Icity_id,
                 Iimg,
                 Iphone,
+                1,
                 Ipassword
             );
 		SET  x = x + 1;
@@ -1086,7 +1103,7 @@ loop_label:  LOOP
 		IF  x > max THEN 
 			LEAVE  loop_label;
 		END  IF;
-        SET u_id = (SELECT id FROM users WHERE admin = 1 LIMIT 1 OFFSET x);
+        SET u_id = (SELECT id FROM users WHERE admin = 1 LIMIT 1);
 
         INSERT INTO user_notifications (
             user_id,
@@ -1118,3 +1135,6 @@ BEGIN
     
 END//
 DELIMITER ;
+
+
+

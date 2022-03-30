@@ -101,6 +101,16 @@ func (h *Handler) ProjectCreate(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
 	}
+	n := &model.Notification{
+		Title: "طلب اضافة مشروع",
+		Breif: fmt.Sprintf("يوجد طلب اضافة مشروع جديد باسم %s", req.Title),
+		Link:  fmt.Sprintf("users/project/%d", project),
+	}
+
+	_, err = h.notificationRepo.Create(n)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
+	}
 	return c.JSON(http.StatusOK, project)
 }
 

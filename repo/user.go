@@ -22,6 +22,20 @@ func NewUserRepo(db *gorm.DB) UserRepo {
 	}
 }
 
+func (ur *UserRepo) RequestService(req *model.UserServiceRequest) (*int, error) {
+	var resp int
+	err := ur.db.Raw("CALL UserServiceCreate(? , ?);",
+		req.User,
+		req.Service,
+	).Row().Scan(&resp)
+	if err != nil {
+		fmt.Println("error calling proc" + err.Error())
+		utils.NewError(err)
+		return nil, err
+	}
+
+	return &resp, nil
+}
 func (ur *UserRepo) Register(req *model.UserRegisterRequest) (*int, error) {
 	var resp int
 	err := ur.db.Raw("CALL Register(? , ? , ? ,? , ?,?);",

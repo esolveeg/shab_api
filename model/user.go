@@ -13,6 +13,11 @@ type UserSendResetEmailRequest struct {
 	Url   string
 }
 
+type UserServiceRequest struct {
+	User    uint
+	Service uint64
+	Breif   string
+}
 type UserRegisterRequest struct {
 	Name     string
 	Name_ar  string

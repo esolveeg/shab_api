@@ -50,6 +50,13 @@ func (h *Handler) ArticleCreate(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
 	}
+	n := &model.Notification{
+		Title: "طلب اضافة مقال",
+		Breif: fmt.Sprintf("يوجد طلب اضافة مقال جديد باسم %s", req.Title),
+		Link:  fmt.Sprintf("users/articels/%d", article),
+	}
+
+	_, err = h.notificationRepo.Create(n)
 	return c.JSON(http.StatusOK, article)
 }
 
