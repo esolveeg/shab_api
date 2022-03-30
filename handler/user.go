@@ -14,7 +14,6 @@ func (h *Handler) ValidateUser(c echo.Context) error {
 	return c.JSON(http.StatusOK, true)
 }
 
-
 func (h *Handler) CurrentUserNotifications(c echo.Context) error {
 	id := userIDFromToken(c)
 	u, err := h.userRepo.GetNotificationsById(id)
@@ -85,6 +84,17 @@ func (h *Handler) RegisterUser(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
 	}
+	n := &model.Notification{
+		Title: "طلب عضوية",
+		Breif: fmt.Sprintf("طلب عضوية  من قبل %s", req.Name_ar),
+		Link:  fmt.Sprintf("users/approve/%d", *u),
+	}
+
+	notify, err := h.notificationRepo.Create(n)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
+	}
+	fmt.Println(notify)
 	return c.JSON(http.StatusOK, u)
 }
 
@@ -102,6 +112,9 @@ func (h *Handler) CurrentUserUpdate(c echo.Context) error {
 }
 func (h *Handler) UserUpdate(c echo.Context) error {
 	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
+	}
 	req := new(model.UserRegisterRequest)
 	if err := c.Bind(req); err != nil {
 		return c.JSON(http.StatusUnprocessableEntity, utils.NewError(err))

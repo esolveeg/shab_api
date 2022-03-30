@@ -27,6 +27,7 @@ func main() {
 	cityRepo := repo.NewCityRepo(db)
 	sereviceRepo := repo.NewServiceRepo(db)
 	consultuntsRepo := repo.NewConsultuntsRepo(db)
+	notificatioRepo := repo.NewNotificationRepo(db)
 	h := handler.NewHandler(
 		userRepo,
 		richRepo,
@@ -39,6 +40,7 @@ func main() {
 		cityRepo,
 		sereviceRepo,
 		consultuntsRepo,
+		notificatioRepo,
 	)
 	h.Register(v1)
 	port := fmt.Sprintf(":%s", config.Config("PORT"))

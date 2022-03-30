@@ -77,7 +77,9 @@ func UploadProjectFiles(c echo.Context) (model.ProjectCreateReq, error) {
 		return *req, err
 	}
 	logoName, err := utils.Upload(logo)
-
+	if err != nil {
+		return *req, err
+	}
 	// upload file
 	file, err := c.FormFile("File")
 	if err != nil {
@@ -193,7 +195,7 @@ func ScanProjectCreateReq(c echo.Context, logo string, img string, file string, 
 	req.Imgs = imgs
 	req.Logo = logo
 	req.Title = c.FormValue("Title")
-	req.Fund, _ = strconv.ParseFloat(c.FormValue("Fund"), 0)
+	req.Fund, _ = strconv.ParseFloat(c.FormValue("Fund"), 64)
 	req.Breif = c.FormValue("Breif")
 	req.Status = c.FormValue("Status")
 	req.Location = c.FormValue("Location")

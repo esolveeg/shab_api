@@ -77,6 +77,7 @@ func (h *Handler) Register(v1 *echo.Group) {
 	// global routes
 
 	api.POST("/upload", h.Upload)
+	api.POST("/contact", h.ContactSend)
 	api.GET("/home", h.HomeGetAllData)
 	api.GET("/videos", h.VideosListByCategory)
 	api.GET("/cats/:type", h.CatsListByType)

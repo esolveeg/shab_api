@@ -678,6 +678,9 @@ BEGIN
         IRole,
         @maxSerial + 1
    );
+
+
+   SELECT LAST_INSERT_ID() id;
 END//
 DELIMITER ;
 
@@ -1096,6 +1099,9 @@ loop_label:  LOOP
 		SET  x = x + 1;
        
 	END LOOP;
+
+
+    SELECT n_id ;
 
 END//
 DELIMITER ;

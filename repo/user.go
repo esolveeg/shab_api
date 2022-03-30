@@ -22,28 +22,23 @@ func NewUserRepo(db *gorm.DB) UserRepo {
 	}
 }
 
-func (ur *UserRepo) Register(req *model.UserRegisterRequest) (*[]model.User, error) {
-	rows, err := ur.db.Raw("CALL Register(? , ? , ? ,? , ?,?);",
+func (ur *UserRepo) Register(req *model.UserRegisterRequest) (*int, error) {
+	var resp int
+	err := ur.db.Raw("CALL Register(? , ? , ? ,? , ?,?);",
 		req.Name,
 		req.Name_ar,
 		req.Email,
 		req.Password,
 		req.Phone,
 		req.Role_id,
-	).Rows()
+	).Row().Scan(&resp)
 	if err != nil {
 		fmt.Println("error calling proc" + err.Error())
 		utils.NewError(err)
 		return nil, err
 	}
-	defer rows.Close()
-	result, err := scanUserResult(rows)
-	if err != nil {
-		utils.NewError(err)
-		return nil, err
-	}
 
-	return result, nil
+	return &resp, nil
 }
 
 func (ur *UserRepo) Update(Id uint, req *model.UserRegisterRequest) (*[]model.User, error) {
