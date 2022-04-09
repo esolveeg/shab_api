@@ -65,6 +65,7 @@ CREATE TABLE users(
     `featured` BOOLEAN DEFAULT FALSE,
     `active` BOOLEAN DEFAULT FALSE,
     `admin` BOOLEAN DEFAULT FALSE,
+    `created_at` datetime DEFAULT now(),
     `deleted_at` datetime
 ) ENGINE = INNODB;
 
@@ -135,7 +136,7 @@ CREATE TABLE articles(
     `content` TEXT,
     `views` int DEFAULT 0 NOT NULL,
     `created_at` datetime DEFAULT now(),
-    `published_at` datetime,
+    `published_at` datetime DEFAULT NULL,
     `deleted_at` datetime
 ) ENGINE = INNODB;
 
@@ -181,6 +182,7 @@ CREATE TABLE projects(
     `website` VARCHAR(250),
     `instagram` VARCHAR(250),
     `twitter` VARCHAR(250),
+    `active` BOOLEAN DEFAULT FALSE,
     `created_at` datetime DEFAULT now(),
     `deleted_at` datetime
 ) ENGINE = INNODB;
@@ -242,10 +244,14 @@ CREATE TABLE user_notifications(
 DROP TABLE IF EXISTS user_services;
 
 CREATE TABLE user_services(
+    id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT,
     CONSTRAINT user_services_user FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE RESTRICT ON UPDATE RESTRICT,
+    breif TEXT,
     service_id INT,
     CONSTRAINT user_services_service FOREIGN KEY(service_id) REFERENCES services(id) ON DELETE RESTRICT ON UPDATE RESTRICT,
-    seen_at datetime
+    seen_at datetime,
+    `created_at` datetime DEFAULT now()
+
 ) ENGINE = INNODB;
 

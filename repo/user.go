@@ -24,9 +24,10 @@ func NewUserRepo(db *gorm.DB) UserRepo {
 
 func (ur *UserRepo) RequestService(req *model.UserServiceRequest) (*int, error) {
 	var resp int
-	err := ur.db.Raw("CALL UserServiceCreate(? , ?);",
+	err := ur.db.Raw("CALL UserServiceCreate(? , ? , ?);",
 		req.User,
 		req.Service,
+		req.Breif,
 	).Row().Scan(&resp)
 	if err != nil {
 		fmt.Println("error calling proc" + err.Error())
@@ -263,6 +264,138 @@ func (ur *UserRepo) ListFeatured() (*[]model.User, error) {
 	return result, nil
 }
 
+func (ur *UserRepo) ListPendingUsers() (*[]model.UserPending, error) {
+	var resp []model.UserPending
+	rows, err := ur.db.Raw("CALL UsersPending();").Rows()
+	if err != nil {
+		utils.NewError(err)
+		return nil, err
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var u model.UserPending
+		rows.Scan(
+			&u.Id,
+			&u.NameAr,
+			&u.Email,
+			&u.Phone,
+			&u.CreatedAt,
+		)
+		resp = append(resp, u)
+
+	}
+	return &resp, nil
+}
+
+func (ur *UserRepo) ListPendingArticles() (*[]model.ArticlePending, error) {
+	var resp []model.ArticlePending
+	rows, err := ur.db.Raw("CALL ArticlePending();").Rows()
+	if err != nil {
+		utils.NewError(err)
+		return nil, err
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var u model.ArticlePending
+		rows.Scan(
+			&u.Id,
+			&u.NameAr,
+			&u.Email,
+			&u.Title,
+			&u.CreatedAt,
+		)
+		resp = append(resp, u)
+
+	}
+	return &resp, nil
+}
+
+func (ur *UserRepo) ListPendingProjects() (*[]model.ProjectPending, error) {
+	var resp []model.ProjectPending
+	rows, err := ur.db.Raw("CALL ProjectPending();").Rows()
+	if err != nil {
+		utils.NewError(err)
+		return nil, err
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var u model.ProjectPending
+		rows.Scan(
+			&u.Id,
+			&u.NameAr,
+			&u.Email,
+			&u.Title,
+			&u.Phone,
+			&u.CreatedAt,
+		)
+		resp = append(resp, u)
+
+	}
+	return &resp, nil
+}
+
+func (ur *UserRepo) ListPendingServices() (*[]model.ServicePending, error) {
+	var resp []model.ServicePending
+	rows, err := ur.db.Raw("CALL ServiceRequestsPending();").Rows()
+	if err != nil {
+		utils.NewError(err)
+		return nil, err
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var u model.ServicePending
+		rows.Scan(
+			&u.Id,
+			&u.NameAr,
+			&u.Email,
+			&u.Breif,
+			&u.CreatedAt,
+		)
+		resp = append(resp, u)
+
+	}
+	return &resp, nil
+}
+
+func (ur *UserRepo) ApprovePendingService(id uint64) (*int, error) {
+	var resp int
+	err := ur.db.Raw("CALL ServiceRequestPendingApprove(?);", id).Row().Scan(&resp)
+	if err != nil {
+		utils.NewError(err)
+		return nil, err
+	}
+	return &resp, nil
+}
+
+func (ur *UserRepo) ApprovePendingUser(id uint64) (*int, error) {
+	var resp int
+	err := ur.db.Raw("CALL UserPendingApprove(?);", id).Row().Scan(&resp)
+	if err != nil {
+		utils.NewError(err)
+		return nil, err
+	}
+	return &resp, nil
+}
+
+func (ur *UserRepo) ApprovePendingProject(id uint64) (*int, error) {
+	var resp int
+	err := ur.db.Raw("CALL ProjectPendingApprove(?);", id).Row().Scan(&resp)
+	if err != nil {
+		utils.NewError(err)
+		return nil, err
+	}
+	return &resp, nil
+}
+
+func (ur *UserRepo) ApprovePendingArticle(id uint64) (*int, error) {
+	var resp int
+	err := ur.db.Raw("CALL ArticlePendingApprove(?);", id).Row().Scan(&resp)
+	if err != nil {
+		utils.NewError(err)
+		return nil, err
+	}
+	return &resp, nil
+}
 func (ur *UserRepo) HashUserPassword(plain string) (string, error) {
 	if len(plain) == 0 {
 		return "", errors.New("empty_password")

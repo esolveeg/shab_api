@@ -46,9 +46,12 @@ func (h *Handler) UserFindById(c echo.Context) error {
 func (h *Handler) UserRequestService(c echo.Context) error {
 	req := new(model.UserServiceRequest)
 	var err error
+	if err := c.Bind(req); err != nil {
+		return c.JSON(http.StatusUnprocessableEntity, utils.NewError(err))
+	}
 	req.User = userIDFromToken(c)
 	req.Service, err = strconv.ParseUint(c.Param("id"), 10, 32)
-	req.Breif = c.FormValue("Breif")
+
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
 	}
@@ -56,8 +59,6 @@ func (h *Handler) UserRequestService(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
 	}
-	fmt.Println(req)
-	fmt.Println("reqqqq")
 	n := &model.Notification{
 		Title: "طلب خدمة",
 		Breif: req.Breif,

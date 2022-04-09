@@ -33,6 +33,17 @@ func (h *Handler) Register(v1 *echo.Group) {
 	users.PUT("/reset", h.UserResetPassword)
 	users.POST("/service/:id", h.UserRequestService, jwtMiddleware)
 
+	// requests routes
+
+	requests := api.Group("/requests")
+	requests.GET("/services", h.ServicesPendingListAll)
+	requests.PUT("/services/:id", h.ServicesPendingApprove)
+	requests.GET("/users", h.UsersPendingListAll)
+	requests.PUT("/users/:id", h.UsersPendingApprove)
+	requests.GET("/projects", h.ProjectsPendingListAll)
+	requests.PUT("/projects/:id", h.ProjectsPendingApprove)
+	requests.GET("/articles", h.ArticlesPendingListAll)
+	requests.PUT("/articles/:id", h.ArticlesPendingApprove)
 	//email routes
 	//auth routes
 	api.POST("/login", h.Login)

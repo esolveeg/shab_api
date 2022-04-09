@@ -140,9 +140,9 @@ DELIMITER ;
 DROP PROCEDURE IF EXISTS UserServiceCreate;
 
 DELIMITER //
-CREATE  PROCEDURE `UserServiceCreate`(userId INT , serviceId int)
+CREATE  PROCEDURE `UserServiceCreate`(userId INT , serviceId int , Ibreif TEXT)
 BEGIN
-   INSERT INTO user_services (user_id , service_id) VALUES (userId , serviceId);
+   INSERT INTO user_services (user_id , service_id , breif) VALUES (userId , serviceId , Ibreif);
    SELECT LAST_INSERT_ID() id ;
     
 END//
@@ -504,8 +504,7 @@ END IF;
          logo,
          img
         FROM projects
-           
-            WHERE 1 = 1 ',
+            WHERE active = 1',
         userCond,
         categoryCond,
         searchCond);
@@ -1097,7 +1096,7 @@ SET n_id = (SELECT LAST_INSERT_ID());
 
 
 SET x = 0;
-SET max = (SELECT (COUNT(*)) FROM users WHERE "admin" = 1);
+SET max = (SELECT (COUNT(*)) FROM users WHERE users.admin = 1);
 
 loop_label:  LOOP
 		IF  x > max THEN 
@@ -1137,4 +1136,83 @@ END//
 DELIMITER ;
 
 
+
+# requests
+DROP PROCEDURE IF EXISTS UsersPending;
+DELIMITER //
+CREATE  PROCEDURE `UsersPending`()
+BEGIN
+    SELECT id , name_ar , email , phone , created_at FROM users WHERE active = 0;
+END//
+DELIMITER ;
+
+
+
+DROP PROCEDURE IF EXISTS ProjectPending;
+DELIMITER //
+CREATE  PROCEDURE `ProjectPending`()
+BEGIN
+    SELECT p.id, u.name_ar , u.email , p.title , p.phone , p.created_at FROM projects p JOIN users u ON p.user_id = u.id WHERE p.active = 0 ;
+END//
+DELIMITER ;
+
+
+
+
+
+DROP PROCEDURE IF EXISTS ArticlePending;
+DELIMITER //
+CREATE  PROCEDURE `ArticlePending`( )
+BEGIN
+    SELECT a.id, u.name_ar , u.email , a.title , a.created_at FROM articles a JOIN users u ON a.user_id = u.id WHERE published_at IS NULL ;
+END//
+DELIMITER ;
+
+DROP PROCEDURE IF EXISTS ServiceRequestsPending;
+DELIMITER //
+CREATE  PROCEDURE `ServiceRequestsPending`()
+BEGIN
+    SELECT s.id, u.name_ar , u.email , s.breif , s.created_at FROM user_services s JOIN users u ON s.user_id = u.id WHERE s.seen_at IS NULL ;
+END//
+DELIMITER ;
+
+
+
+
+
+DROP PROCEDURE IF EXISTS ProjectPendingApprove;
+DELIMITER //
+CREATE  PROCEDURE `ProjectPendingApprove`(Iid int)
+BEGIN
+    UPDATE projects SET active = TRUE WHERE id = Iid;
+END//
+DELIMITER ;
+
+
+
+
+
+DROP PROCEDURE IF EXISTS ArticlePendingApprove;
+DELIMITER //
+CREATE  PROCEDURE `ArticlePendingApprove`(Iid int)
+BEGIN
+    UPDATE articles SET status = 'active' , published_at = now() WHERE id = Iid;
+END//
+DELIMITER ;
+
+DROP PROCEDURE IF EXISTS UserPendingApprove;
+DELIMITER //
+CREATE  PROCEDURE `UserPendingApprove`(Iid int)
+BEGIN
+    UPDATE users SET active = 1  WHERE id = Iid;
+END//
+DELIMITER ;
+
+DROP PROCEDURE IF EXISTS ServiceRequestPendingApprove;
+DELIMITER //
+CREATE  PROCEDURE `ServiceRequestPendingApprove`(Iid int)
+BEGIN
+    UPDATE articles SET seen_at = now() WHERE id = Iid;
+END//
+DELIMITER ;
 
