@@ -118,6 +118,7 @@ CREATE TABLE msgs(
     CONSTRAINT fk_msg_from FOREIGN KEY(from_id) REFERENCES users(id) ON DELETE CASCADE ON UPDATE CASCADE,
     to_id INT,
     CONSTRAINT fk_msg_to FOREIGN KEY(to_id) REFERENCES users(id) ON DELETE CASCADE ON UPDATE CASCADE,
+    `created_at` datetime DEFAULT now(),
     `breif` TEXT,
     seen datetime
 ) ENGINE = INNODB;

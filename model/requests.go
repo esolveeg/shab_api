@@ -7,6 +7,11 @@ type UserPending struct {
 	Phone     string
 	CreatedAt string
 }
+type ApproveServiceReq struct {
+	Msg    string
+	FromId int
+	ToId   int
+}
 type ArticlePending struct {
 	Id        int
 	NameAr    string

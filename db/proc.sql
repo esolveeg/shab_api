@@ -1035,6 +1035,9 @@ loop_label:  LOOP
         SET Icity_id = (SELECT alshab.users.city_id FROM  alshab.users WHERE id = x);
         SET Iphone = (SELECT alshab.users.phone FROM  alshab.users WHERE id = x);
         SET Ipassword = (SELECT alshab.users.password FROM  alshab.users WHERE id = x);
+        IF NOT EXISTS(SELECT * FROM users WHERE phone = Iphone) AND NOT EXISTS(SELECT * FROM users WHERE email = Iemail)
+            THEN
+            
             INSERT INTO alshab_staging.users (
                 serial,
                 name,
@@ -1058,6 +1061,8 @@ loop_label:  LOOP
                 1,
                 Ipassword
             );
+            
+            END IF;
 		SET  x = x + 1;
        
 	END LOOP;
@@ -1185,6 +1190,7 @@ DELIMITER //
 CREATE  PROCEDURE `ProjectPendingApprove`(Iid int)
 BEGIN
     UPDATE projects SET active = TRUE WHERE id = Iid;
+    SELECT Iid;
 END//
 DELIMITER ;
 
@@ -1197,6 +1203,7 @@ DELIMITER //
 CREATE  PROCEDURE `ArticlePendingApprove`(Iid int)
 BEGIN
     UPDATE articles SET status = 'active' , published_at = now() WHERE id = Iid;
+    SELECT Iid;
 END//
 DELIMITER ;
 
@@ -1205,6 +1212,7 @@ DELIMITER //
 CREATE  PROCEDURE `UserPendingApprove`(Iid int)
 BEGIN
     UPDATE users SET active = 1  WHERE id = Iid;
+    SELECT Iid;
 END//
 DELIMITER ;
 
@@ -1212,7 +1220,25 @@ DROP PROCEDURE IF EXISTS ServiceRequestPendingApprove;
 DELIMITER //
 CREATE  PROCEDURE `ServiceRequestPendingApprove`(Iid int)
 BEGIN
-    UPDATE articles SET seen_at = now() WHERE id = Iid;
+    UPDATE user_services SET seen_at = now() WHERE id = Iid;
+    SELECT LAST_INSERT_ID() id;
+
 END//
 DELIMITER ;
 
+DROP PROCEDURE IF EXISTS MsgsCreate;
+DELIMITER //
+CREATE  PROCEDURE `MsgsCreate`(Ifrom_id INT , Ito_id INT , Ibreif TEXT)
+BEGIN
+   INSERT INTO msgs (from_id , to_id , breif) VALUES (Ifrom_id , Ito_id , Ibreif);
+END//
+DELIMITER ;
+
+
+DROP PROCEDURE IF EXISTS MsgsList;
+DELIMITER //
+CREATE  PROCEDURE `MsgsList`(Iuser_id INT)
+BEGIN
+   SELECT id , breif , u.name , created_at , seen FROM msgs WHERE to_id = Iuser_id;
+END//
+DELIMITER ;

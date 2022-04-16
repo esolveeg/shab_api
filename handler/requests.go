@@ -2,6 +2,7 @@ package handler
 
 import (
 	"net/http"
+	"shab/model"
 	"shab/utils"
 	"strconv"
 
@@ -48,10 +49,21 @@ func (h *Handler) ServicesPendingApprove(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
 	}
+
+	req := new(model.ApproveServiceReq)
+	if err := c.Bind(req); err != nil {
+		return c.JSON(http.StatusUnprocessableEntity, utils.NewError(err))
+	}
+
 	r, err := h.userRepo.ApprovePendingService(id)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
 	}
+	r, err = h.userRepo.SendMsg(req)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
+	}
+
 	return c.JSON(http.StatusOK, r)
 }
 
