@@ -468,53 +468,83 @@ END IF;
 END//
 DELIMITER ;
 
-
-DROP PROCEDURE IF EXISTS VideosList;
+#videos
 DROP PROCEDURE IF EXISTS VideosListByCategory;
 
 DELIMITER //
 CREATE  PROCEDURE `VideosListByCategory`(IN ICategory INT)
 BEGIN
-    SELECT * FROM videos WHERE (CASE WHEN ICategory = 0 THEN '1' ELSE category_id = ICategory END);
+    SELECT id , name ,url ,image ,category_id FROM videos WHERE deleted_at IS NULL AND (CASE WHEN ICategory = 0 THEN '1' ELSE category_id = ICategory END);
 END//
 DELIMITER ;
 
+
+DROP PROCEDURE IF EXISTS VideosCreate;
+
+DELIMITER //
+CREATE  PROCEDURE `VideosCreate`(IN Iname VARCHAR(250),IN Iurl VARCHAR(250),IN Iimage VARCHAR(250),IN Icategory_id INT)
+BEGIN
+    INSERT INTO videos (
+        name ,
+        url ,
+        image ,
+        category_id 
+    ) VALUES (
+        Iname,
+        Iurl,
+        Iimage,
+        Icategory_id
+    );
+
+    SELECT LAST_INSERT_ID() id;
+END//
+DELIMITER ;
+
+
+
+DROP PROCEDURE IF EXISTS VideosUpdate;
+
+DELIMITER //
+CREATE  PROCEDURE `VideosUpdate`(IN Iid INT,IN Iname VARCHAR(250),IN Iurl VARCHAR(250),IN Iimage VARCHAR(250),IN Icategory_id INT)
+BEGIN
+    UPDATE  videos SET
+        name = Iname ,
+        url = Iurl ,
+        image = Iimage ,
+        category_id = Icategory_id
+    WHERE id = Iid;
+
+    SELECT Iid id;
+END//
+DELIMITER ;
+
+
+DROP PROCEDURE IF EXISTS VideosDelete;
+
+DELIMITER //
+CREATE  PROCEDURE `VideosDelete`(IN Iid INT)
+BEGIN
+    UPDATE  videos SET deleted_at = now()  WHERE id = Iid;
+    SELECT Iid id;
+END//
+DELIMITER ;
 DROP PROCEDURE IF EXISTS ProjectsListByCategoryUserSearch;
 DELIMITER //
 CREATE PROCEDURE ProjectsListByCategoryUserSearch(IN ICategory INT , IN Iuser INT , IN search VARCHAR(200)) 
 BEGIN
-DECLARE categoryCond VARCHAR(50) DEFAULT '';
-DECLARE userCond VARCHAR(50) DEFAULT '';
-DECLARE searchCond VARCHAR(50) DEFAULT '';
-IF ICategory != 0 THEN
-    SET categoryCond = CONCAT('AND category_id = ' , ICategory);
-END IF;
-IF Iuser != 0 THEN
-    SET userCond = CONCAT('AND user_id = ' , IUser);
-END IF;
-IF search != '' THEN
-    SET searchCond = CONCAT('AND title LIKE "%' , search , '%"');
-END IF;
 
-    SET @query = CONCAT(
-        'SELECT 
+    SELECT 
          id,
          title,
          status,
          logo,
          img
-        FROM projects
-            WHERE active = 1',
-        userCond,
-        categoryCond,
-        searchCond);
-
-
-         
-    PREPARE stmt FROM @query;
-    EXECUTE stmt;
-    DEALLOCATE PREPARE stmt;
-    END//
+        FROM projects p
+            WHERE active = 1
+            AND p.user_id = CASE WHEN Iuser = 0 THEN p.user_id ELSE Iuser END
+            AND p.category_id = CASE WHEN ICategory = 0 THEN p.category_id ELSE ICategory END
+            AND CASE WHEN search = '' THEN 1 = 1 ELSE  title LIKE CONCAT('"%' , search , '%"') END;
+END//
 
 DELIMITER ;
 

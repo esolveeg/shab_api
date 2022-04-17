@@ -86,6 +86,14 @@ func (h *Handler) Register(v1 *echo.Group) {
 	consultunts.PUT("/:id", h.ConsultuntsUpdate)
 	consultunts.GET("/:id", h.ConsultuntById)
 
+	//consultunts routes
+	videos := api.Group("/videos")
+
+	videos.GET("", h.VideosListByCategory)
+	videos.POST("", h.VideosCreate)
+	videos.PUT("", h.VideosUpdate)
+	videos.DELETE("/:id", h.VideosDelete)
+
 	// global routes
 
 	api.POST("/upload", h.Upload)

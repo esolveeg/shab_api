@@ -42,3 +42,44 @@ func (ur *VideoRepo) ListByCategory(cat string) (*[]model.Video, error) {
 	}
 	return &videos, nil
 }
+
+func (ur *VideoRepo) Create(req model.VideoCreateReq) (*int, error) {
+	var resp int
+	err := ur.db.Raw("CALL VideosCreate(? , ? , ? , ?);",
+		req.Name,
+		req.Url,
+		req.Image,
+		req.Category_id,
+	).Row().Scan(&resp)
+	if err != nil {
+		utils.NewError(err)
+		return nil, err
+	}
+	return &resp, nil
+}
+
+func (ur *VideoRepo) Update(req model.Video) (*int, error) {
+	var resp int
+	err := ur.db.Raw("CALL VideosUpdate(? , ? , ? , ? , ? );",
+		req.Id,
+		req.Name,
+		req.Url,
+		req.Image,
+		req.Category_id,
+	).Row().Scan(&resp)
+	if err != nil {
+		utils.NewError(err)
+		return nil, err
+	}
+	return &resp, nil
+}
+
+func (ur *VideoRepo) Delete(id uint64) (*int, error) {
+	var resp int
+	err := ur.db.Raw("CALL VideosDelete(?);", id).Row().Scan(&resp)
+	if err != nil {
+		utils.NewError(err)
+		return nil, err
+	}
+	return &resp, nil
+}

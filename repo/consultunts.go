@@ -35,6 +35,7 @@ func (ur *ConsltuntsRepo) ConsultuntsListAll() (*[]model.Consultunt, error) {
 			&rec.Title,
 			&rec.Skills,
 			&rec.Img,
+			&rec.IsTeam,
 			&rec.Breif,
 		)
 		if err != nil {

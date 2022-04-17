@@ -16,6 +16,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+
 	userRepo := repo.NewUserRepo(db)
 	richRepo := repo.NewRichTextRepo(db)
 	roleRepo := repo.NewRoleRepo(db)

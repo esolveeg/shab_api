@@ -20,6 +20,7 @@ CREATE TABLE consultunts(
     `title` VARCHAR(250),
     `skills` text,
     `img` VARCHAR(250) DEFAULT "assets/members/default.png",
+    `is_team` BOOLEAN DEFAULT FALSE, 
     `breif` TEXT
 ) ENGINE = INNODB;
 
@@ -98,7 +99,8 @@ CREATE TABLE videos(
     `url` VARCHAR(300),
     `image` VARCHAR(250),
     category_id INT,
-    CONSTRAINT fk_video_category FOREIGN KEY(category_id) REFERENCES categories(id) ON DELETE RESTRICT ON UPDATE RESTRICT
+    CONSTRAINT fk_video_category FOREIGN KEY(category_id) REFERENCES categories(id) ON DELETE RESTRICT ON UPDATE RESTRICT,
+    `deleted_at` datetime
 ) ENGINE = INNODB;
 
 DROP TABLE IF EXISTS features;

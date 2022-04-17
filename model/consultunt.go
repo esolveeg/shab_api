@@ -5,6 +5,7 @@ type Consultunt struct {
 	Name_ar string
 	Title   string
 	Skills  string
+	IsTeam  bool
 	Img     string
 	Breif   string
 }
