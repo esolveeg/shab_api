@@ -68,7 +68,7 @@ BEGIN
         r.color
         FROM users u
             JOIN roles r ON u.role_id = r.id
-            WHERE  u.id = Iid AND active = 1;
+            WHERE  u.id = Iid;
 END //
 DELIMITER ;
 
@@ -154,12 +154,14 @@ DELIMITER //
 
 
 CREATE PROCEDURE ArticleDelete(IN id INT) BEGIN
-UPDATE
-    articles a
-SET
-    deleted_at = now()
-WHERE
-    a.id = id;
+    UPDATE
+        articles a
+    SET
+        deleted_at = now()
+    WHERE
+        a.id = id;
+
+    SELECT id;
 
 END //
 DELIMITER ;
@@ -576,6 +578,17 @@ END IF;
 
 DELIMITER ;
 
+
+DROP PROCEDURE IF EXISTS ProjectDelete;
+
+DELIMITER //
+CREATE  PROCEDURE `ProjectDelete`(IN Iid INT)
+BEGIN
+    UPDATE  projects SET deleted_at = now()  WHERE id = Iid;
+    SELECT Iid id;
+END//
+DELIMITER ;
+
 DROP PROCEDURE IF EXISTS ProjectRead;
 DELIMITER //
 CREATE  PROCEDURE `ProjectRead`(IN Iid INT)
@@ -678,7 +691,7 @@ BEGIN
        a.status,
        a.content,
        a.created_at,
-       a.published_at
+       IFNULL(a.published_at , '')
      FROM articles a
         JOIN users u ON u.id = a.user_id
         JOIN categories c ON c.id = a.category_id
@@ -1177,7 +1190,7 @@ DROP PROCEDURE IF EXISTS UsersPending;
 DELIMITER //
 CREATE  PROCEDURE `UsersPending`()
 BEGIN
-    SELECT id , name_ar , email , phone , created_at FROM users WHERE active = 0;
+       SELECT u.id , u.name_ar , u.email ,IF(us.end_at < CURRENT_DATE() , 'تجديد عضوية' , 'عضوية جديدة') AS type , u.phone , u.created_at FROM users u JOIN user_subs us ON u.id = us.user_id  WHERE active = 0 OR us.end_at < CURRENT_DATE();
 END//
 DELIMITER ;
 
@@ -1187,7 +1200,7 @@ DROP PROCEDURE IF EXISTS ProjectPending;
 DELIMITER //
 CREATE  PROCEDURE `ProjectPending`()
 BEGIN
-    SELECT p.id, u.name_ar , u.email , p.title , p.phone , p.created_at FROM projects p JOIN users u ON p.user_id = u.id WHERE p.active = 0 ;
+    SELECT p.id, u.name_ar , u.email , p.title , p.phone , p.created_at FROM projects p JOIN users u ON p.user_id = u.id WHERE p.active = 0 AND p.deleted_at IS NULL;
 END//
 DELIMITER ;
 
@@ -1199,7 +1212,7 @@ DROP PROCEDURE IF EXISTS ArticlePending;
 DELIMITER //
 CREATE  PROCEDURE `ArticlePending`( )
 BEGIN
-    SELECT a.id, u.name_ar , u.email , a.title , a.created_at FROM articles a JOIN users u ON a.user_id = u.id WHERE published_at IS NULL ;
+    SELECT a.id, u.name_ar , u.email , a.title , a.created_at FROM articles a JOIN users u ON a.user_id = u.id WHERE published_at IS NULL AND a.deleted_at IS NULL ;
 END//
 DELIMITER ;
 

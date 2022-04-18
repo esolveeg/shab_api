@@ -24,6 +24,18 @@ func (h *Handler) ProjectListByCategoryUserSearch(c echo.Context) error {
 	return c.JSON(http.StatusOK, projects)
 }
 
+func (h *Handler) ProjectDelete(c echo.Context) error {
+	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
+	if err != nil {
+		fmt.Println(err)
+	}
+	project, err := h.projectRepo.Delete(id)
+
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
+	}
+	return c.JSON(http.StatusOK, project)
+}
 func (h *Handler) ProjectRead(c echo.Context) error {
 	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {

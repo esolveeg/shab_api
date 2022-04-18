@@ -22,6 +22,17 @@ func (h *Handler) ArticleListByCategoryUserSearch(c echo.Context) error {
 	return c.JSON(http.StatusOK, articles)
 }
 
+func (h *Handler) ArticleDelete(c echo.Context) error {
+	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
+	if err != nil {
+		fmt.Println(err)
+	}
+	article, err := h.articleRepo.ArticleDelete(id)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
+	}
+	return c.JSON(http.StatusOK, article)
+}
 func (h *Handler) ArticleRead(c echo.Context) error {
 	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {

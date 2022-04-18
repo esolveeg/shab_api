@@ -88,3 +88,15 @@ func (ar *ArticleRepo) ArticleRead(id uint64) (*model.Article, error) {
 	}
 	return &article, nil
 }
+
+func (ar *ArticleRepo) ArticleDelete(id uint64) (*int, error) {
+	var resp int
+	err := ar.db.Raw("CALL ArticleDelete(?);", id).Row().Scan(
+		&resp,
+	)
+	if err != nil {
+		utils.NewError(err)
+		return nil, err
+	}
+	return &resp, nil
+}

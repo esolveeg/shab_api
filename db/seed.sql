@@ -678,7 +678,7 @@ INSERT INTO
 VALUES
     (
         'ahmed mohamed moustafa',
-        'عبدالله مساعد باحادق',
+        'احمد محمد مصطفي',
         'a.mohamedd@gmail.com',
         'assets/members/male-01.jpg',
         '123456',
@@ -690,6 +690,21 @@ VALUES
         FALSE,
         FALSE,
         FALSE
+    ),
+    (
+        'ahmed ashraf darwish',
+        'احمد اشرف درويش',
+        'a.ashraf@gmail.com',
+        'assets/members/male-01.jpg',
+        '123456',
+        2400100,
+        1,
+        '05466176622',
+        'لوريم ايبسوم دولار سيت أميت ,كونسيكتيتور أدايبا يسكينج أليايت,سيت دو أيوسمود تيمبور أنكايديديونتيوت لابوري ات دولار ماجنا أليكيوا .',
+        230,
+        FALSE,
+        FALSE,
+        TRUE
     ),
     (
         'nadya el khoshromy',
@@ -811,9 +826,34 @@ VALUES
         TRUE,
         TRUE,
         TRUE
-    )
-    ;
+    );
 
+INSERT INTO user_subs (
+    user_id,
+    role_id,
+    price,
+    method,
+    points,
+    start_at,
+    end_at
+) VALUES (
+    1,
+    1,
+    230,
+    'cash',
+    230,
+    '2021-04-17',
+    '2023-04-17'
+),
+(
+    2,
+    1,
+    230,
+    'cash',
+    230,
+    '2021-04-17',
+    '2022-04-17'
+);
 # projects
 INSERT INTO
     projects (

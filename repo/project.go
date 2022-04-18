@@ -67,6 +67,20 @@ func (pr *ProjectRepo) ListByCategoryUserSearch(category uint, user uint, search
 	return &resp, nil
 }
 
+func (pr *ProjectRepo) Delete(id uint64) (*int, error) {
+	var resp int
+	err := pr.db.Raw("CALL ProjectDelete(?);", id).Row().Scan(
+		&resp,
+	)
+
+	if err != nil {
+		utils.NewError(err)
+		return nil, err
+	}
+
+	return &resp, nil
+}
+
 func (pr *ProjectRepo) ProjectRead(id uint64) (*model.Project, error) {
 	var project model.Project
 	err := pr.db.Raw("CALL ProjectRead(?);", id).Row().Scan(

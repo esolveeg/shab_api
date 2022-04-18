@@ -293,6 +293,7 @@ func (ur *UserRepo) ListPendingUsers() (*[]model.UserPending, error) {
 			&u.Id,
 			&u.NameAr,
 			&u.Email,
+			&u.Type,
 			&u.Phone,
 			&u.CreatedAt,
 		)

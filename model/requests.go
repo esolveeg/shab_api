@@ -4,6 +4,7 @@ type UserPending struct {
 	Id        int
 	NameAr    string
 	Email     string
+	Type      string
 	Phone     string
 	CreatedAt string
 }

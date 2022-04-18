@@ -44,6 +44,7 @@ func (h *Handler) Register(v1 *echo.Group) {
 	requests.PUT("/projects/:id", h.ProjectsPendingApprove)
 	requests.GET("/articles", h.ArticlesPendingListAll)
 	requests.PUT("/articles/:id", h.ArticlesPendingApprove)
+
 	//email routes
 	//auth routes
 	api.POST("/login", h.Login)
@@ -55,12 +56,14 @@ func (h *Handler) Register(v1 *echo.Group) {
 	projects.POST("/editadd", h.ProjectCreate, jwtMiddleware)
 	projects.PUT("/editadd/:id", h.ProjectUpdate, jwtMiddleware)
 	projects.GET("/:id", h.ProjectRead)
+	projects.DELETE("/:id", h.ProjectDelete)
 
 	// articles routes
 	articles := api.Group("/articles")
 	articles.POST("", h.ArticleListByCategoryUserSearch)
 	articles.POST("/create", h.ArticleCreate, jwtMiddleware)
 	articles.GET("/:id", h.ArticleRead)
+	articles.DELETE("/:id", h.ArticleDelete)
 
 	// events
 	api.POST("/events", h.EventsListAll)
