@@ -98,6 +98,7 @@ CREATE TABLE videos(
     `name` VARCHAR(250),
     `url` VARCHAR(300),
     `image` VARCHAR(250),
+    `Breif` TEXT,
     category_id INT,
     CONSTRAINT fk_video_category FOREIGN KEY(category_id) REFERENCES categories(id) ON DELETE RESTRICT ON UPDATE RESTRICT,
     `deleted_at` datetime

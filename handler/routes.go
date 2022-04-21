@@ -94,8 +94,9 @@ func (h *Handler) Register(v1 *echo.Group) {
 	videos := api.Group("/videos")
 
 	videos.GET("", h.VideosListByCategory)
+	videos.GET("/:id", h.VideosFind)
 	videos.POST("", h.VideosCreate)
-	videos.PUT("", h.VideosUpdate)
+	videos.PUT("/:id", h.VideosUpdate)
 	videos.DELETE("/:id", h.VideosDelete)
 
 	// global routes

@@ -9,6 +9,17 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
+func (h *Handler) VideosFind(c echo.Context) error {
+	id, err := strconv.ParseUint(c.Param("id"), 10, 64)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
+	}
+	r, err := h.videoRepo.Find(id)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
+	}
+	return c.JSON(http.StatusOK, r)
+}
 func (h *Handler) VideosListByCategory(c echo.Context) error {
 	r, err := h.videoRepo.ListByCategory(c.QueryParam("category"))
 	if err != nil {
@@ -30,10 +41,12 @@ func (h *Handler) VideosCreate(c echo.Context) error {
 }
 
 func (h *Handler) VideosUpdate(c echo.Context) error {
+	id, err := strconv.ParseUint(c.Param("id"), 10, 64)
 	req := new(model.Video)
 	if err := c.Bind(req); err != nil {
 		return c.JSON(http.StatusUnprocessableEntity, utils.NewError(err))
 	}
+	req.Id = id
 	r, err := h.videoRepo.Update(*req)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, utils.NewError(err))

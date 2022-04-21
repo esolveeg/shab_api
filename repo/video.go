@@ -21,16 +21,25 @@ func NewVideoRepo(db *gorm.DB) VideoRepo {
 func (ur *VideoRepo) ListByCategory(cat string) (*[]model.Video, error) {
 	var videos []model.Video
 	rows, err := ur.db.Raw("CALL VideosListByCategory(?);", cat).Rows()
+	if err != nil {
+		utils.NewError(err)
+		return nil, err
+	}
 	defer rows.Close()
 	for rows.Next() {
 		var video model.Video
-		rows.Scan(
+		err = rows.Scan(
 			&video.Id,
 			&video.Name,
 			&video.Url,
 			&video.Image,
-			&video.Category_id,
+			&video.Breif,
+			&video.CategoryId,
 		)
+		if err != nil {
+			utils.NewError(err)
+			return nil, err
+		}
 		video.Image = config.Config("BASE_URL") + video.Image
 
 		videos = append(videos, video)
@@ -43,13 +52,32 @@ func (ur *VideoRepo) ListByCategory(cat string) (*[]model.Video, error) {
 	return &videos, nil
 }
 
+func (ur *VideoRepo) Find(id uint64) (*model.Video, error) {
+	var video model.Video
+	err := ur.db.Raw("CALL VideosRead(?);", id).Row().Scan(
+		&video.Id,
+		&video.Name,
+		&video.Url,
+		&video.Image,
+		&video.Breif,
+		&video.CategoryId,
+		&video.CategoryName,
+	)
+	if err != nil {
+		utils.NewError(err)
+		return nil, err
+	}
+	return &video, nil
+}
+
 func (ur *VideoRepo) Create(req model.VideoCreateReq) (*int, error) {
 	var resp int
-	err := ur.db.Raw("CALL VideosCreate(? , ? , ? , ?);",
+	err := ur.db.Raw("CALL VideosCreate(? , ? , ? , ? , ?);",
 		req.Name,
 		req.Url,
 		req.Image,
-		req.Category_id,
+		req.Breif,
+		req.CategoryId,
 	).Row().Scan(&resp)
 	if err != nil {
 		utils.NewError(err)
@@ -60,12 +88,13 @@ func (ur *VideoRepo) Create(req model.VideoCreateReq) (*int, error) {
 
 func (ur *VideoRepo) Update(req model.Video) (*int, error) {
 	var resp int
-	err := ur.db.Raw("CALL VideosUpdate(? , ? , ? , ? , ? );",
+	err := ur.db.Raw("CALL VideosUpdate(? , ? , ? , ? , ? , ? );",
 		req.Id,
 		req.Name,
 		req.Url,
 		req.Image,
-		req.Category_id,
+		req.Breif,
+		req.CategoryId,
 	).Row().Scan(&resp)
 	if err != nil {
 		utils.NewError(err)

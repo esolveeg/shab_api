@@ -476,25 +476,40 @@ DROP PROCEDURE IF EXISTS VideosListByCategory;
 DELIMITER //
 CREATE  PROCEDURE `VideosListByCategory`(IN ICategory INT)
 BEGIN
-    SELECT id , name ,url ,image ,category_id FROM videos WHERE deleted_at IS NULL AND (CASE WHEN ICategory = 0 THEN '1' ELSE category_id = ICategory END);
+    SELECT id , name ,url ,image ,breif , category_id FROM videos WHERE deleted_at IS NULL AND (CASE WHEN ICategory = 0 THEN '1' ELSE category_id = ICategory END);
 END//
 DELIMITER ;
+
+
+
+
+DROP PROCEDURE IF EXISTS VideosRead;
+
+DELIMITER //
+CREATE  PROCEDURE `VideosRead`(IN Iid INT)
+BEGIN
+    SELECT v.id , v.name ,v.url ,v.image ,v.breif , v.category_id ,c.name category_name  FROM videos v JOIN categories c ON v.category_id = c.id WHERE v.deleted_at IS NULL AND v.id= Iid;
+END//
+DELIMITER ;
+
 
 
 DROP PROCEDURE IF EXISTS VideosCreate;
 
 DELIMITER //
-CREATE  PROCEDURE `VideosCreate`(IN Iname VARCHAR(250),IN Iurl VARCHAR(250),IN Iimage VARCHAR(250),IN Icategory_id INT)
+CREATE  PROCEDURE `VideosCreate`(IN Iname VARCHAR(250),IN Iurl VARCHAR(250),IN Iimage VARCHAR(250),IN Ibreif TEXT,IN Icategory_id INT)
 BEGIN
     INSERT INTO videos (
         name ,
         url ,
         image ,
+        breif , 
         category_id 
     ) VALUES (
         Iname,
         Iurl,
         Iimage,
+        Ibreif,
         Icategory_id
     );
 
@@ -507,12 +522,13 @@ DELIMITER ;
 DROP PROCEDURE IF EXISTS VideosUpdate;
 
 DELIMITER //
-CREATE  PROCEDURE `VideosUpdate`(IN Iid INT,IN Iname VARCHAR(250),IN Iurl VARCHAR(250),IN Iimage VARCHAR(250),IN Icategory_id INT)
+CREATE  PROCEDURE `VideosUpdate`(IN Iid INT,IN Iname VARCHAR(250),IN Iurl VARCHAR(250),IN Iimage VARCHAR(250),IN Ibreif TEXT,IN Icategory_id INT)
 BEGIN
     UPDATE  videos SET
         name = Iname ,
         url = Iurl ,
         image = Iimage ,
+        breif = Ibreif ,
         category_id = Icategory_id
     WHERE id = Iid;
 
