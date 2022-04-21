@@ -58,6 +58,23 @@ func (ur *ServiceRepo) UpdateService(req model.Service) (*int, error) {
 	return &resp, nil
 }
 
+func (ur *ServiceRepo) FindPendingSerivce(id uint64) (*model.ServiceReq, error) {
+	var resp model.ServiceReq
+	err := ur.db.Raw("CALL SerivcesPendingFind(?) ", id).Row().Scan(
+		&resp.Id,
+		&resp.Name,
+		&resp.Email,
+		&resp.Phone,
+		&resp.Breif,
+		&resp.CreatedAt,
+	)
+	if err != nil {
+		utils.NewError(err)
+		return &resp, err
+	}
+	return &resp, nil
+}
+
 func (ur *ServiceRepo) DeleteService(id string) (*int, error) {
 	var resp int
 	err := ur.db.Raw("CALL ServiceDelete(?) ", id).Row().Scan(&resp)

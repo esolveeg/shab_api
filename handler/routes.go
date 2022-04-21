@@ -38,6 +38,7 @@ func (h *Handler) Register(v1 *echo.Group) {
 	requests := api.Group("/requests")
 	requests.GET("/services", h.ServicesPendingListAll)
 	requests.PUT("/services/:id", h.ServicesPendingApprove)
+	requests.GET("/services/:id", h.ServicesPendingFind)
 	requests.GET("/users", h.UsersPendingListAll)
 	requests.PUT("/users/:id", h.UsersPendingApprove)
 	requests.GET("/projects", h.ProjectsPendingListAll)

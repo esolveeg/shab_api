@@ -737,6 +737,25 @@ BEGIN
    );
 
 
+    INSERT INTO user_subs (
+        user_id,
+        role_id,
+        price,
+        method,
+        points,
+        start_at,
+        end_at
+    ) VALUES (
+        LAST_INSERT_ID(),
+        IRole,
+        (SELECT price FROM roles WHERE id = IRole),
+        'cash',
+        (SELECT price FROM roles WHERE id = IRole),
+        now(),
+        DATE_ADD( now(), INTERVAL 1 YEAR)
+    );
+
+
    SELECT LAST_INSERT_ID() id;
 END//
 DELIMITER ;
@@ -1193,6 +1212,17 @@ BEGIN
        SELECT u.id , u.name_ar , u.email ,IF(us.end_at < CURRENT_DATE() , 'تجديد عضوية' , 'عضوية جديدة') AS type , u.phone , u.created_at FROM users u JOIN user_subs us ON u.id = us.user_id  WHERE active = 0 OR us.end_at < CURRENT_DATE();
 END//
 DELIMITER ;
+
+
+DROP PROCEDURE IF EXISTS SerivcesPendingFind;
+DELIMITER //
+CREATE  PROCEDURE `SerivcesPendingFind`(IN id INT)
+BEGIN
+       SELECT u.id , u.name_ar , u.email , u.phone , us.breif ,u.created_at FROM users u JOIN user_services us ON u.id = us.user_id  WHERE us.id = id;
+END//
+DELIMITER ;
+
+
 
 
 

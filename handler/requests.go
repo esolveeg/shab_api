@@ -44,6 +44,18 @@ func (h *Handler) ArticlesPendingListAll(c echo.Context) error {
 	}
 	return c.JSON(http.StatusOK, r)
 }
+func (h *Handler) ServicesPendingFind(c echo.Context) error {
+	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
+	}
+	r, err := h.serviceRepo.FindPendingSerivce(id)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
+	}
+	return c.JSON(http.StatusOK, r)
+}
+
 func (h *Handler) ServicesPendingApprove(c echo.Context) error {
 	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
