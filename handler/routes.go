@@ -99,6 +99,13 @@ func (h *Handler) Register(v1 *echo.Group) {
 	videos.PUT("/:id", h.VideosUpdate)
 	videos.DELETE("/:id", h.VideosDelete)
 
+	//consultunts routes
+	msgs := api.Group("/msg")
+
+	msgs.GET("", h.MsgsListAll, jwtMiddleware)
+	msgs.GET("/:id", h.MsgsListByUser, jwtMiddleware)
+	msgs.POST("", h.MsgsCreate, jwtMiddleware)
+
 	// global routes
 
 	api.POST("/upload", h.Upload)

@@ -1320,6 +1320,7 @@ DELIMITER //
 CREATE  PROCEDURE `MsgsCreate`(Ifrom_id INT , Ito_id INT , Ibreif TEXT)
 BEGIN
    INSERT INTO msgs (from_id , to_id , breif) VALUES (Ifrom_id , Ito_id , Ibreif);
+   SELECT LAST_INSERT_ID() id;
 END//
 DELIMITER ;
 
@@ -1328,6 +1329,15 @@ DROP PROCEDURE IF EXISTS MsgsList;
 DELIMITER //
 CREATE  PROCEDURE `MsgsList`(Iuser_id INT)
 BEGIN
-   SELECT id , breif , u.name , created_at , seen FROM msgs WHERE to_id = Iuser_id;
+  SELECT u.id , u.name , COUNT(m.id) `count` FROM msgs m JOIN users u ON m.from_id = u.id  WHERE to_id = 9  GROUP BY u.name , u.id;
+END//
+DELIMITER ;
+
+
+DROP PROCEDURE IF EXISTS MsgsListByUser;
+DELIMITER //
+CREATE  PROCEDURE `MsgsListByUser`(Ifrom_id INT ,Ito_id INT  )
+BEGIN
+SELECT m.id ,IF(m.from_id = Ifrom_id , TRUE , FALSE) mine, m.breif , m.created_at , IFNULL(m.seen , '') seen FROM msgs m WHERE (m.from_id = Ifrom_id AND m.to_id = Ito_id) OR (m.from_id = Ito_id AND m.to_id = Ifrom_id) ORDER BY id , m.created_at DESC;
 END//
 DELIMITER ;
