@@ -42,7 +42,7 @@ func (pr *ProjectRepo) ListFeatured() (*[]model.ProjectList, error) {
 	return &resp, nil
 }
 
-func (pr *ProjectRepo) ListByCategoryUserSearch(category uint, user uint, search string) (*[]model.ProjectList, error) {
+func (pr *ProjectRepo) ListByCategoryUserSearch(category uint64, user uint64, search string) (*[]model.ProjectList, error) {
 	var resp []model.ProjectList
 	rows, err := pr.db.Raw("CALL ProjectsListByCategoryUserSearch(? , ? , ?);", category, user, search).Rows()
 	if err != nil {

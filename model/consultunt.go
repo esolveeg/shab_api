@@ -15,5 +15,6 @@ type ConsultuntCreateReq struct {
 	Title  string
 	Skills string
 	Img    string
+	IsTeam bool
 	Breif  string
 }

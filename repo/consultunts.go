@@ -19,8 +19,8 @@ func NewConsultuntsRepo(db *gorm.DB) ConsltuntsRepo {
 	}
 }
 
-func (ur *ConsltuntsRepo) ConsultuntsListAll() (*[]model.Consultunt, error) {
-	rows, err := ur.db.Raw("CALL ConsultuntsListAll();").Rows()
+func (ur *ConsltuntsRepo) ConsultuntsListAll(isTeam bool) (*[]model.Consultunt, error) {
+	rows, err := ur.db.Raw("CALL ConsultuntsListAll(?);", isTeam).Rows()
 	if err != nil {
 		utils.NewError(err)
 		return nil, err
@@ -55,11 +55,12 @@ func (ur *ConsltuntsRepo) ConsultuntsListAll() (*[]model.Consultunt, error) {
 }
 
 func (ur *ConsltuntsRepo) ConsultuntsCreate(req *model.ConsultuntCreateReq) (string, error) {
-	rows, err := ur.db.Raw("CALL ConsultuntsCreate(? , ? , ? ,? , ?);",
+	rows, err := ur.db.Raw("CALL ConsultuntsCreate(? , ? , ? ,? , ? , ?);",
 		req.Name,
 		req.Title,
 		req.Skills,
 		req.Img,
+		req.IsTeam,
 		req.Breif,
 	).Rows()
 	if err != nil {
@@ -72,12 +73,13 @@ func (ur *ConsltuntsRepo) ConsultuntsCreate(req *model.ConsultuntCreateReq) (str
 	return "created", nil
 }
 func (ur *ConsltuntsRepo) ConsultuntsUpdate(req *model.Consultunt) (string, error) {
-	rows, err := ur.db.Raw("CALL ConsultuntsUpdate(? , ? , ? , ? ,? , ?);",
+	rows, err := ur.db.Raw("CALL ConsultuntsUpdate(? , ? , ?  , ? , ? ,? , ?);",
 		req.Id,
 		req.Name_ar,
 		req.Title,
 		req.Skills,
 		req.Img,
+		req.IsTeam,
 		req.Breif,
 	).Rows()
 	if err != nil {

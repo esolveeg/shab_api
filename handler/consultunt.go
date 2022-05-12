@@ -10,7 +10,11 @@ import (
 )
 
 func (h *Handler) ConsultuntsListAll(c echo.Context) error {
-	consultunts, err := h.consltuntsRepo.ConsultuntsListAll()
+	var isTeam bool
+	if c.QueryParam("type") == "team" {
+		isTeam = true
+	}
+	consultunts, err := h.consltuntsRepo.ConsultuntsListAll(isTeam)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
 	}

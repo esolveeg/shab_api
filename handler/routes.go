@@ -53,7 +53,7 @@ func (h *Handler) Register(v1 *echo.Group) {
 
 	// project routes
 	projects := api.Group("/projects")
-	projects.POST("", h.ProjectListByCategoryUserSearch)
+	projects.GET("", h.ProjectListByCategoryUserSearch)
 	projects.POST("/editadd", h.ProjectCreate, jwtMiddleware)
 	projects.PUT("/editadd/:id", h.ProjectUpdate, jwtMiddleware)
 	projects.GET("/:id", h.ProjectRead)
@@ -90,7 +90,7 @@ func (h *Handler) Register(v1 *echo.Group) {
 	consultunts.PUT("/:id", h.ConsultuntsUpdate)
 	consultunts.GET("/:id", h.ConsultuntById)
 
-	//consultunts routes
+	//videos routes
 	videos := api.Group("/videos")
 
 	videos.GET("", h.VideosListByCategory)
@@ -99,7 +99,7 @@ func (h *Handler) Register(v1 *echo.Group) {
 	videos.PUT("/:id", h.VideosUpdate)
 	videos.DELETE("/:id", h.VideosDelete)
 
-	//consultunts routes
+	//msg routes
 	msgs := api.Group("/msg")
 
 	msgs.GET("", h.MsgsListAll, jwtMiddleware)

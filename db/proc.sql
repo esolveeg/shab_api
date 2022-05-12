@@ -854,11 +854,11 @@ DROP PROCEDURE IF EXISTS ConsultuntsListAll;
 
 
 DELIMITER //
-CREATE  PROCEDURE `ConsultuntsListAll`()
+CREATE  PROCEDURE `ConsultuntsListAll`(IN Iis_team BOOLEAN)
 BEGIN
     SELECT 
        *
-     FROM consultunts;
+     FROM consultunts WHERE is_team = Iis_team;
 END//
 
 
@@ -888,6 +888,7 @@ CREATE  PROCEDURE `ConsultuntsCreate`(
     IN Ititle VARCHAR(250),
     IN Iskills VARCHAR(250),
     IN Iimg TEXT,
+    IN Iis_team BOOLEAN,
     IN Ibreif TEXT
 )
 BEGIN
@@ -896,6 +897,7 @@ BEGIN
         title,
         skills,
         img,
+        is_team,
         breif
     )
     VALUES (
@@ -903,6 +905,7 @@ BEGIN
         Ititle,
         Iskills,
         Iimg,
+        Iis_team,
         Ibreif
     );
 END//
@@ -918,6 +921,7 @@ CREATE  PROCEDURE `ConsultuntsUpdate`(
     IN Ititle VARCHAR(250),
     IN Iskills VARCHAR(250),
     IN Iimg TEXT,
+    IN Iis_team BOOLEAN,
     IN Ibreif TEXT
 )
 BEGIN
@@ -926,6 +930,7 @@ BEGIN
         title = Ititle ,
         skills = Iskills ,
         img = Iimg ,
+        is_team = Iis_team ,
         breif = Ibreif 
     WHERE id = Iid;
 END//
@@ -1338,6 +1343,6 @@ DROP PROCEDURE IF EXISTS MsgsListByUser;
 DELIMITER //
 CREATE  PROCEDURE `MsgsListByUser`(Ifrom_id INT ,Ito_id INT  )
 BEGIN
-SELECT m.id ,IF(m.from_id = Ifrom_id , TRUE , FALSE) mine, m.breif , m.created_at , IFNULL(m.seen , '') seen FROM msgs m WHERE (m.from_id = Ifrom_id AND m.to_id = Ito_id) OR (m.from_id = Ito_id AND m.to_id = Ifrom_id) ORDER BY id , m.created_at DESC;
+SELECT m.id ,IF(m.from_id = Ifrom_id , TRUE , FALSE) mine, m.breif , m.created_at , IFNULL(m.seen , '') seen FROM msgs m WHERE (m.from_id = Ifrom_id AND m.to_id = Ito_id) OR (m.from_id = Ito_id AND m.to_id = Ifrom_id) ORDER BY m.created_at DESC, id DESC;
 END//
 DELIMITER ;

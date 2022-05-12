@@ -13,11 +13,9 @@ import (
 )
 
 func (h *Handler) ProjectListByCategoryUserSearch(c echo.Context) error {
-	req := new(model.ProjectListReq)
-	if err := c.Bind(req); err != nil {
-		return c.JSON(http.StatusUnprocessableEntity, utils.NewError(err))
-	}
-	projects, err := h.projectRepo.ListByCategoryUserSearch(req.Category, req.User, req.Search)
+	category, _ := strconv.ParseUint(c.QueryParam("category"), 10, 64)
+	user, _ := strconv.ParseUint(c.QueryParam("user"), 10, 64)
+	projects, err := h.projectRepo.ListByCategoryUserSearch(category, user, c.QueryParam("search"))
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
 	}
