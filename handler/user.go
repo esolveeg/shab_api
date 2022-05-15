@@ -22,10 +22,41 @@ func (h *Handler) CurrentUserNotifications(c echo.Context) error {
 	}
 	return c.JSON(http.StatusOK, u)
 }
+
 func (h *Handler) Me(c echo.Context) error {
 	id := userIDFromToken(c)
-	fmt.Println(id)
 	u, err := h.userRepo.GetById(id)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
+	}
+	return c.JSON(http.StatusOK, u)
+}
+func (h *Handler) CurrentUserMessages(c echo.Context) error {
+	id := userIDFromToken(c)
+
+	u, err := h.msgRepo.ListByUser(1, uint64(id))
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
+	}
+	return c.JSON(http.StatusOK, u)
+}
+
+func (h *Handler) CurrentUserUpgradeRequests(c echo.Context) error {
+	id := userIDFromToken(c)
+	u, err := h.userRepo.FindUserUpgradeRequest(id)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
+	}
+	return c.JSON(http.StatusOK, u)
+}
+
+func (h *Handler) UserUpgrade(c echo.Context) error {
+	id := userIDFromToken(c)
+	role, err := strconv.ParseUint(c.Param("role"), 10, 32)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
+	}
+	u, err := h.userRepo.Upgradeuser(id, role)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
 	}

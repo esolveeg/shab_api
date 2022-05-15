@@ -190,6 +190,27 @@ func (ur *UserRepo) GetById(id uint) (*model.User, error) {
 	return &user, nil
 }
 
+func (ur *UserRepo) FindUserUpgradeRequest(id uint) (*model.UserPendingUpgrades, error) {
+	var resp model.UserPendingUpgrades
+	err := ur.db.Raw("CALL UserFindUpgradeRequest(?);", id).Row().Scan(
+		&resp.Id,
+		&resp.NameAr,
+		&resp.Email,
+		&resp.Phone,
+		&resp.CurrentRole,
+		&resp.CurrentRoleId,
+		&resp.NewRole,
+		&resp.NewRoleId,
+		&resp.PriceToPay,
+		&resp.CreatedAt,
+	)
+	if err != nil {
+		utils.NewError(err)
+		return nil, err
+	}
+	return &resp, nil
+}
+
 func scanUserResult(rows *sql.Rows) (*[]model.User, error) {
 	var resp []model.User
 	for rows.Next() {
@@ -303,6 +324,34 @@ func (ur *UserRepo) ListPendingUsers() (*[]model.UserPending, error) {
 	return &resp, nil
 }
 
+func (ur *UserRepo) ListPendingUpgrades() (*[]model.UserPendingUpgrades, error) {
+	var resp []model.UserPendingUpgrades
+	rows, err := ur.db.Raw("CALL UsersPendingUpgrades();").Rows()
+	if err != nil {
+		utils.NewError(err)
+		return nil, err
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var rec model.UserPendingUpgrades
+		rows.Scan(
+			&rec.Id,
+			&rec.NameAr,
+			&rec.Email,
+			&rec.Phone,
+			&rec.CurrentRole,
+			&rec.CurrentRoleId,
+			&rec.NewRole,
+			&rec.NewRoleId,
+			&rec.PriceToPay,
+			&rec.CreatedAt,
+		)
+		resp = append(resp, rec)
+
+	}
+	return &resp, nil
+}
+
 func (ur *UserRepo) ListPendingArticles() (*[]model.ArticlePending, error) {
 	var resp []model.ArticlePending
 	rows, err := ur.db.Raw("CALL ArticlePending();").Rows()
@@ -383,9 +432,23 @@ func (ur *UserRepo) ApprovePendingService(id uint64) (*int, error) {
 	return &resp, nil
 }
 
+func (ur *UserRepo) Upgradeuser(user uint, role uint64) (bool, error) {
+	ur.db.Raw("CALL UserUpgrade(? , ? );", user, role).Row()
+	return true, nil
+}
+
 func (ur *UserRepo) ApprovePendingUser(id uint64) (*int, error) {
 	var resp int
 	err := ur.db.Raw("CALL UserPendingApprove(?);", id).Row().Scan(&resp)
+	if err != nil {
+		utils.NewError(err)
+		return nil, err
+	}
+	return &resp, nil
+}
+func (ur *UserRepo) ApproveUserUpgrade(id uint64) (*int, error) {
+	var resp int
+	err := ur.db.Raw("CALL UserUpgradeApprove(?);", id).Row().Scan(&resp)
 	if err != nil {
 		utils.NewError(err)
 		return nil, err

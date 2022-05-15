@@ -18,6 +18,18 @@ type UserServiceRequest struct {
 	Service uint64
 	Breif   string
 }
+type UserPendingUpgrades struct {
+	Id            int
+	NameAr        string
+	Email         string
+	Phone         string
+	CurrentRole   string
+	CurrentRoleId int
+	NewRole       string
+	NewRoleId     int
+	PriceToPay    float64
+	CreatedAt     string
+}
 type UserRegisterRequest struct {
 	Name     string
 	Name_ar  string

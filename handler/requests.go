@@ -26,6 +26,14 @@ func (h *Handler) UsersPendingListAll(c echo.Context) error {
 	}
 	return c.JSON(http.StatusOK, r)
 }
+func (h *Handler) UsersPendingUpgradeListAll(c echo.Context) error {
+
+	r, err := h.userRepo.ListPendingUpgrades()
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
+	}
+	return c.JSON(http.StatusOK, r)
+}
 
 func (h *Handler) ProjectsPendingListAll(c echo.Context) error {
 
@@ -85,6 +93,18 @@ func (h *Handler) UsersPendingApprove(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
 	}
 	r, err := h.userRepo.ApprovePendingUser(id)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
+	}
+	return c.JSON(http.StatusOK, r)
+}
+
+func (h *Handler) UsersUpgradeApprove(c echo.Context) error {
+	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
+	}
+	r, err := h.userRepo.ApproveUserUpgrade(id)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
 	}

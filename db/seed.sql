@@ -683,6 +683,21 @@ INSERT INTO
     )
 VALUES
     (
+        'admin',
+        'مسئول',
+        'admin@alshabalriyadi.net',
+        'assets/members/male-03.jpg',
+        '123456',
+        240000,
+        3,
+        '05555555555',
+        'يواس أيوتي أريري دولار إن ريبريهينديرأيت فوليوبتاتي فيلايت أيسسي كايلليوم دولار أيو فيجايت نيولا باراياتيور',
+        460,
+        TRUE,
+        TRUE,
+        TRUE
+    ),
+    (
         'ahmed mohamed moustafa',
         'احمد محمد مصطفي',
         'a.mohamedd@gmail.com',
@@ -817,21 +832,6 @@ VALUES
         TRUE,
         FALSE,
         TRUE
-    ),
-    (
-        'admin',
-        'مسئول',
-        'admin@alshabalriyadi.net',
-        'assets/members/male-03.jpg',
-        '123456',
-        240000,
-        3,
-        '05555555555',
-        'يواس أيوتي أريري دولار إن ريبريهينديرأيت فوليوبتاتي فيلايت أيسسي كايلليوم دولار أيو فيجايت نيولا باراياتيور',
-        460,
-        TRUE,
-        TRUE,
-        TRUE
     );
 
 INSERT INTO user_subs (
@@ -843,17 +843,17 @@ INSERT INTO user_subs (
     start_at,
     end_at
 ) VALUES (
-    1,
-    1,
-    230,
+    2,
+    2,
+    115,
     'cash',
-    230,
+    115,
     '2021-04-17',
     '2023-04-17'
 ),
 (
-    2,
-    1,
+    3,
+    3,
     230,
     'cash',
     230,
@@ -995,3 +995,18 @@ VALUES
         now(),
         7
     );
+
+
+
+
+
+INSERT INTO user_subs (
+        user_id,
+        role_id,
+        price,
+        method,
+        points,
+        start_at,
+        end_at,
+        approved_at
+    ) SELECT u.id , u.role_id , r.price , 'cash' , r.price , '2022-01-01 00:00:00' , '2022-12-31 00:00:00' , '2022-01-01 00:00:00'  FROM users u JOIN roles r ON u.role_id = r.id ;

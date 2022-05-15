@@ -16,6 +16,8 @@ func (h *Handler) Register(v1 *echo.Group) {
 	// auth routes
 	auth := api.Group("/me", jwtMiddleware)
 	auth.GET("", h.Me)
+	auth.GET("/upgrade", h.CurrentUserUpgradeRequests)
+	auth.GET("/messages", h.CurrentUserMessages)
 	auth.GET("/notifications", h.CurrentUserNotifications)
 	auth.PUT("", h.CurrentUserUpdate)
 
@@ -32,6 +34,7 @@ func (h *Handler) Register(v1 *echo.Group) {
 	users.PUT("/reset/email", h.UserSendResetEmail)
 	users.PUT("/reset", h.UserResetPassword)
 	users.POST("/service/:id", h.UserRequestService, jwtMiddleware)
+	users.POST("/upgrade/:role", h.UserUpgrade, jwtMiddleware)
 
 	// requests routes
 
@@ -40,7 +43,9 @@ func (h *Handler) Register(v1 *echo.Group) {
 	requests.PUT("/services/:id", h.ServicesPendingApprove)
 	requests.GET("/services/:id", h.ServicesPendingFind)
 	requests.GET("/users", h.UsersPendingListAll)
+	requests.GET("/users/upgrades", h.UsersPendingUpgradeListAll)
 	requests.PUT("/users/:id", h.UsersPendingApprove)
+	requests.PUT("/upgrades/:id", h.UsersUpgradeApprove)
 	requests.GET("/projects", h.ProjectsPendingListAll)
 	requests.PUT("/projects/:id", h.ProjectsPendingApprove)
 	requests.GET("/articles", h.ArticlesPendingListAll)
@@ -65,6 +70,13 @@ func (h *Handler) Register(v1 *echo.Group) {
 	articles.POST("/create", h.ArticleCreate, jwtMiddleware)
 	articles.GET("/:id", h.ArticleRead)
 	articles.DELETE("/:id", h.ArticleDelete)
+
+	// cats routes
+	cats := api.Group("/categories")
+	cats.GET("", h.CatsListByType)
+	cats.POST("/editadd", h.CatCreate, jwtMiddleware)
+	cats.PUT("/editadd/:id", h.CatUpdate, jwtMiddleware)
+	cats.GET("/:id", h.CatRead)
 
 	// events
 	api.POST("/events", h.EventsListAll)
@@ -112,7 +124,7 @@ func (h *Handler) Register(v1 *echo.Group) {
 	api.POST("/contact", h.ContactSend)
 	api.GET("/home", h.HomeGetAllData)
 	api.GET("/videos", h.VideosListByCategory)
-	api.GET("/cats/:type", h.CatsListByType)
+	api.GET("/cats", h.CatsListByType)
 	api.GET("/cities", h.CitiesListAll)
 
 }

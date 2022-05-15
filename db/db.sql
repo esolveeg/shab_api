@@ -202,8 +202,10 @@ CREATE TABLE user_subs(
     price FLOAT UNSIGNED,
     method ENUM('card', 'cash'),
     points int UNSIGNED default 0,
+    created_at datetime DEFAULT NOW(),
     start_at datetime,
-    end_at datetime
+    end_at datetime,
+    approved_at datetime
 ) ENGINE = INNODB;
 
 DROP TABLE IF EXISTS user_events;

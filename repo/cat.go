@@ -18,6 +18,21 @@ func NewCatRepo(db *gorm.DB) CatRepo {
 	}
 }
 
+func (ur *CatRepo) CatRead(id uint64) (*model.Cat, error) {
+	var resp model.Cat
+	err := ur.db.Raw("CALL CategoryFind(?)", id).Row().Scan(
+		&resp.Id,
+		&resp.Name,
+		&resp.Icon,
+		&resp.Type,
+	)
+	if err != nil {
+		utils.NewError(err)
+		return nil, err
+	}
+	return &resp, nil
+}
+
 func (ur *CatRepo) CatListByType(t string) (*[]model.Cat, error) {
 	rows, err := ur.db.Raw("CALL CategoryListByType(?)", t).Rows()
 	if err != nil {
@@ -33,6 +48,26 @@ func (ur *CatRepo) CatListByType(t string) (*[]model.Cat, error) {
 	return result, nil
 }
 
+func (ur *CatRepo) CatCreate(req model.Cat) (*int, error) {
+	var resp int
+	err := ur.db.Raw("CALL CategoryCreate(? , ? , ?)", req.Name, req.Icon, req.Type).Row().Scan(&resp)
+	if err != nil {
+		utils.NewError(err)
+		return nil, err
+	}
+	return &resp, nil
+}
+
+func (ur *CatRepo) CatUpdate(req model.Cat) (*int, error) {
+	var resp int
+	err := ur.db.Raw("CALL CategoryUpdate(? , ? , ? , ?)", req.Id, req.Name, req.Icon, req.Type).Row().Scan(&resp)
+	if err != nil {
+		utils.NewError(err)
+		return nil, err
+	}
+	return &resp, nil
+}
+
 func scanCatsResult(rows *sql.Rows) (*[]model.Cat, error) {
 	var resp []model.Cat
 	for rows.Next() {
@@ -41,6 +76,7 @@ func scanCatsResult(rows *sql.Rows) (*[]model.Cat, error) {
 			&rec.Id,
 			&rec.Name,
 			&rec.Icon,
+			&rec.Type,
 		)
 		resp = append(resp, rec)
 	}

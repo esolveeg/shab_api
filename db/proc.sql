@@ -548,7 +548,7 @@ END//
 DELIMITER ;
 DROP PROCEDURE IF EXISTS ProjectsListByCategoryUserSearch;
 DELIMITER //
-CREATE PROCEDURE ProjectsListByCategoryUserSearch(IN ICategory INT , IN Iuser INT , IN search VARCHAR(200)) 
+CREATE PROCEDURE ProjectsListByCategoryUserSearch(IN ICategory INT ,IN ICity INT , IN Iuser INT , IN search VARCHAR(200)) 
 BEGIN
 
     SELECT 
@@ -561,6 +561,7 @@ BEGIN
             WHERE active = 1
             AND p.user_id = CASE WHEN Iuser = 0 THEN p.user_id ELSE Iuser END
             AND p.category_id = CASE WHEN ICategory = 0 THEN p.category_id ELSE ICategory END
+            AND p.city_id = CASE WHEN ICity = 0 THEN p.city_id ELSE ICity END
             AND CASE WHEN search = '' THEN 1 = 1 ELSE  title LIKE CONCAT('"%' , search , '%"') END;
 END//
 
@@ -777,6 +778,66 @@ END//
 DELIMITER ;
 
 
+
+DROP PROCEDURE IF EXISTS UserUpgrade;
+DELIMITER // 
+CREATE PROCEDURE UserUpgrade(
+    IN Iuser int,
+    IN Irole int
+) BEGIN 
+SET @currentRole = (SELECT role_id  FROM users u WHERE u.id = Iuser);
+SET @amount =(SELECT price FROM roles r WHERE r.id = Irole) - (SELECT price FROM roles r WHERE r.id = @currentRole);
+SELECT @currentStartDate := us.start_at , @currentEndDate := us.end_at FROM user_subs us WHERE user_id = Iuser ORDER BY id DESC LIMIT 1;
+INSERT INTO user_subs (
+        user_id,
+        role_id,
+        price,
+        method,
+        points,
+        start_at,
+        end_at
+    ) VALUES (
+        Iuser,
+        Irole,
+        @amount,
+        'cash',
+        @amount,
+        @currentStartDate,
+        @currentEndDate
+    );
+END//
+DELIMITER ;
+
+
+
+
+DROP PROCEDURE IF EXISTS UserUpgradeApprove;
+DELIMITER // 
+CREATE PROCEDURE UserUpgradeApprove(IN Iid INT ) BEGIN
+    SELECT user_id , role_id , points INTO @userId ,  @newRole , @pointsToAdd FROM user_subs WHERE id = Iid;
+   UPDATE users u SET u.role_id = @newRole , points = (u.points + @pointsToAdd) WHERE id = @userId;
+   UPDATE user_subs us SET us.approved_at =NOW() WHERE id = Iid;
+   CALL MsgsCreate(1 , @userId , 'لقد تم قبول طلب عضويتك');
+   SELECT Iid id;
+END //
+DELIMITER ;
+DROP PROCEDURE IF EXISTS UsersPendingUpgrades;
+DELIMITER // 
+CREATE PROCEDURE UsersPendingUpgrades() BEGIN
+    SELECT us.id , u.name_ar , u.email , u.phone , cur_role.name current_role , u.role_id current_role_id  , new_role.name new_role, us.role_id new_role_id, us.price , us.created_at FROM users u JOIN user_subs us ON u.id = us.user_id AND us.approved_at IS NULL JOIN roles cur_role ON u.role_id = cur_role.id JOIN roles new_role ON us.role_id = new_role.id;
+END //
+DELIMITER ;
+
+
+DROP PROCEDURE IF EXISTS UserFindUpgradeRequest;
+DELIMITER // 
+CREATE PROCEDURE UserFindUpgradeRequest(IN Iid INT ) BEGIN
+    SELECT us.id , u.name_ar , u.email , u.phone , cur_role.name current_role , u.role_id current_role_id  , new_role.name new_role, us.role_id new_role_id, us.price , us.created_at FROM users u JOIN user_subs us ON u.id = us.user_id AND us.approved_at IS NULL JOIN roles cur_role ON u.role_id = cur_role.id JOIN roles new_role ON us.role_id = new_role.id WHERE u.id = Iid;
+   
+END //
+DELIMITER ;
+
+
 DROP PROCEDURE IF EXISTS UserReset;
 DELIMITER // 
 CREATE PROCEDURE UserReset(
@@ -794,13 +855,7 @@ END //
 DELIMITER ;
 
 DROP PROCEDURE IF EXISTS UserUpdate;
-
-
-
 DELIMITER // 
-
-
-
 CREATE PROCEDURE UserUpdate(
     IN id int,
     IN Iname varchar(250),
@@ -815,6 +870,18 @@ CREATE PROCEDURE UserUpdate(
     IN Ibreif TEXT(250)
 ) BEGIN
 
+
+
+DECLARE currentRole INT;
+DECLARE points FLOAT;
+
+SET currentRole = (SELECT role_id  FROM users u WHERE u.id = id);
+
+SET points =(SELECT price FROM roles r WHERE r.id = Irole_id) - (SELECT price FROM roles r WHERE r.id = currentRole);
+
+/* 
+IF currentRole != Irole_id THEN 
+END IF; */
 UPDATE
     users u
 SET
@@ -827,9 +894,11 @@ SET
     u.city_id = CASE WHEN Icity_id = 0 THEN u.city_id ELSE Icity_id END,
     u.img = CASE WHEN Iimg = "" THEN u.img ELSE Iimg END,
     u.phone = Iphone,
+    u.points = (u.points + points),
     u.breif = CASE WHEN Ibreif = "" THEN u.breif ELSE Ibreif END 
 WHERE
     u.id = id;
+
 
 END //
 
@@ -843,12 +912,56 @@ DELIMITER //
 CREATE  PROCEDURE `CategoryListByType`(IN Itype VARCHAR(50))
 BEGIN
     SELECT 
-       id,name,icon
+       id,name,icon,type
      FROM categories
      
-     WHERE type = Itype;
+     WHERE type = CASE WHEN Itype = "" THEN type ELSE Itype END ;
 END//
 DELIMITER ;
+
+
+DELIMITER //
+CREATE  PROCEDURE `CategoryFind`(IN Iid INT)
+BEGIN
+    SELECT 
+       id,name,icon,type
+     FROM categories
+     
+     WHERE id = Iid;
+END//
+DELIMITER ;
+
+
+
+DROP PROCEDURE IF EXISTS CategoryCreate;
+
+
+DELIMITER //
+CREATE  PROCEDURE `CategoryCreate`(IN Iname VARCHAR(300) , IN Iicon VARCHAR(300) , IN Itype VARCHAR(10))
+BEGIN
+    INSERT INTO categories (name , icon , type) VALUES (Iname , Iicon , Itype);
+    SELECT LAST_INSERT_ID() id;
+END//
+DELIMITER ;
+
+
+
+
+DROP PROCEDURE IF EXISTS CategoryUpdate;
+
+
+DELIMITER //
+CREATE  PROCEDURE `CategoryUpdate`(IN Iid INT , IN Iname VARCHAR(300) , IN Iicon VARCHAR(300) , IN Itype VARCHAR(10))
+BEGIN
+    UPDATE categories SET 
+    name = Iname ,
+    icon = Iicon ,
+    type = Itype WHERE id = Iid ;
+
+    SELECT Iid;
+END//
+DELIMITER ;
+
 
 DROP PROCEDURE IF EXISTS ConsultuntsListAll;
 

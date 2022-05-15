@@ -21,7 +21,7 @@ func (h *Handler) MsgsListAll(c echo.Context) error {
 
 func (h *Handler) MsgsListByUser(c echo.Context) error {
 	from_id := userIDFromToken(c)
-	to_id, err := strconv.ParseUint(c.Param("id"), 10, 32)
+	to_id, err := strconv.ParseUint(c.Param("id"), 10, 64)
 	if err != nil {
 		fmt.Println(err)
 	}
