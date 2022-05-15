@@ -1,6 +1,7 @@
 package repo
 
 import (
+	"shab/config"
 	"shab/model"
 	"shab/utils"
 
@@ -30,13 +31,13 @@ func (ur *MsgRepo) ListAll(id uint) (*[]model.Inbox, error) {
 		err := rows.Scan(
 			&rec.Id,
 			&rec.Name,
-			&rec.Count,
+			&rec.Img,
 		)
 		if err != nil {
 			utils.NewError(err)
 			return nil, err
 		}
-
+		rec.Img = config.Config("BASE_URL") + rec.Img
 		resp = append(resp, rec)
 	}
 	if err != nil {
@@ -59,6 +60,7 @@ func (ur *MsgRepo) ListByUser(from_id uint, to_id uint64) (*[]model.Msg, error) 
 		err := rows.Scan(
 			&rec.Id,
 			&rec.Mine,
+			&rec.Name,
 			&rec.Msg,
 			&rec.CreatedAt,
 			&rec.Seen,

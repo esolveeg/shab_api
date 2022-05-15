@@ -1139,6 +1139,42 @@ DELIMITER ;
 
 
 
+DROP PROCEDURE IF EXISTS CityFind;
+
+DELIMITER //
+CREATE  PROCEDURE `CityFind`(IN Iid int)
+BEGIN
+    SELECT id,name from cities WHERE id = Iid;
+END//
+DELIMITER ;
+
+
+DROP PROCEDURE IF EXISTS CityCreate;
+
+DELIMITER //
+CREATE  PROCEDURE `CityCreate`(IN Iname TEXT)
+BEGIN
+    INSERT INTO cities (name) VALUES (Iname);
+
+    SELECT LAST_INSERT_ID() id;
+END//
+DELIMITER ;
+
+
+
+
+DROP PROCEDURE IF EXISTS CityUpdate;
+
+DELIMITER //
+CREATE  PROCEDURE `CityUpdate`(IN Iid INT, IN Iname TEXT)
+BEGIN
+  UPDATE cities SET name = Iname WHERE id = Iid;
+  SELECT Iid id;
+END//
+DELIMITER ;
+
+
+
 DROP PROCEDURE IF EXISTS FeaturesListAll;
 
 DELIMITER //
@@ -1445,17 +1481,27 @@ DELIMITER ;
 
 DROP PROCEDURE IF EXISTS MsgsList;
 DELIMITER //
-CREATE  PROCEDURE `MsgsList`(Iuser_id INT)
+CREATE  PROCEDURE `MsgsList`(IN Iuser_id INT)
 BEGIN
-  SELECT u.id , u.name , COUNT(m.id) `count` FROM msgs m JOIN users u ON m.from_id = u.id  WHERE to_id = 9  GROUP BY u.name , u.id;
+    SELECT fr.id from_id , t.id to_id  INTO @toId , @fromId FROM msgs m JOIN users fr ON m.from_id = fr.id JOIN users t ON m.to_id = t.id WHERE to_id = Iuser_id OR from_id = Iuser_id GROUP BY fr.name , fr.id , t.name , t.id; 
+    IF @toId = Iuser_id THEN
+        SELECT id , name_ar , img FROM users WHERE id = @fromId ;
+    ELSE
+        SELECT id , name_ar , img FROM users WHERE id = @toId ;
+    END IF;
 END//
 DELIMITER ;
 
 
 DROP PROCEDURE IF EXISTS MsgsListByUser;
 DELIMITER //
-CREATE  PROCEDURE `MsgsListByUser`(Ifrom_id INT ,Ito_id INT  )
+CREATE  PROCEDURE `MsgsListByUser`(id1 INT ,id2 INT  )
 BEGIN
-SELECT m.id ,IF(m.from_id = Ifrom_id , TRUE , FALSE) mine, m.breif , m.created_at , IFNULL(m.seen , '') seen FROM msgs m WHERE (m.from_id = Ifrom_id AND m.to_id = Ito_id) OR (m.from_id = Ito_id AND m.to_id = Ifrom_id) ORDER BY m.created_at DESC, id DESC;
+    SELECT m.id ,IF(m.from_id = id1 , TRUE , FALSE) mine, u.name_ar name ,m.breif , m.created_at , IFNULL(m.seen , '') seen 
+    FROM msgs m 
+      JOIN users u ON m.from_id = u.id
+    WHERE (m.from_id = id1 AND m.to_id = id2) OR (m.from_id = id2 AND m.to_id = id1) 
+  
+    ORDER BY m.created_at DESC, id DESC;
 END//
 DELIMITER ;

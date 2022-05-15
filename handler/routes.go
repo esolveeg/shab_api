@@ -78,6 +78,13 @@ func (h *Handler) Register(v1 *echo.Group) {
 	cats.PUT("/editadd/:id", h.CatUpdate, jwtMiddleware)
 	cats.GET("/:id", h.CatRead)
 
+	// cities routes
+	cities := api.Group("/cities")
+	cities.GET("", h.CitiesList)
+	cities.POST("/editadd", h.CityCreate, jwtMiddleware)
+	cities.PUT("/editadd/:id", h.CityUpdate, jwtMiddleware)
+	cities.GET("/:id", h.CityRead)
+
 	// events
 	api.POST("/events", h.EventsListAll)
 	api.GET("/events/:id", h.EventRead)
@@ -112,7 +119,7 @@ func (h *Handler) Register(v1 *echo.Group) {
 	videos.DELETE("/:id", h.VideosDelete)
 
 	//msg routes
-	msgs := api.Group("/msg")
+	msgs := api.Group("/chat")
 
 	msgs.GET("", h.MsgsListAll, jwtMiddleware)
 	msgs.GET("/:id", h.MsgsListByUser, jwtMiddleware)
@@ -125,6 +132,6 @@ func (h *Handler) Register(v1 *echo.Group) {
 	api.GET("/home", h.HomeGetAllData)
 	api.GET("/videos", h.VideosListByCategory)
 	api.GET("/cats", h.CatsListByType)
-	api.GET("/cities", h.CitiesListAll)
+	api.GET("/cities", h.CitiesList)
 
 }

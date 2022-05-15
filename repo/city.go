@@ -33,6 +33,36 @@ func (ur *CityRepo) CityListAll() (*[]model.City, error) {
 	return result, nil
 }
 
+func (ur *CityRepo) CityRead(id *uint64) (*model.City, error) {
+	var resp model.City
+	err := ur.db.Raw("CALL CityFind(?)", *id).Row().Scan(&resp.Id, &resp.Name)
+	if err != nil {
+		utils.NewError(err)
+		return nil, err
+	}
+	return &resp, nil
+}
+
+func (ur *CityRepo) CityCreate(city *model.City) (*int, error) {
+	var resp int
+	err := ur.db.Raw("CALL CityCreate(?)", city.Name).Row().Scan(&resp)
+	if err != nil {
+		utils.NewError(err)
+		return nil, err
+	}
+	return &resp, nil
+}
+
+func (ur *CityRepo) CityUpdate(city *model.City) (*int, error) {
+	var resp int
+	err := ur.db.Raw("CALL CityUpdate(? , ?)", city.Id, city.Name).Row().Scan(&resp)
+	if err != nil {
+		utils.NewError(err)
+		return nil, err
+	}
+	return &resp, nil
+}
+
 func scanCityResult(rows *sql.Rows) (*[]model.City, error) {
 	var resp []model.City
 	for rows.Next() {

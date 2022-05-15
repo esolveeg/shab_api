@@ -10,9 +10,9 @@ type Msg struct {
 }
 
 type Inbox struct {
-	Id    uint
-	Name  string
-	Count uint
+	Id   uint
+	Name string
+	Img  string
 }
 
 type MsgReq struct {

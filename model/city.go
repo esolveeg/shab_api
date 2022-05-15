@@ -1,6 +1,6 @@
 package model
 
 type City struct {
-	Id   uint
+	Id   uint64
 	Name string
 }
