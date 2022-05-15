@@ -33,7 +33,7 @@ loop_label:  LOOP
         SET Icity_id = (SELECT alshab.users.city_id FROM  alshab.users WHERE id = x);
         SET Iphone = (SELECT alshab.users.phone FROM  alshab.users WHERE id = x);
         SET Ipassword = (SELECT alshab.users.password FROM  alshab.users WHERE id = x);
-            INSERT INTO alshab_staging.users (
+            INSERT INTO alshab_st.users (
                 serial,
                 name,
                 name_ar,

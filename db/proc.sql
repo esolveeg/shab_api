@@ -1,4 +1,4 @@
-USE alshab_staging;
+USE alshab_st;
 
 # procedures\\
 #/// users////
@@ -1049,13 +1049,6 @@ BEGIN
 END//
 DELIMITER ;
 
-
-
-
-
-
-
-
 DROP PROCEDURE IF EXISTS ProjectsCreate;
 
 DELIMITER //
@@ -1159,9 +1152,6 @@ BEGIN
     SELECT LAST_INSERT_ID() id;
 END//
 DELIMITER ;
-
-
-
 
 DROP PROCEDURE IF EXISTS CityUpdate;
 
@@ -1270,7 +1260,7 @@ loop_label:  LOOP
         IF NOT EXISTS(SELECT * FROM users WHERE phone = Iphone) AND NOT EXISTS(SELECT * FROM users WHERE email = Iemail)
             THEN
             
-            INSERT INTO alshab_staging.users (
+            INSERT INTO alshab_st.users (
                 serial,
                 name,
                 name_ar,
