@@ -41,6 +41,33 @@ func (ur *RichTextRepo) ListByGroup(group uint) (*[]model.RichText, error) {
 	return &resp, nil
 }
 
+func (ur *RichTextRepo) Update(id *int, req *model.RichText) (*int, error) {
+	var resp int
+	err := ur.db.Raw("CALL RichTextUpdate(? , ? , ? , ? , ?);", id, req.Value, req.Title, req.Icon, req.Image).Row().Scan(&resp)
+	if err != nil {
+		utils.NewError(err)
+		return nil, err
+	}
+	return &resp, nil
+}
+func (ur *RichTextRepo) GetById(id int) (*model.RichText, error) {
+	var rec model.RichText
+	err := ur.db.Raw("CALL RichTextListById(?);", id).Row().Scan(
+		&rec.Id,
+		&rec.Value,
+		&rec.Title,
+		&rec.Image,
+		&rec.Icon,
+	)
+	rec.Image = config.Config("BASE_URL") + rec.Image
+
+	if err != nil {
+		utils.NewError(err)
+		return nil, err
+	}
+	return &rec, nil
+}
+
 func (ur *RichTextRepo) GetByKey(key string) (*model.RichText, error) {
 	var rec model.RichText
 	err := ur.db.Raw("CALL RichTextListByGroupOrKey(? , ?);", 0, key).Row().Scan(
@@ -56,4 +83,28 @@ func (ur *RichTextRepo) GetByKey(key string) (*model.RichText, error) {
 		return nil, err
 	}
 	return &rec, nil
+}
+
+func (ur *RichTextRepo) ListByPage(page string) (*[]model.RichText, error) {
+	var resp []model.RichText
+	rows, err := ur.db.Raw("CALL RichTextListByPage(?);", page).Rows()
+	if err != nil {
+		utils.NewError(err)
+		return nil, err
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var rec model.RichText
+		rows.Scan(
+			&rec.Id,
+			&rec.Value,
+			&rec.Title,
+			&rec.Image,
+			&rec.Icon,
+		)
+		rec.Image = config.Config("BASE_URL") + rec.Image
+
+		resp = append(resp, rec)
+	}
+	return &resp, nil
 }

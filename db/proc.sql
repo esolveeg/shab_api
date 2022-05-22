@@ -304,6 +304,47 @@ END //
 DELIMITER ;
 
 
+
+
+DROP PROCEDURE IF EXISTS RichTextListByPage;
+DELIMITER //
+
+CREATE PROCEDURE RichTextListByPage(IN Ipage VARCHAR(100))
+BEGIN
+    SELECT 
+        r.id,
+        r.value,
+        r.title,
+        IFNULL(r.image , "") image,
+        IFNULL(r.icon , "") icon
+        FROM rich_text r
+            WHERE page = Ipage;
+END //
+
+DELIMITER ;
+
+
+
+
+
+DROP PROCEDURE IF EXISTS RichTextListById;
+DELIMITER //
+
+CREATE PROCEDURE RichTextListById(IN Iid int)
+BEGIN
+    SELECT 
+        r.id,
+        r.value,
+        r.title,
+        IFNULL(r.image , "") image,
+        IFNULL(r.icon , "") icon
+        FROM rich_text r
+            WHERE id = Iid;
+END //
+
+DELIMITER ;
+
+
 # roles
 
 DELIMITER ;
@@ -1493,5 +1534,46 @@ BEGIN
     WHERE (m.from_id = id1 AND m.to_id = id2) OR (m.from_id = id2 AND m.to_id = id1) 
   
     ORDER BY m.created_at DESC, id DESC;
+END//
+DELIMITER ;
+
+
+
+DROP PROCEDURE IF EXISTS FindDashboardCounts;
+DELIMITER //
+CREATE  PROCEDURE `FindDashboardCounts`()
+BEGIN
+    SET @projects = (SELECT COUNT(*)  FROM projects WHERE deleted_at IS NULL);
+    SET @events = (SELECT COUNT(*)  FROM events WHERE deleted_at IS NULL);
+    SET @users = (SELECT COUNT(*)  FROM users WHERE deleted_at IS NULL);
+    SET @pendingUsers = (SELECT COUNT(*)  FROM users WHERE  active = 0 AND deleted_at IS NULL);
+    SET @ryadeen = (SELECT COUNT(*)  FROM users WHERE  active = 1 AND deleted_at IS NULL AND role_id = 3);
+    SET @tamooheen = (SELECT COUNT(*)  FROM users WHERE  active = 1 AND deleted_at IS NULL AND role_id = 2);
+    SET @mobadreen = (SELECT COUNT(*)  FROM users WHERE  active = 1 AND deleted_at IS NULL AND role_id = 1);
+
+
+    SELECT 
+        @projects projects,
+        @events events,
+        @users users,
+        @pendingUsers pendingUsers,
+        @ryadeen ryadeen,
+        @tamooheen tamooheen,
+        @mobadreen mobadreen;
+END//
+DELIMITER ;
+
+
+
+DROP PROCEDURE IF EXISTS RichTextUpdate;
+
+DELIMITER //
+CREATE  PROCEDURE `RichTextUpdate`(Iid INT ,Ititle TEXT, Ivalue TEXT , IIcon VARCHAR(100) , Iimage VARCHAR(100))
+BEGIN
+    
+    UPDATE  rich_text SET value = Ivalue , title = Ititle ,icon = IIcon,
+    image = CASE WHEN Iimage = "" THEN image ELSE Iimage END 
+     WHERE id = Iid ;
+    SELECT 1 updated;
 END//
 DELIMITER ;

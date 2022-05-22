@@ -98,6 +98,9 @@ func (h *Handler) Register(v1 *echo.Group) {
 
 	// rich text routes
 	rich := api.Group("/rich")
+	rich.GET("/page", h.RichListByPage)
+	rich.PUT("/:id", h.RichUpdate)
+	rich.GET("/id/:id", h.RichGetById)
 	rich.GET("", h.RichListByGroup)
 	rich.GET("/key", h.RichGetByKey)
 
@@ -127,6 +130,7 @@ func (h *Handler) Register(v1 *echo.Group) {
 
 	// global routes
 
+	api.GET("/counts", h.FindDashboardCounts)
 	api.POST("/upload", h.Upload)
 	api.POST("/contact", h.ContactSend)
 	api.GET("/home", h.HomeGetAllData)

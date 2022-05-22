@@ -84,6 +84,7 @@ DROP TABLE IF EXISTS rich_text;
 CREATE TABLE rich_text(
     id INT AUTO_INCREMENT PRIMARY KEY,
     `key` VARCHAR(250),
+    `page` VARCHAR(250),
     `value` TEXT,
     `title` TEXT NULL,
     `image` VARCHAR(250) NULL,

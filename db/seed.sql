@@ -276,6 +276,7 @@ VALUES
 INSERT INTO
     `rich_text` (
         `key`,
+        `page`,
         `title`,
         `value`,
         `image`,
@@ -285,6 +286,7 @@ INSERT INTO
 VALUES
     (
         'banner',
+        'home',
         ' أفضل مجتمع أعمال حيوي ',
         '<strong>متفرد</strong> لتبادل الخبرات وتنمية المهارات',
         'assets/banner.png',
@@ -293,6 +295,7 @@ VALUES
     ),
     (
         'vision',
+        'home',
         'رؤيتنا',
         'أفضل مجتمع اعمال حيوي متفرد لرواد الاعمال واصحاب المشاريع',
         NULL,
@@ -301,6 +304,7 @@ VALUES
     ),
     (
         'msg',
+        'home',
         'رسالتنا',
         'تمكين الشباب من تأسيس وتطوير مشاريع نوعية واعدة',
         NULL,
@@ -309,6 +313,7 @@ VALUES
     ),
     (
         'mission',
+        'home',
         'مهمتنا',
         'تكوين مجتمع حيوي لتبادل أفضل الممارسات والشراكات',
         NULL,
@@ -317,6 +322,7 @@ VALUES
     ),
     (
         'values',
+        'home',
         'قيمنا',
         'بناء العلاقات واثراء المعرفة لتحقيق النجاح المشترك',
         NULL,
@@ -325,6 +331,7 @@ VALUES
     ),
     (
         'small_business',
+        "business",
         NULL,
         'أصحاب المشاريع الناشئة والصغيرة',
         NULL,
@@ -333,6 +340,7 @@ VALUES
     ),
     (
         'ideas',
+        "business",
         NULL,
         'أصحاب الأفكار الخلاقة والواعدة ',
         NULL,
@@ -341,6 +349,7 @@ VALUES
     ),
     (
         'students',
+        "business",
         NULL,
         'طلاب الإدارة والاقتصاد وريادة الاعمال',
         NULL,
@@ -349,6 +358,7 @@ VALUES
     ),
     (
         'business_men',
+        "business",
         NULL,
         'المهتمين بمجال المال والأعمال وريادة الاعمال',
         NULL,
@@ -357,6 +367,7 @@ VALUES
     ),
     (
         'business_men',
+        "business",
         NULL,
         'الباحثين عن تأسيس مشاريعهم التجارية',
         NULL,
