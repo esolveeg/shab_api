@@ -5,6 +5,7 @@ import (
 	"shab/config"
 	"shab/model"
 	"shab/utils"
+	"strings"
 
 	"github.com/jinzhu/gorm"
 )
@@ -43,9 +44,11 @@ func (ur *EventRepo) Read(id int64) (*model.Event, error) {
 		&event.Day,
 		&event.Month,
 		&event.Year,
+		&event.Date,
 		&event.Price,
 		&event.Featured,
 		&event.Created_at,
+		&event.CatId,
 		&event.CatName,
 		&event.Video,
 	)
@@ -54,8 +57,50 @@ func (ur *EventRepo) Read(id int64) (*model.Event, error) {
 		return nil, err
 	}
 	event.Img = config.Config("BASE_URL") + event.Img
-
+	// layout := "2022-04-09"
+	event.Date = strings.Split(event.Date, "T")[0]
 	return &event, nil
+}
+
+func (ur *EventRepo) Edit(id *int, req *model.EventRequest) (*int, error) {
+	var resp int
+	err := ur.db.Raw("CALL EventEdit(? , ? , ? , ? , ? , ? , ? , ? , ? )",
+		id,
+		req.Title,
+		req.Img,
+		req.Video,
+		req.Breif,
+		req.Date,
+		req.Price,
+		req.Featured,
+		req.CatId,
+	).Row().Scan(&resp)
+	if err != nil {
+		utils.NewError(err)
+		return nil, err
+	}
+
+	return &resp, nil
+}
+
+func (ur *EventRepo) Create(req *model.EventRequest) (*int, error) {
+	var resp int
+	err := ur.db.Raw("CALL EventCreate(? , ? , ? , ? , ? , ? , ? , ? )",
+		req.Title,
+		req.Img,
+		req.Breif,
+		req.Date,
+		req.Price,
+		req.Featured,
+		req.CatId,
+		req.Video,
+	).Row().Scan(&resp)
+	if err != nil {
+		utils.NewError(err)
+		return nil, err
+	}
+
+	return &resp, nil
 }
 
 func (er *EventRepo) ListFeatured() (*[]model.Event, error) {

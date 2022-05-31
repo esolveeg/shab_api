@@ -123,7 +123,7 @@ END IF;
         r.color
         FROM users u
             JOIN roles r ON u.role_id = r.id
-            WHERE active = 1 ',
+            WHERE u.active = 1 ',
         roleCond,
         featuredCond, " ORDER BY RAND()");
          
@@ -132,7 +132,6 @@ END IF;
     DEALLOCATE PREPARE stmt;
     END//
 DELIMITER ;
-
 
 
 
@@ -348,15 +347,14 @@ DELIMITER ;
 # roles
 
 DELIMITER ;
-
 DROP PROCEDURE IF EXISTS RolesList;
+
+
 DELIMITER //
-
-CREATE PROCEDURE RolesList()
+CREATE  PROCEDURE `RolesList`()
 BEGIN
-	SELECT * FROM roles;
-END //
-
+    SELECT r.id ,r.name ,r.image ,r.breif ,r.price , r.color, r.active FROM roles r WHERE r.active = 1;
+END//
 DELIMITER ;
 
 
@@ -387,11 +385,11 @@ DELIMITER //
 
 CREATE PROCEDURE EventRead(IN Iid INT)
 BEGIN
-	SELECT e.id ,e.title,e.img ,IFNULL(e.breif,"") ,day(e.date) d,month(e.date) m,year(e.date) y, e.price ,e.featured ,e.created_at ,  c.name cat_name , e.video FROM events e JOIN categories c on e.category_id = c.id WHERE  e.id = Iid;
-
+	SELECT e.id ,e.title,e.img ,IFNULL(e.breif,"") breif ,day(e.date) d,month(e.date) m,year(e.date) y,e.date, e.price ,e.featured ,e.created_at , c.Id cat_id, c.name cat_name , e.video FROM events e JOIN categories c on e.category_id = c.id WHERE  e.id = Iid;
 END //
 
 DELIMITER ;
+
 
 # EventsList
 
@@ -471,6 +469,11 @@ END //
 DELIMITER ;
 
 
+
+
+
+
+
 DROP PROCEDURE IF EXISTS UserRead;
 
 DELIMITER //
@@ -500,7 +503,7 @@ END IF;
         u.password
         FROM users u
             JOIN roles r ON u.role_id = r.id
-            WHERE active = 1 ',
+            WHERE u.active = 1 ',
         cond);
 
 
@@ -1410,7 +1413,18 @@ DROP PROCEDURE IF EXISTS UsersPending;
 DELIMITER //
 CREATE  PROCEDURE `UsersPending`()
 BEGIN
-       SELECT u.id , u.name_ar , u.email ,IF(us.end_at < CURRENT_DATE() , 'تجديد عضوية' , 'عضوية جديدة') AS type , u.phone , u.created_at FROM users u JOIN user_subs us ON u.id = us.user_id  WHERE active = 0 OR us.end_at < CURRENT_DATE();
+    SELECT 
+        u.id ,
+        u.name_ar ,
+        u.email ,
+        IF(us.end_at < CURRENT_DATE() , 'تجديد عضوية' , 'عضوية جديدة') AS type ,
+        u.phone ,
+        u.created_at 
+    FROM users u 
+    JOIN user_subs us 
+    ON u.id = us.user_id  
+    WHERE active = 0 
+    OR us.end_at < CURRENT_DATE();
 END//
 DELIMITER ;
 
@@ -1577,3 +1591,122 @@ BEGIN
     SELECT 1 updated;
 END//
 DELIMITER ;
+
+
+
+
+/* // 26 may updated */
+
+DROP PROCEDURE IF EXISTS RoleFind;
+
+DELIMITER //
+CREATE  PROCEDURE `RoleFind`(IId INT )
+BEGIN
+    SELECT id ,name ,image ,breif ,price , color , active FROM roles WHERE id = IId;
+END//
+DELIMITER ;
+
+
+DROP PROCEDURE IF EXISTS RoleEdit;
+
+
+DELIMITER //
+CREATE  PROCEDURE `RoleEdit`(
+    IN Iid INT ,
+    IN Iname VARCHAR(250),
+    IN Iimage TEXT ,
+    IN Ibreif TEXT ,
+    IN Iprice FLOAT ,
+    IN Icolor VARCHAR(10),
+    IN Iactive BOOLEAN 
+)
+BEGIN
+    UPDATE roles SET 
+        id  = Iid ,
+        name  = Iname ,
+        image =  CASE WHEN Iimage = "" THEN image ELSE Iimage END,
+        breif  = Ibreif ,
+        price  = Iprice ,
+        color  = Icolor,
+        active  = Iactive 
+    WHERE id = Iid;
+
+
+    SELECT Iid;
+END//
+DELIMITER ;
+
+
+DROP PROCEDURE IF EXISTS EventEdit;
+DELIMITER //
+
+CREATE PROCEDURE EventEdit(
+    IN Iid INT,
+    IN Ititle  VARCHAR(250),
+    IN Iimg  VARCHAR(250),
+    IN Ivideo  TEXT,
+    IN Ibreif  TEXT,
+    IN Idate  VARCHAR(250),
+    IN Iprice  FLOAT,
+    IN Ifeatured  BOOLEAN,
+    IN Icategory_id INT
+)
+BEGIN
+    UPDATE events SET
+        title = Ititle,
+        img =  CASE WHEN Iimg = "" THEN img ELSE Iimg END,
+        video = Ivideo,
+        breif = Ibreif,
+        `date` = Idate,
+        price = Iprice,
+        featured = Ifeatured,
+        category_id = Icategory_id
+    WHERE id = Iid;
+        SELECT Iid;
+
+END //
+
+DELIMITER ;
+
+
+
+DROP PROCEDURE IF EXISTS EventCreate;
+DELIMITER //
+
+CREATE PROCEDURE EventCreate(
+    IN Ititle  VARCHAR(250),
+    IN Iimg  VARCHAR(250),
+    IN Ivideo  TEXT,
+    IN Ibreif  TEXT,
+    IN Idate  date,
+    IN Iprice  FLOAT,
+    IN Ifeatured  BOOLEAN,
+    IN Icategory_id INT
+)
+BEGIN
+    INSERT INTO events (
+        title,
+        img,
+        video,
+        breif,
+        date,
+        price,
+        featured,
+        category_idd
+        ) VALUES (
+            Ititle,
+            Iimg,
+            Ivideo,
+            Ibreif,
+            Idate,
+            Iprice,
+            Ifeatured,
+            Icategory_id
+        );
+        SELECT LAST_INSERT_ID( ) id;
+END //
+
+DELIMITER ;
+
+
+

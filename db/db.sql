@@ -58,9 +58,9 @@ CREATE TABLE users(
     `serial` int,
     `points` int(5) UNSIGNED DEFAULT 0,
     role_id INT,
-    CONSTRAINT fk_user_role FOREIGN KEY(role_id) REFERENCES roles(id) ON DELETE RESTRICT ON UPDATE RESTRICT,
+    CONSTRAINT fk_user_role FOREIGN KEY(role_id) REFERENCES roles(id) ON DELETE CASCADE ON UPDATE CASCADE,
     city_id INT,
-    CONSTRAINT fk_user_city FOREIGN KEY(city_id) REFERENCES cities(id) ON DELETE RESTRICT ON UPDATE RESTRICT,
+    CONSTRAINT fk_user_city FOREIGN KEY(city_id) REFERENCES cities(id) ON DELETE CASCADE ON UPDATE CASCADE,
     `phone` VARCHAR(250) UNIQUE NOT NULL,
     `breif` TEXT(250),
     `featured` BOOLEAN DEFAULT FALSE,
@@ -101,7 +101,7 @@ CREATE TABLE videos(
     `image` VARCHAR(250),
     `Breif` TEXT,
     category_id INT,
-    CONSTRAINT fk_video_category FOREIGN KEY(category_id) REFERENCES categories(id) ON DELETE RESTRICT ON UPDATE RESTRICT,
+    CONSTRAINT fk_video_category FOREIGN KEY(category_id) REFERENCES categories(id) ON DELETE CASCADE ON UPDATE CASCADE,
     `deleted_at` datetime
 ) ENGINE = INNODB;
 
@@ -132,9 +132,9 @@ DROP TABLE IF EXISTS articles;
 CREATE TABLE articles(
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT,
-    CONSTRAINT fk_article_user FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE RESTRICT ON UPDATE RESTRICT,
+    CONSTRAINT fk_article_user FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE ON UPDATE CASCADE,
     category_id INT,
-    CONSTRAINT fk_article_cat FOREIGN KEY(category_id) REFERENCES categories(id) ON DELETE RESTRICT ON UPDATE RESTRICT,
+    CONSTRAINT fk_article_cat FOREIGN KEY(category_id) REFERENCES categories(id) ON DELETE CASCADE ON UPDATE CASCADE,
     `title` VARCHAR(250),
     `img` VARCHAR(250),
     `status` ENUM('pending', 'active', 'declined') DEFAULT 'pending',
@@ -157,7 +157,7 @@ CREATE TABLE events(
     `price` FLOAT UNSIGNED,
     `featured` BOOLEAN DEFAULT FALSE,
     category_id INT,
-    CONSTRAINT fk_project_event FOREIGN KEY(category_id) REFERENCES categories(id) ON DELETE RESTRICT ON UPDATE RESTRICT,
+    CONSTRAINT fk_project_event FOREIGN KEY(category_id) REFERENCES categories(id) ON DELETE CASCADE ON UPDATE CASCADE,
     `created_at` datetime DEFAULT now(),
     `deleted_at` datetime
 ) ENGINE = INNODB;
@@ -167,11 +167,11 @@ DROP TABLE IF EXISTS projects;
 CREATE TABLE projects(
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT,
-    CONSTRAINT fk_project_user FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE RESTRICT ON UPDATE RESTRICT,
+    CONSTRAINT fk_project_user FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE ON UPDATE CASCADE,
     category_id INT,
-    CONSTRAINT fk_project_category FOREIGN KEY(category_id) REFERENCES categories(id) ON DELETE RESTRICT ON UPDATE RESTRICT,
+    CONSTRAINT fk_project_category FOREIGN KEY(category_id) REFERENCES categories(id) ON DELETE CASCADE ON UPDATE CASCADE,
     city_id INT,
-    CONSTRAINT fk_project_city FOREIGN KEY(city_id) REFERENCES cities(id) ON DELETE RESTRICT ON UPDATE RESTRICT,
+    CONSTRAINT fk_project_city FOREIGN KEY(city_id) REFERENCES cities(id) ON DELETE CASCADE ON UPDATE CASCADE,
     `title` VARCHAR(250),
     `logo` VARCHAR(250),
     `img` VARCHAR(250),
@@ -197,9 +197,9 @@ DROP TABLE IF EXISTS user_subs;
 CREATE TABLE user_subs(
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT,
-    CONSTRAINT fk_user_subs_user FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE RESTRICT ON UPDATE RESTRICT,
+    CONSTRAINT fk_user_subs_user FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE ON UPDATE CASCADE,
     role_id INT,
-    CONSTRAINT fk_user_subs_role FOREIGN KEY(role_id) REFERENCES roles(id) ON DELETE RESTRICT ON UPDATE RESTRICT,
+    CONSTRAINT fk_user_subs_role FOREIGN KEY(role_id) REFERENCES roles(id) ON DELETE CASCADE ON UPDATE CASCADE,
     price FLOAT UNSIGNED,
     method ENUM('card', 'cash'),
     points int UNSIGNED default 0,
@@ -214,9 +214,9 @@ DROP TABLE IF EXISTS user_events;
 CREATE TABLE user_events(
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT,
-    CONSTRAINT fk_user_events_user FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE RESTRICT ON UPDATE RESTRICT,
+    CONSTRAINT fk_user_events_user FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE ON UPDATE CASCADE,
     event_id INT,
-    CONSTRAINT fk_user_events_event FOREIGN KEY(event_id) REFERENCES events(id) ON DELETE RESTRICT ON UPDATE RESTRICT,
+    CONSTRAINT fk_user_events_event FOREIGN KEY(event_id) REFERENCES events(id) ON DELETE CASCADE ON UPDATE CASCADE,
     price FLOAT UNSIGNED,
     method ENUM('card', 'cash'),
     points int UNSIGNED default 0
@@ -241,9 +241,9 @@ DROP TABLE IF EXISTS user_notifications;
 
 CREATE TABLE user_notifications(
     user_id INT,
-    CONSTRAINT fk_user_notifications_user FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE RESTRICT ON UPDATE RESTRICT,
+    CONSTRAINT fk_user_notifications_user FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE ON UPDATE CASCADE,
     notification_id INT,
-    CONSTRAINT fk_user_notifications_notification FOREIGN KEY(notification_id) REFERENCES notifications(id) ON DELETE RESTRICT ON UPDATE RESTRICT,
+    CONSTRAINT fk_user_notifications_notification FOREIGN KEY(notification_id) REFERENCES notifications(id) ON DELETE CASCADE ON UPDATE CASCADE,
     seen_at datetime
 ) ENGINE = INNODB;
 
@@ -253,10 +253,10 @@ DROP TABLE IF EXISTS user_services;
 CREATE TABLE user_services(
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT,
-    CONSTRAINT user_services_user FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE RESTRICT ON UPDATE RESTRICT,
+    CONSTRAINT user_services_user FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE ON UPDATE CASCADE,
     breif TEXT,
     service_id INT,
-    CONSTRAINT user_services_service FOREIGN KEY(service_id) REFERENCES services(id) ON DELETE RESTRICT ON UPDATE RESTRICT,
+    CONSTRAINT user_services_service FOREIGN KEY(service_id) REFERENCES services(id) ON DELETE CASCADE ON UPDATE CASCADE,
     seen_at datetime,
     `created_at` datetime DEFAULT now()
 

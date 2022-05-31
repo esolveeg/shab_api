@@ -23,7 +23,9 @@ func (h *Handler) Register(v1 *echo.Group) {
 
 	// roles routes
 	roles := api.Group("/roles")
+	roles.PUT("/editadd/:id", h.RolesEdit)
 	roles.GET("", h.RolesListAll)
+	roles.GET("/:id", h.RolesFind)
 
 	// users routes
 	users := api.Group("/users")
@@ -86,8 +88,12 @@ func (h *Handler) Register(v1 *echo.Group) {
 	cities.GET("/:id", h.CityRead)
 
 	// events
-	api.POST("/events", h.EventsListAll)
-	api.GET("/events/:id", h.EventRead)
+	events := api.Group("/events")
+
+	events.GET("", h.EventsListAll)
+	events.GET("/:id", h.EventRead)
+	events.POST("/editadd", h.EventCreate, jwtMiddleware)
+	events.PUT("/editadd/:id", h.EventUpdate, jwtMiddleware)
 
 	// services
 
@@ -132,6 +138,7 @@ func (h *Handler) Register(v1 *echo.Group) {
 
 	api.GET("/counts", h.FindDashboardCounts)
 	api.POST("/upload", h.Upload)
+	api.POST("/delete/file", h.DeleteFile)
 	api.POST("/contact", h.ContactSend)
 	api.GET("/home", h.HomeGetAllData)
 	api.GET("/videos", h.VideosListByCategory)

@@ -76,7 +76,9 @@ func (ur *RichTextRepo) GetByKey(key string) (*model.RichText, error) {
 		&rec.Image,
 		&rec.Icon,
 	)
-	rec.Image = config.Config("BASE_URL") + rec.Image
+	if rec.Image != "" {
+		rec.Image = config.Config("BASE_URL") + rec.Image
+	}
 
 	if err != nil {
 		utils.NewError(err)
@@ -102,7 +104,9 @@ func (ur *RichTextRepo) ListByPage(page string) (*[]model.RichText, error) {
 			&rec.Image,
 			&rec.Icon,
 		)
-		rec.Image = config.Config("BASE_URL") + rec.Image
+		if rec.Image != "" {
+			rec.Image = config.Config("BASE_URL") + rec.Image
+		}
 
 		resp = append(resp, rec)
 	}
