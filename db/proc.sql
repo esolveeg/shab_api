@@ -351,9 +351,11 @@ DROP PROCEDURE IF EXISTS RolesList;
 
 
 DELIMITER //
-CREATE  PROCEDURE `RolesList`()
+CREATE  PROCEDURE `RolesList`(IN active BOOLEAN)
 BEGIN
-    SELECT r.id ,r.name ,r.image ,r.breif ,r.price , r.color, r.active FROM roles r WHERE r.active = 1;
+    SELECT r.id ,r.name ,r.image ,r.breif ,r.price , r.color, r.active FROM roles r 
+    WHERE 
+    (CASE WHEN active IS NULL THEN '1' ELSE r.active = active END);
 END//
 DELIMITER ;
 
@@ -868,7 +870,7 @@ DELIMITER ;
 DROP PROCEDURE IF EXISTS UsersPendingUpgrades;
 DELIMITER // 
 CREATE PROCEDURE UsersPendingUpgrades() BEGIN
-    SELECT us.id , u.name_ar , u.email , u.phone , cur_role.name current_role , u.role_id current_role_id  , new_role.name new_role, us.role_id new_role_id, us.price , us.created_at FROM users u JOIN user_subs us ON u.id = us.user_id AND us.approved_at IS NULL JOIN roles cur_role ON u.role_id = cur_role.id JOIN roles new_role ON us.role_id = new_role.id;
+    SELECT us.id , u.name_ar , u.email , u.phone , cur_role.name  , u.role_id   , new_role.name , us.role_id , us.price , us.created_at FROM users u JOIN user_subs us ON u.id = us.user_id AND us.approved_at IS NULL JOIN roles cur_role ON u.role_id = cur_role.id JOIN roles new_role ON us.role_id = new_role.id;
 END //
 DELIMITER ;
 
@@ -876,7 +878,7 @@ DELIMITER ;
 DROP PROCEDURE IF EXISTS UserFindUpgradeRequest;
 DELIMITER // 
 CREATE PROCEDURE UserFindUpgradeRequest(IN Iid INT ) BEGIN
-    SELECT us.id , u.name_ar , u.email , u.phone , cur_role.name current_role , u.role_id current_role_id  , new_role.name new_role, us.role_id new_role_id, us.price , us.created_at FROM users u JOIN user_subs us ON u.id = us.user_id AND us.approved_at IS NULL JOIN roles cur_role ON u.role_id = cur_role.id JOIN roles new_role ON us.role_id = new_role.id WHERE u.id = Iid;
+    SELECT us.id , u.name_ar , u.email , u.phone , cur_role.name , u.role_id  , new_role.name, us.role_id, us.price , us.created_at FROM users u JOIN user_subs us ON u.id = us.user_id AND us.approved_at IS NULL JOIN roles cur_role ON u.role_id = cur_role.id JOIN roles new_role ON us.role_id = new_role.id WHERE u.id = Iid;
    
 END //
 DELIMITER ;
@@ -1215,6 +1217,16 @@ DELIMITER //
 CREATE  PROCEDURE `FeaturesListAll`()
 BEGIN
     SELECT * from features;
+END//
+DELIMITER ;
+
+DROP PROCEDURE IF EXISTS FeaturesListByRole;
+
+DELIMITER //
+CREATE  PROCEDURE `FeaturesListByRole`(IN role INT)
+BEGIN
+    
+    SELECT * from features WHERE (CASE WHEN role IS NULL THEN '1' ELSE level <= (role -1) END);
 END//
 DELIMITER ;
 

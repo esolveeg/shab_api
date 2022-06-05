@@ -17,8 +17,8 @@ func (h *Handler) HomeGetAllData(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
 	}
-
-	roles, err := h.roleRepo.ListAll()
+	var activeRoles bool = true
+	roles, err := h.roleRepo.ListAll(&activeRoles)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
 	}

@@ -10,7 +10,12 @@ import (
 )
 
 func (h *Handler) RolesListAll(c echo.Context) error {
-	r, err := h.roleRepo.ListAll()
+	var active *bool
+	if c.QueryParam("active") != "" {
+		filter, _ := strconv.ParseBool(c.QueryParam("active"))
+		active = &filter
+	}
+	r, err := h.roleRepo.ListAll(active)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
 	}

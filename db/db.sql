@@ -43,7 +43,8 @@ CREATE TABLE roles(
     `image` VARCHAR(250),
     `breif` VARCHAR(250),
     `price` FLOAT,
-    `color` VARCHAR(250)
+    `color` VARCHAR(250),
+    `active` BOOLEAN DEFAULT TRUE
 ) ENGINE = INNODB;
 
 DROP TABLE IF EXISTS users;

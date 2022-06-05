@@ -20,9 +20,9 @@ func NewRoleRepo(db *gorm.DB) RoleRepo {
 	}
 }
 
-func (ur *RoleRepo) ListAll() (*[]model.Role, error) {
+func (ur *RoleRepo) ListAll(active *bool) (*[]model.Role, error) {
 	var resp []model.Role
-	rows, err := ur.db.Raw("CALL RolesList()").Rows()
+	rows, err := ur.db.Raw("CALL RolesList(?)", active).Rows()
 	if err != nil {
 		utils.NewError(err)
 		return nil, err
@@ -99,6 +99,27 @@ func scanRoleResut(rows *sql.Rows, resp *[]model.Role, row *sql.Row, rec *model.
 func (ur *RoleRepo) ListAllFeatures() (*[]model.Feature, error) {
 	var resp []model.Feature
 	rows, err := ur.db.Raw("CALL FeaturesListAll()").Rows()
+	if err != nil {
+		utils.NewError(err)
+		return nil, err
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var rec model.Feature
+		rows.Scan(
+			&rec.Id,
+			&rec.Name,
+			&rec.Breif,
+			&rec.Level,
+		)
+		resp = append(resp, rec)
+	}
+	return &resp, nil
+}
+
+func (ur *RoleRepo) ListFeaturesByRole(role *int) (*[]model.Feature, error) {
+	var resp []model.Feature
+	rows, err := ur.db.Raw("CALL FeaturesListByRole(?)", role).Rows()
 	if err != nil {
 		utils.NewError(err)
 		return nil, err

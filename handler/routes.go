@@ -27,6 +27,10 @@ func (h *Handler) Register(v1 *echo.Group) {
 	roles.GET("", h.RolesListAll)
 	roles.GET("/:id", h.RolesFind)
 
+	// features routes
+	features := api.Group("/features")
+	features.GET("", h.ListFeaturesByRole)
+
 	// users routes
 	users := api.Group("/users")
 	users.GET("", h.UserListByRoleOrFeatured)
@@ -106,6 +110,8 @@ func (h *Handler) Register(v1 *echo.Group) {
 	rich := api.Group("/rich")
 	rich.GET("/page", h.RichListByPage)
 	rich.PUT("/:id", h.RichUpdate)
+	api.GET("/rich_text/:id", h.RichGetById)
+	api.PUT("/rich_text/editadd/:id", h.RichUpdate)
 	rich.GET("/id/:id", h.RichGetById)
 	rich.GET("", h.RichListByGroup)
 	rich.GET("/key", h.RichGetByKey)
