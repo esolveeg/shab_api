@@ -72,7 +72,7 @@ func (h *Handler) Register(v1 *echo.Group) {
 
 	// articles routes
 	articles := api.Group("/articles")
-	articles.POST("", h.ArticleListByCategoryUserSearch)
+	articles.GET("", h.ArticleListByCategoryUserSearch)
 	articles.POST("/create", h.ArticleCreate, jwtMiddleware)
 	articles.GET("/:id", h.ArticleRead)
 	articles.DELETE("/:id", h.ArticleDelete)

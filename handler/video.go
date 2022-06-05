@@ -14,14 +14,23 @@ func (h *Handler) VideosFind(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
 	}
-	r, err := h.videoRepo.Find(id)
+	r, err := h.videoRepo.Find(&id)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
 	}
 	return c.JSON(http.StatusOK, r)
 }
 func (h *Handler) VideosListByCategory(c echo.Context) error {
-	r, err := h.videoRepo.ListByCategory(c.QueryParam("category"))
+	var cat int
+	var err error
+	if c.QueryParam("category") != "" {
+		cat, err = strconv.Atoi(c.QueryParam("category"))
+		if err != nil {
+			return c.JSON(http.StatusInternalServerError, utils.NewError(err))
+		}
+
+	}
+	r, err := h.videoRepo.ListByCategory(&cat)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
 	}
