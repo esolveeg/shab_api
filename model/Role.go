@@ -11,7 +11,7 @@ type Role struct {
 }
 
 type Feature struct {
-	Id    uint
+	Id    int
 	Name  string
 	Breif string
 	Level uint

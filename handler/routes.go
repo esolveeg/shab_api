@@ -29,7 +29,10 @@ func (h *Handler) Register(v1 *echo.Group) {
 
 	// features routes
 	features := api.Group("/features")
-	features.GET("", h.ListFeaturesByRole)
+	features.GET("", h.FeaturesListByRole)
+	features.GET("/:id", h.FeaturesFindById)
+	features.POST("/editadd", h.FeaturesEditAdd)
+	features.PUT("/editadd/:id", h.FeaturesEditAdd)
 
 	// users routes
 	users := api.Group("/users")

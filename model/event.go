@@ -19,7 +19,7 @@ type Event struct {
 
 type EventRequest struct {
 	Title    string
-	Img      string
+	Img      string `json:"Image"`
 	Breif    string
 	Date     string
 	Price    float64

@@ -137,3 +137,30 @@ func (ur *RoleRepo) ListFeaturesByRole(role *int) (*[]model.Feature, error) {
 	}
 	return &resp, nil
 }
+
+func (ur *RoleRepo) FindFeatureById(id *int) (*model.Feature, error) {
+	var resp model.Feature
+	err := ur.db.Raw("CALL FeaturesFindById(?)", id).Row().Scan(
+		&resp.Id,
+		&resp.Name,
+		&resp.Breif,
+		&resp.Level,
+	)
+	if err != nil {
+		utils.NewError(err)
+		return nil, err
+	}
+	return &resp, nil
+}
+
+func (ur *RoleRepo) EditAddFeature(req *model.Feature) (*int, error) {
+	var resp int
+	err := ur.db.Raw("CALL FeaturesEditAdd(? , ? , ? , ?)", req.Id, req.Name, req.Breif, req.Level).Row().Scan(&resp)
+	if err != nil {
+		utils.NewError(err)
+		return nil, err
+	}
+	return &resp, nil
+}
+
+

@@ -43,7 +43,7 @@ func (ur *RichTextRepo) ListByGroup(group uint) (*[]model.RichText, error) {
 
 func (ur *RichTextRepo) Update(id *int, req *model.RichText) (*int, error) {
 	var resp int
-	err := ur.db.Raw("CALL RichTextUpdate(? , ? , ? , ? , ?);", id, req.Value, req.Title, req.Icon, req.Image).Row().Scan(&resp)
+	err := ur.db.Raw("CALL RichTextUpdate(? , ? , ? , ? , ?);", id, req.Title, req.Value, req.Icon, req.Image).Row().Scan(&resp)
 	if err != nil {
 		utils.NewError(err)
 		return nil, err

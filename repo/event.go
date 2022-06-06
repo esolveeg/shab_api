@@ -88,12 +88,12 @@ func (ur *EventRepo) Create(req *model.EventRequest) (*int, error) {
 	err := ur.db.Raw("CALL EventCreate(? , ? , ? , ? , ? , ? , ? , ? )",
 		req.Title,
 		req.Img,
+		req.Video,
 		req.Breif,
 		req.Date,
 		req.Price,
 		req.Featured,
 		req.CatId,
-		req.Video,
 	).Row().Scan(&resp)
 	if err != nil {
 		utils.NewError(err)

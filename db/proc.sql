@@ -1231,6 +1231,44 @@ END//
 DELIMITER ;
 
 
+DROP PROCEDURE IF EXISTS FeaturesFindById;
+
+DELIMITER //
+CREATE  PROCEDURE `FeaturesFindById`(IN Iid INT)
+BEGIN
+    
+    SELECT * from features WHERE id = Iid;
+END//
+DELIMITER ;
+
+
+
+DROP PROCEDURE IF EXISTS FeaturesEditAdd;
+
+DELIMITER //
+CREATE  PROCEDURE `FeaturesEditAdd`(IN Iid INT , IN Iname VARCHAR(200),IN Ibreif TEXT , IN Ilevel INT)
+BEGIN
+    IF Iid != 0 THEN
+        UPDATE features SET name = Iname , level = Ilevel, breif = Ibreif WHERE id = Iid;
+    ELSE 
+        INSERT INTO features (
+            name,
+            breif,
+            level
+        ) VALUES (
+            Iname,
+            Ibreif,
+            Ilevel
+        );
+        SET Iid = LAST_INSERT_ID();
+    END IF;
+    SELECT Iid;
+END//
+DELIMITER ;
+
+
+
+
 DROP PROCEDURE IF EXISTS ServicesListAll;
 
 DELIMITER //
@@ -1704,7 +1742,7 @@ BEGIN
         date,
         price,
         featured,
-        category_idd
+        category_id
         ) VALUES (
             Ititle,
             Iimg,
