@@ -1,4 +1,4 @@
-USE alshab_st;
+USE alshab_staging;
 
 # categories
 INSERT INTO

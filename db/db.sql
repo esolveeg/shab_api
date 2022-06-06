@@ -1,9 +1,9 @@
 
-DROP DATABASE IF EXISTS alshab_st;
+DROP DATABASE IF EXISTS alshab_staging;
 
-CREATE DATABASE alshab_st CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE DATABASE alshab_staging CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
-USE alshab_st;
+USE alshab_staging;
 
 DROP TABLE IF EXISTS cities;
 
