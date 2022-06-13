@@ -31,7 +31,7 @@ func (ur *ConsltuntsRepo) ConsultuntsListAll(isTeam bool) (*[]model.Consultunt, 
 		var rec model.Consultunt
 		err = rows.Scan(
 			&rec.Id,
-			&rec.Name_ar,
+			&rec.NameAr,
 			&rec.Title,
 			&rec.Skills,
 			&rec.Img,
@@ -54,9 +54,9 @@ func (ur *ConsltuntsRepo) ConsultuntsListAll(isTeam bool) (*[]model.Consultunt, 
 	return &resp, nil
 }
 
-func (ur *ConsltuntsRepo) ConsultuntsCreate(req *model.ConsultuntCreateReq) (string, error) {
+func (ur *ConsltuntsRepo) ConsultuntsCreate(req *model.Consultunt) (string, error) {
 	rows, err := ur.db.Raw("CALL ConsultuntsCreate(? , ? , ? ,? , ? , ?);",
-		req.Name,
+		req.NameAr,
 		req.Title,
 		req.Skills,
 		req.Img,
@@ -75,7 +75,7 @@ func (ur *ConsltuntsRepo) ConsultuntsCreate(req *model.ConsultuntCreateReq) (str
 func (ur *ConsltuntsRepo) ConsultuntsUpdate(req *model.Consultunt) (string, error) {
 	rows, err := ur.db.Raw("CALL ConsultuntsUpdate(? , ? , ?  , ? , ? ,? , ?);",
 		req.Id,
-		req.Name_ar,
+		req.NameAr,
 		req.Title,
 		req.Skills,
 		req.Img,
@@ -97,10 +97,11 @@ func (ur *ConsltuntsRepo) ConsultuntById(id int) (*model.Consultunt, error) {
 
 	err := ur.db.Raw("CALL ConsultuntById(?);", id).Row().Scan(
 		&resp.Id,
-		&resp.Name_ar,
+		&resp.NameAr,
 		&resp.Title,
 		&resp.Skills,
 		&resp.Img,
+		&resp.IsTeam,
 		&resp.Breif,
 	)
 	if err != nil {

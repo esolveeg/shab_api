@@ -104,10 +104,12 @@ func (h *Handler) Register(v1 *echo.Group) {
 
 	// services
 
-	api.GET("/services", h.ServicesListAll)
-	api.POST("/services", h.ServiceCreate)
-	api.PUT("/services", h.ServiceUpdate)
-	api.DELETE("/services/:id", h.ServiceDelete)
+	services := api.Group("/services")
+	services.GET("", h.ServicesListAll)
+	services.GET("/:id", h.ServicesFindById)
+	services.POST("/editadd", h.ServiceCreate)
+	services.PUT("/editadd/:id", h.ServiceUpdate)
+	services.DELETE("/:id", h.ServiceDelete)
 
 	// rich text routes
 	rich := api.Group("/rich")
@@ -123,7 +125,7 @@ func (h *Handler) Register(v1 *echo.Group) {
 	consultunts := api.Group("/consultunts")
 
 	consultunts.GET("", h.ConsultuntsListAll)
-	consultunts.POST("", h.ConsultuntsCreate)
+	consultunts.POST("/editadd", h.ConsultuntsCreate)
 	consultunts.PUT("/:id", h.ConsultuntsUpdate)
 	consultunts.GET("/:id", h.ConsultuntById)
 

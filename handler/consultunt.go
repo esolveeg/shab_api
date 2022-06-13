@@ -22,7 +22,7 @@ func (h *Handler) ConsultuntsListAll(c echo.Context) error {
 }
 
 func (h *Handler) ConsultuntsCreate(c echo.Context) error {
-	req := new(model.ConsultuntCreateReq)
+	req := new(model.Consultunt)
 	if err := c.Bind(req); err != nil {
 		return c.JSON(http.StatusUnprocessableEntity, utils.NewError(err))
 	}

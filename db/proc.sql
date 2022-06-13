@@ -1278,6 +1278,15 @@ BEGIN
 END//
 DELIMITER ;
 
+DROP PROCEDURE IF EXISTS ServicesFindById;
+
+DELIMITER //
+CREATE  PROCEDURE `ServicesFindById`(IN Iid INT)
+BEGIN
+    SELECT id,name,icon from services WHERE id = Iid ;
+END//
+DELIMITER ;
+
 
 
 DROP PROCEDURE IF EXISTS ServiceCreate;

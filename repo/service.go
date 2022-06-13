@@ -38,6 +38,20 @@ func (ur *ServiceRepo) ListAllServicces() (*[]model.Service, error) {
 	return &resp, nil
 }
 
+func (ur *ServiceRepo) Find(id *int) (*model.Service, error) {
+	var resp model.Service
+	err := ur.db.Raw("CALL ServicesFindById(?)", id).Row().Scan(
+		&resp.Id,
+		&resp.Name,
+		&resp.Icon,
+	)
+	if err != nil {
+		utils.NewError(err)
+		return nil, err
+	}
+	return &resp, nil
+}
+
 func (ur *ServiceRepo) CreateService(req model.Service) (*int, error) {
 	var resp int
 	err := ur.db.Raw("CALL ServiceCreate(? , ?) ", req.Name, req.Icon).Row().Scan(&resp)
