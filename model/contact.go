@@ -7,3 +7,14 @@ type ContactSendReq struct {
 	Phone   string
 	Breif   string
 }
+
+type ContactPending struct {
+	Id        int
+	UserId    int
+	Name      string
+	Email     string
+	Phone     string
+	Subject   string
+	Msg       string
+	CreatedAt string
+}

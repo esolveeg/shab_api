@@ -30,3 +30,11 @@ func (h *Handler) ContactSend(c echo.Context) error {
 	// }
 	return c.JSON(http.StatusOK, "u")
 }
+
+func (h *Handler) ContactsPendingListAll(c echo.Context) error {
+	r, err := h.userRepo.ListPendingContact()
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
+	}
+	return c.JSON(http.StatusOK, r)
+}

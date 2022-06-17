@@ -300,6 +300,30 @@ func (ur *UserRepo) ListFeatured() (*[]model.User, error) {
 	return result, nil
 }
 
+func (ur *UserRepo) ListPendingContact() (*[]model.ContactPending, error) {
+	var resp []model.ContactPending
+	rows, err := ur.db.Raw("CALL ContactPending();").Rows()
+	if err != nil {
+		utils.NewError(err)
+		return nil, err
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var c model.ContactPending
+		rows.Scan(
+			&c.Id,
+			&c.Name,
+			&c.Email,
+			&c.Phone,
+			&c.Subject,
+			&c.Msg,
+			&c.CreatedAt,
+		)
+		resp = append(resp, c)
+
+	}
+	return &resp, nil
+}
 func (ur *UserRepo) ListPendingUsers() (*[]model.UserPending, error) {
 	var resp []model.UserPending
 	rows, err := ur.db.Raw("CALL UsersPending();").Rows()

@@ -59,6 +59,7 @@ func (h *Handler) Register(v1 *echo.Group) {
 	requests.PUT("/projects/:id", h.ProjectsPendingApprove)
 	requests.GET("/articles", h.ArticlesPendingListAll)
 	requests.PUT("/articles/:id", h.ArticlesPendingApprove)
+	requests.GET("/contacts", h.ContactsPendingListAll)
 
 	//email routes
 	//auth routes

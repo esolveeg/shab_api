@@ -874,6 +874,16 @@ CREATE PROCEDURE UsersPendingUpgrades() BEGIN
 END //
 DELIMITER ;
 
+DROP PROCEDURE IF EXISTS ContactRequestsList;
+DELIMITER // 
+CREATE PROCEDURE ContactRequestsList() BEGIN
+    SELECT id, IFNULL(user_id , 0 ) user_id , name , email , phone , IFNULL(subject , '') , msg , created_at FROM contact_requests;
+END //
+DELIMITER ;
+
+
+
+
 
 DROP PROCEDURE IF EXISTS UserFindUpgradeRequest;
 DELIMITER // 

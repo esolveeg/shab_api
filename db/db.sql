@@ -210,6 +210,22 @@ CREATE TABLE user_subs(
     approved_at datetime
 ) ENGINE = INNODB;
 
+
+DROP TABLE IF EXISTS contact_requests;
+
+CREATE TABLE contact_requests(
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT DEFAULT NULL,
+    CONSTRAINT fk_contact_requests_user FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE SET NULL ON UPDATE CASCADE,
+    name VARCHAR(200),
+    email VARCHAR(200),
+    phone VARCHAR(200),
+    subject VARCHAR(200),
+    msg VARCHAR(200),
+    created_at datetime DEFAULT NOW()
+) ENGINE = INNODB;
+
+
 DROP TABLE IF EXISTS user_events;
 
 CREATE TABLE user_events(
@@ -230,11 +246,9 @@ DROP TABLE IF EXISTS notifications;
 
 CREATE TABLE notifications(
     id INT AUTO_INCREMENT PRIMARY KEY,
-    
     `title` VARCHAR(250),
     `breif` TEXT,
     `link` VARCHAR(250),
-   
     created_at datetime DEFAULT now()
 ) ENGINE = INNODB;
 
