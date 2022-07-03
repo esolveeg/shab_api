@@ -56,7 +56,7 @@ func (ur *UserRepo) Register(req *model.UserRegisterRequest) (*int, error) {
 	return &resp, nil
 }
 
-func (ur *UserRepo) Update(Id uint, req *model.UserRegisterRequest) (*[]model.User, error) {
+func (ur *UserRepo) Update(Id uint, req *model.UserRegisterRequest) ([]model.User, error) {
 	rows, err := ur.db.Raw("CALL UserUpdate(? ,?, ? , ? , ? , ? , ?  , ? , ? , ? , ?);",
 		Id,
 		req.Name,
@@ -175,7 +175,7 @@ func (ur *UserRepo) GetById(id uint) (*model.User, error) {
 	return &user, nil
 }
 
-func scanUserResult(rows *sql.Rows) (*[]model.User, error) {
+func scanUserResult(rows *sql.Rows) ([]model.User, error) {
 	var resp []model.User
 	for rows.Next() {
 		var rec model.User
@@ -198,10 +198,10 @@ func scanUserResult(rows *sql.Rows) (*[]model.User, error) {
 		resp = append(resp, rec)
 	}
 
-	return &resp, nil
+	return resp, nil
 }
 
-func (ur *UserRepo) ListAll() (*[]model.User, error) {
+func (ur *UserRepo) ListAll() ([]model.User, error) {
 	rows, err := ur.db.Raw("CALL UserListByRoleOrFeatured(? , ?);", 0, 0).Rows()
 	if err != nil {
 		utils.NewError(err)
@@ -216,7 +216,7 @@ func (ur *UserRepo) ListAll() (*[]model.User, error) {
 
 	return result, nil
 }
-func (ur *UserRepo) ListByRoleOrFeatured(role *uint64, featured *bool, admin *int) (*[]model.User, error) {
+func (ur *UserRepo) ListByRoleOrFeatured(role *uint64, featured *bool, admin *int) ([]model.User, error) {
 	rows, err := ur.db.Raw("CALL UserListByRoleOrFeatured(? , ? , ?);", role, featured, admin).Rows()
 	if err != nil {
 		utils.NewError(err)
@@ -232,7 +232,7 @@ func (ur *UserRepo) ListByRoleOrFeatured(role *uint64, featured *bool, admin *in
 	return result, nil
 }
 
-func (ur *UserRepo) ListRyadeen() (*[]model.User, error) {
+func (ur *UserRepo) ListRyadeen() ([]model.User, error) {
 	rows, err := ur.db.Raw("CALL UserListByRoleOrFeatured(? , ?);", 3, 0).Rows()
 	if err != nil {
 		utils.NewError(err)
@@ -248,7 +248,7 @@ func (ur *UserRepo) ListRyadeen() (*[]model.User, error) {
 	return result, nil
 }
 
-func (ur *UserRepo) ListFeatured() (*[]model.User, error) {
+func (ur *UserRepo) ListFeatured() ([]model.User, error) {
 	rows, err := ur.db.Raw("CALL UserListByRoleOrFeatured(? , ?);", 0, 1).Rows()
 	if err != nil {
 		utils.NewError(err)

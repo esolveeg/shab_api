@@ -7,6 +7,7 @@ import (
 	"shab/utils"
 	"strconv"
 
+	"github.com/360EntSecGroup-Skylar/excelize"
 	"github.com/labstack/echo/v4"
 )
 
@@ -118,6 +119,59 @@ func (h *Handler) UserListAll(c echo.Context) error {
 	return c.JSON(http.StatusOK, users)
 }
 
+func (h *Handler) UsersDownloadExcel(c echo.Context) error {
+
+	featured, err := strconv.ParseBool(c.QueryParam("Featured"))
+	if err != nil {
+		featured = false
+	}
+	admin, err := strconv.Atoi(c.QueryParam("Admin"))
+	if err != nil {
+		admin = 0
+	}
+	role, err := strconv.ParseUint(c.QueryParam("Role_id"), 10, 32)
+	if err != nil {
+		role = 0
+	}
+	users, err := h.userRepo.ListByRoleOrFeatured(&role, &featured, &admin)
+
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
+	}
+	f := excelize.NewFile()
+	// Create a new sheet.
+	index := f.NewSheet("Sheet")
+
+	// Set value of a cell.
+	f.SetCellValue("Sheet", "A1", "Id")
+	f.SetCellValue("Sheet", "b1", "Name")
+	f.SetCellValue("Sheet", "c1", "Name_ar")
+	f.SetCellValue("Sheet", "d1", "Email")
+	f.SetCellValue("Sheet", "e1", "Phone")
+	f.SetCellValue("Sheet", "f1", "Serial")
+	f.SetCellValue("Sheet", "g1", "Breif")
+	f.SetCellValue("Sheet", "h1", "Role")
+	// Set active sheet of the workbook.
+	f.SetActiveSheet(index)
+
+	for i := 0; i < len(users); i++ {
+		f.SetCellValue("Sheet", "A"+strconv.Itoa(i+2), users[i].Id)
+		f.SetCellValue("Sheet", "b"+strconv.Itoa(i+2), users[i].Name)
+		f.SetCellValue("Sheet", "c"+strconv.Itoa(i+2), users[i].Name_ar)
+		f.SetCellValue("Sheet", "d"+strconv.Itoa(i+2), users[i].Email)
+		f.SetCellValue("Sheet", "e"+strconv.Itoa(i+2), users[i].Phone)
+		f.SetCellValue("Sheet", "f"+strconv.Itoa(i+2), users[i].Serial)
+		f.SetCellValue("Sheet", "g"+strconv.Itoa(i+2), users[i].Breif)
+		f.SetCellValue("Sheet", "h"+strconv.Itoa(i+2), users[i].Role)
+	}
+	// Save xlsx file by the given path.
+	if err := f.SaveAs("assets/alshab-users2.xlsx"); err != nil {
+		println(err.Error())
+	}
+	return c.JSON(http.StatusOK, "assets/alshab-users2.xlsx")
+
+	// return c.JSON(http.StatusOK, users)
+}
 func (h *Handler) UserListByRoleOrFeatured(c echo.Context) error {
 	featured, err := strconv.ParseBool(c.QueryParam("Featured"))
 	if err != nil {

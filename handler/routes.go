@@ -37,6 +37,7 @@ func (h *Handler) Register(v1 *echo.Group) {
 	// users routes
 	users := api.Group("/users")
 	users.GET("", h.UserListByRoleOrFeatured)
+	users.POST("/excel", h.UsersDownloadExcel)
 	users.GET("/:id", h.UserFindById)
 	users.GET("/ryadeen", h.UserListRyadeen)
 	users.PUT("/editadd/:id", h.UserUpdate)

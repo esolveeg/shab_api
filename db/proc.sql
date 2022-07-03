@@ -1064,7 +1064,13 @@ DELIMITER //
 CREATE  PROCEDURE `ConsultuntById`(IN Iid INT)
 BEGIN
     SELECT 
-       *
+       id,
+        name,
+        title,
+        skills,
+        img,
+        is_team,
+        breif
      FROM consultunts WHERE id = Iid;
 END//
 DELIMITER ;
