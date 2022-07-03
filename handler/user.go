@@ -43,7 +43,7 @@ func (h *Handler) CurrentUserMessages(c echo.Context) error {
 
 func (h *Handler) CurrentUserUpgradeRequests(c echo.Context) error {
 	id := userIDFromToken(c)
-	u, err := h.userRepo.FindUserUpgradeRequest(id)
+	u, err := h.requestRepo.FindUserUpgradeRequest(id)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
 	}
@@ -86,7 +86,7 @@ func (h *Handler) UserRequestService(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
 	}
-	u, err := h.userRepo.RequestService(req)
+	u, err := h.requestRepo.RequestService(req)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
 	}
@@ -123,11 +123,15 @@ func (h *Handler) UserListByRoleOrFeatured(c echo.Context) error {
 	if err != nil {
 		featured = false
 	}
+	admin, err := strconv.Atoi(c.QueryParam("Admin"))
+	if err != nil {
+		admin = 0
+	}
 	role, err := strconv.ParseUint(c.QueryParam("Role_id"), 10, 32)
 	if err != nil {
 		role = 0
 	}
-	users, err := h.userRepo.ListByRoleOrFeatured(role, featured)
+	users, err := h.userRepo.ListByRoleOrFeatured(&role, &featured, &admin)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
 	}

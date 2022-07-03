@@ -21,7 +21,8 @@ CREATE TABLE consultunts(
     `skills` text,
     `img` VARCHAR(250) DEFAULT "assets/members/default.png",
     `is_team` BOOLEAN DEFAULT FALSE, 
-    `breif` TEXT
+    `breif` TEXT,
+    `deleted_at` datetime
 ) ENGINE = INNODB;
 
 
@@ -67,6 +68,7 @@ CREATE TABLE users(
     `featured` BOOLEAN DEFAULT FALSE,
     `active` BOOLEAN DEFAULT FALSE,
     `admin` BOOLEAN DEFAULT FALSE,
+    `status` VARCHAR(200) DEFAULT 'pending',
     `created_at` datetime DEFAULT now(),
     `deleted_at` datetime
 ) ENGINE = INNODB;
@@ -220,6 +222,7 @@ CREATE TABLE contact_requests(
     name VARCHAR(200),
     email VARCHAR(200),
     phone VARCHAR(200),
+    status VARCHAR(200) DEFAULT 'PENDING',
     subject VARCHAR(200),
     msg VARCHAR(200),
     created_at datetime DEFAULT NOW()
@@ -272,6 +275,7 @@ CREATE TABLE user_services(
     breif TEXT,
     service_id INT,
     CONSTRAINT user_services_service FOREIGN KEY(service_id) REFERENCES services(id) ON DELETE CASCADE ON UPDATE CASCADE,
+    status VARCHAR(100),
     seen_at datetime,
     `created_at` datetime DEFAULT now()
 

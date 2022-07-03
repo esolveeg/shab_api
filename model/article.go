@@ -3,7 +3,7 @@ package model
 type Article struct {
 	Id           uint
 	UserId       uint
-	CategoryId   uint
+	CatId        uint
 	CategoryName string
 	UserImg      string
 	UserName     string
@@ -28,9 +28,10 @@ type ArticleList struct {
 }
 
 type ArticleCreateReq struct {
-	UserId     uint
-	CategoryId uint64
-	Img        string
-	Content    string
-	Title      string
+	UserId  uint
+	CatId   uint64
+	Img     string
+	Content string
+	Title   string
+	Status  string
 }

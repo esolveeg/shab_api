@@ -13,6 +13,7 @@ type ContactPending struct {
 	UserId    int
 	Name      string
 	Email     string
+	Status    string
 	Phone     string
 	Subject   string
 	Msg       string

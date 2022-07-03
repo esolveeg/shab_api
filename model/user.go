@@ -24,6 +24,7 @@ type UserPendingUpgrades struct {
 	Email         string
 	Phone         string
 	CurrentRole   string
+	Status        string
 	CurrentRoleId int
 	NewRole       string
 	NewRoleId     int

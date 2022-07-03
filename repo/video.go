@@ -34,7 +34,7 @@ func (ur *VideoRepo) ListByCategory(cat *int) (*[]model.Video, error) {
 			&video.Url,
 			&video.Image,
 			&video.Breif,
-			&video.CategoryId,
+			&video.CatId,
 		)
 		if err != nil {
 			utils.NewError(err)
@@ -60,7 +60,7 @@ func (ur *VideoRepo) Find(id *uint64) (*model.Video, error) {
 		&video.Url,
 		&video.Image,
 		&video.Breif,
-		&video.CategoryId,
+		&video.CatId,
 		&video.CategoryName,
 	)
 	if err != nil {
@@ -77,7 +77,7 @@ func (ur *VideoRepo) Create(req model.VideoCreateReq) (*int, error) {
 		req.Url,
 		req.Image,
 		req.Breif,
-		req.CategoryId,
+		req.CatId,
 	).Row().Scan(&resp)
 	if err != nil {
 		utils.NewError(err)
@@ -94,7 +94,7 @@ func (ur *VideoRepo) Update(req model.Video) (*int, error) {
 		req.Url,
 		req.Image,
 		req.Breif,
-		req.CategoryId,
+		req.CatId,
 	).Row().Scan(&resp)
 	if err != nil {
 		utils.NewError(err)

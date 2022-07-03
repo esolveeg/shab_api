@@ -32,7 +32,8 @@ func (h *Handler) ContactSend(c echo.Context) error {
 }
 
 func (h *Handler) ContactsPendingListAll(c echo.Context) error {
-	r, err := h.userRepo.ListPendingContact()
+	status := c.QueryParam("status")
+	r, err := h.requestRepo.ListContactRequests(&status)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
 	}

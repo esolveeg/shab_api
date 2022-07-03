@@ -704,7 +704,7 @@ VALUES
         '05555555555',
         'يواس أيوتي أريري دولار إن ريبريهينديرأيت فوليوبتاتي فيلايت أيسسي كايلليوم دولار أيو فيجايت نيولا باراياتيور',
         460,
-        TRUE,
+        FALSE,
         TRUE,
         TRUE
     ),
@@ -845,6 +845,22 @@ VALUES
         TRUE
     );
 
+
+
+
+INSERT INTO user_services (
+    user_id,
+    breif,
+    service_id,
+    status
+) VALUES (
+    5,
+    "i need this service",
+    1,
+    "pending"
+);
+
+
 INSERT INTO user_subs (
     user_id,
     role_id,
@@ -854,20 +870,20 @@ INSERT INTO user_subs (
     start_at,
     end_at
 ) VALUES (
-    2,
-    2,
-    115,
+    4,
+    3,
+    460,
     'cash',
-    115,
+    460,
     '2021-04-17',
     '2023-04-17'
 ),
 (
     3,
     3,
-    230,
+    460,
     'cash',
-    230,
+    460,
     '2021-04-17',
     '2022-04-17'
 );
@@ -964,8 +980,25 @@ VALUES
         TRUE,
         FALSE,
         'inadhmi@gmail.com'
-    )
-    ;
+    );
+
+
+INSERT INTO contact_requests(
+    user_id ,
+    name,
+    email,
+    phone,
+    subject,
+    msg
+) VALUES (
+    5,
+    'مشعل علي البرجس',
+    'mashasl@gmail.com',
+    '05466176661',
+    'ترقية العضوية',
+    'اريد ان ارقي العضوية'
+    
+);
 
 # articles
 INSERT INTO
@@ -1020,4 +1053,4 @@ INSERT INTO user_subs (
         start_at,
         end_at,
         approved_at
-    ) SELECT u.id , u.role_id , r.price , 'cash' , r.price , '2022-01-01 00:00:00' , '2022-12-31 00:00:00' , '2022-01-01 00:00:00'  FROM users u JOIN roles r ON u.role_id = r.id ;
+    ) SELECT u.id , u.role_id , r.price , 'cash' , r.price , '2022-01-01 00:00:00' , '2022-12-31 00:00:00' , '2022-01-01 00:00:00'  FROM users u JOIN roles r ON u.role_id = r.id WHERE admin = 0 AND u.active = 0;

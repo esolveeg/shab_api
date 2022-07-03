@@ -6,6 +6,7 @@ type UserPending struct {
 	Email     string
 	Type      string
 	Phone     string
+	Status    string
 	CreatedAt string
 }
 type ApproveServiceReq struct {
@@ -25,6 +26,7 @@ type ProjectPending struct {
 	NameAr    string
 	Email     string
 	Title     string
+	Status    string
 	Phone     string
 	CreatedAt string
 }

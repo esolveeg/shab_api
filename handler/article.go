@@ -45,40 +45,81 @@ func (h *Handler) ArticleRead(c echo.Context) error {
 	return c.JSON(http.StatusOK, article)
 }
 
-func (h *Handler) ArticleCreate(c echo.Context) error {
-	// upload image
-	img, err := c.FormFile("Img")
-	if err != nil {
-		return c.JSON(http.StatusInternalServerError, "img_required"+err.Error())
-	}
-	imgName, err := utils.Upload(img)
-	if err != nil {
-		return c.JSON(http.StatusInternalServerError, "err_uploading_img"+err.Error())
-	}
+// func (h *Handler) ArticleUpdate(c echo.Context) error {
+// 	id, _ := strconv.Atoi(c.Param("id"))
 
-	req := ScanArticleCreateReq(c, imgName)
-	article, err := h.articleRepo.ArticleCreate(req)
+// 	r := new(model.ProjectCreateReq)
+// 	if err := c.Bind(r); err != nil {
+// 		return c.JSON(http.StatusUnprocessableEntity, utils.NewError(err))
+// 	}
+// 	resp, err := h.articleRepo.ArticleUpdate(r, &id)
+// 	if err != nil {
+// 		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
+// 	}
+// 	return c.JSON(http.StatusOK, resp)
+// }
+
+func (h *Handler) ArticleCreate(c echo.Context) error {
+	r := new(model.ArticleCreateReq)
+	if err := c.Bind(r); err != nil {
+		return c.JSON(http.StatusUnprocessableEntity, utils.NewError(err))
+	}
+	r.UserId = userIDFromToken(c)
+	resp, err := h.articleRepo.ArticleCreate(r)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
 	}
-	n := &model.Notification{
-		Title: "طلب اضافة مقال",
-		Breif: fmt.Sprintf("يوجد طلب اضافة مقال جديد باسم %s", req.Title),
-		Link:  fmt.Sprintf("users/articels/%d", article),
+	return c.JSON(http.StatusOK, resp)
+}
+
+func (h *Handler) ArticleUpdate(c echo.Context) error {
+	id, _ := strconv.Atoi(c.Param("id"))
+	r := new(model.ArticleCreateReq)
+	if err := c.Bind(r); err != nil {
+		return c.JSON(http.StatusUnprocessableEntity, utils.NewError(err))
 	}
-
-	_, err = h.notificationRepo.Create(n)
-	return c.JSON(http.StatusOK, article)
+	r.UserId = userIDFromToken(c)
+	resp, err := h.articleRepo.ArticleUpdate(&id, r)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
+	}
+	return c.JSON(http.StatusOK, resp)
 }
 
-func ScanArticleCreateReq(c echo.Context, img string) model.ArticleCreateReq {
-	id := userIDFromToken(c)
-	req := new(model.ArticleCreateReq)
-	req.UserId = id
-	req.CategoryId, _ = strconv.ParseUint(c.FormValue("CategoryId"), 0, 8)
-	req.Img = img
-	req.Title = c.FormValue("Title")
-	req.Content = c.FormValue("Content")
-	return *req
+// func (h *Handler) ArticleCreate(c echo.Context) error {
+// 	// upload image
+// 	img, err := c.FormFile("Img")
+// 	if err != nil {
+// 		return c.JSON(http.StatusInternalServerError, "img_required"+err.Error())
+// 	}
+// 	imgName, err := utils.Upload(img)
+// 	if err != nil {
+// 		return c.JSON(http.StatusInternalServerError, "err_uploading_img"+err.Error())
+// 	}
 
-}
+// 	req := ScanArticleCreateReq(c, imgName)
+// 	article, err := h.articleRepo.ArticleCreate(req)
+// 	if err != nil {
+// 		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
+// 	}
+// 	n := &model.Notification{
+// 		Title: "طلب اضافة مقال",
+// 		Breif: fmt.Sprintf("يوجد طلب اضافة مقال جديد باسم %s", req.Title),
+// 		Link:  fmt.Sprintf("users/articels/%d", article),
+// 	}
+
+// 	_, err = h.notificationRepo.Create(n)
+// 	return c.JSON(http.StatusOK, article)
+// }
+
+// func ScanArticleCreateReq(c echo.Context, img string) model.ArticleCreateReq {
+// 	id := userIDFromToken(c)
+// 	req := new(model.ArticleCreateReq)
+// 	req.UserId = id
+// 	req.CategoryId, _ = strconv.ParseUint(c.FormValue("CategoryId"), 0, 8)
+// 	req.Img = img
+// 	req.Title = c.FormValue("Title")
+// 	req.Content = c.FormValue("Content")
+// 	return *req
+
+// }

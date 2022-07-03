@@ -39,6 +39,8 @@ func (h *Handler) Register(v1 *echo.Group) {
 	users.GET("", h.UserListByRoleOrFeatured)
 	users.GET("/:id", h.UserFindById)
 	users.GET("/ryadeen", h.UserListRyadeen)
+	users.PUT("/editadd/:id", h.UserUpdate)
+	users.POST("/editadd", h.RegisterUser)
 	users.PUT("/:id", h.UserUpdate)
 	users.PUT("/reset/email", h.UserSendResetEmail)
 	users.PUT("/reset", h.UserResetPassword)
@@ -49,14 +51,14 @@ func (h *Handler) Register(v1 *echo.Group) {
 
 	requests := api.Group("/requests")
 	requests.GET("/services", h.ServicesPendingListAll)
-	requests.PUT("/services/:id", h.ServicesPendingApprove)
+	requests.PUT("/services/:id", h.ServicesPendingAction)
 	requests.GET("/services/:id", h.ServicesPendingFind)
 	requests.GET("/users", h.UsersPendingListAll)
 	requests.GET("/users/upgrades", h.UsersPendingUpgradeListAll)
-	requests.PUT("/users/:id", h.UsersPendingApprove)
+	requests.PUT("/users/:action/:id", h.UsersPendingAction)
 	requests.PUT("/upgrades/:id", h.UsersUpgradeApprove)
 	requests.GET("/projects", h.ProjectsPendingListAll)
-	requests.PUT("/projects/:id", h.ProjectsPendingApprove)
+	requests.PUT("/projects/:action/:id", h.ProjectsPendingAction)
 	requests.GET("/articles", h.ArticlesPendingListAll)
 	requests.PUT("/articles/:id", h.ArticlesPendingApprove)
 	requests.GET("/contacts", h.ContactsPendingListAll)
@@ -77,7 +79,8 @@ func (h *Handler) Register(v1 *echo.Group) {
 	// articles routes
 	articles := api.Group("/articles")
 	articles.GET("", h.ArticleListByCategoryUserSearch)
-	articles.POST("/create", h.ArticleCreate, jwtMiddleware)
+	articles.POST("/editadd", h.ArticleCreate, jwtMiddleware)
+	articles.PUT("/editadd/:id", h.ArticleUpdate, jwtMiddleware)
 	articles.GET("/:id", h.ArticleRead)
 	articles.DELETE("/:id", h.ArticleDelete)
 
@@ -127,7 +130,8 @@ func (h *Handler) Register(v1 *echo.Group) {
 
 	consultunts.GET("", h.ConsultuntsListAll)
 	consultunts.POST("/editadd", h.ConsultuntsCreate)
-	consultunts.PUT("/:id", h.ConsultuntsUpdate)
+	consultunts.PUT("/editadd/:id", h.ConsultuntsUpdate)
+	// consultunts.PUT("/:id", h.ConsultuntsUpdate)
 	consultunts.GET("/:id", h.ConsultuntById)
 
 	//videos routes
@@ -135,8 +139,8 @@ func (h *Handler) Register(v1 *echo.Group) {
 
 	videos.GET("", h.VideosListByCategory)
 	videos.GET("/:id", h.VideosFind)
-	videos.POST("", h.VideosCreate)
-	videos.PUT("/:id", h.VideosUpdate)
+	videos.POST("/editadd", h.VideosCreate)
+	videos.PUT("/editadd/:id", h.VideosUpdate)
 	videos.DELETE("/:id", h.VideosDelete)
 
 	//msg routes
@@ -156,5 +160,6 @@ func (h *Handler) Register(v1 *echo.Group) {
 	api.GET("/videos", h.VideosListByCategory)
 	api.GET("/cats", h.CatsListByType)
 	api.GET("/cities", h.CitiesList)
+	api.DELETE("/delete/:table/:id", h.DeleteRecord)
 
 }

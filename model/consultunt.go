@@ -6,7 +6,7 @@ type Consultunt struct {
 	Title  string
 	Skills string
 	IsTeam bool
-	Img    string
+	Image  string
 	Breif  string
 }
 

@@ -11,7 +11,7 @@ type ProjectList struct {
 type Project struct {
 	UserName     string
 	CategoryName string
-	CategoryId   int
+	CatId        int
 	City         string
 	CityId       int
 	Title        string
@@ -38,21 +38,23 @@ type ProjectListReq struct {
 }
 
 type ProjectCreateReq struct {
-	Userid     uint64
-	CategoryId uint64
-	CityId     uint64
-	Img        string
-	Imgs       string
-	Logo       string
-	Title      string
-	Status     string
-	Fund       float64
-	Breif      string
-	Location   string
-	Phone      string
-	File       string
-	Email      string
-	Website    string
-	Instagram  string
-	Twitter    string
+	Userid    uint64
+	CatId     uint64
+	CityId    uint64
+	Img       string
+	Imgs      string
+	Logo      string
+	Title     string
+	Status    string
+	Fund      float64
+	Breif     string
+	Location  string
+	Phone     string
+	File      string
+	Email     string
+	Website   string
+	Instagram string
+	Twitter   string
+	Featured  bool
+	Active    bool
 }

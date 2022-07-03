@@ -7,6 +7,8 @@ import (
 	"shab/handler"
 	"shab/repo"
 	"shab/router"
+
+	"github.com/360EntSecGroup-Skylar/excelize"
 )
 
 func main() {
@@ -16,6 +18,10 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+
+	f := excelize.NewFile()
+
+	fmt.Println(f)
 
 	userRepo := repo.NewUserRepo(db)
 	richRepo := repo.NewRichTextRepo(db)
@@ -31,6 +37,8 @@ func main() {
 	notificatioRepo := repo.NewNotificationRepo(db)
 	msgRepo := repo.NewMsgRepo(db)
 	reportsRepo := repo.NewReportsRepo(db)
+	globalRepo := repo.NewGlobalRepo(db)
+	requestsRepo := repo.NewRequestRepo(db)
 	h := handler.NewHandler(
 		userRepo,
 		richRepo,
@@ -46,6 +54,8 @@ func main() {
 		notificatioRepo,
 		msgRepo,
 		reportsRepo,
+		globalRepo,
+		requestsRepo,
 	)
 	h.Register(v1)
 	port := fmt.Sprintf(":%s", config.Config("PORT"))

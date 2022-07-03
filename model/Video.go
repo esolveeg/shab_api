@@ -6,14 +6,14 @@ type Video struct {
 	Url          string
 	Image        string
 	Breif        string
-	CategoryId   uint
+	CatId        uint
 	CategoryName string
 }
 
 type VideoCreateReq struct {
-	Name       string
-	Url        string
-	Image      string
-	Breif      string
-	CategoryId uint
+	Name  string
+	Url   string
+	Image string
+	Breif string
+	CatId uint
 }

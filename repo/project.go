@@ -86,7 +86,7 @@ func (pr *ProjectRepo) ProjectRead(id uint64) (*model.Project, error) {
 	err := pr.db.Raw("CALL ProjectRead(?);", id).Row().Scan(
 		&project.UserName,
 		&project.CategoryName,
-		&project.CategoryId,
+		&project.CatId,
 		&project.City,
 		&project.CityId,
 		&project.Title,
@@ -120,11 +120,11 @@ func (pr *ProjectRepo) ProjectRead(id uint64) (*model.Project, error) {
 	return &project, nil
 }
 
-func (pr *ProjectRepo) ProjectsCreate(req model.ProjectCreateReq) (uint, error) {
+func (pr *ProjectRepo) ProjectsCreate(req *model.ProjectCreateReq) (uint, error) {
 	var id uint
-	err := pr.db.Raw("CALL ProjectsCreate(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);",
+	err := pr.db.Raw("CALL ProjectsCreate(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,? , ? , ?);",
 		req.Userid,
-		req.CategoryId,
+		req.CatId,
 		req.CityId,
 		req.Title,
 		req.Status,
@@ -140,6 +140,8 @@ func (pr *ProjectRepo) ProjectsCreate(req model.ProjectCreateReq) (uint, error) 
 		req.Website,
 		req.Instagram,
 		req.Twitter,
+		req.Featured,
+		req.Active,
 	).Row().Scan(&id)
 
 	if err != nil {
@@ -149,11 +151,11 @@ func (pr *ProjectRepo) ProjectsCreate(req model.ProjectCreateReq) (uint, error) 
 	return id, nil
 }
 
-func (pr *ProjectRepo) ProjectsUpdate(req model.ProjectCreateReq, id uint64) (uint, error) {
+func (pr *ProjectRepo) ProjectsUpdate(req *model.ProjectCreateReq, id *int) (uint, error) {
 	var resp uint
-	err := pr.db.Raw("CALL ProjectUpdate(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);",
+	err := pr.db.Raw("CALL ProjectUpdate(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);",
 		id,
-		req.CategoryId,
+		req.CatId,
 		req.CityId,
 		req.Title,
 		req.Status,
@@ -169,6 +171,8 @@ func (pr *ProjectRepo) ProjectsUpdate(req model.ProjectCreateReq, id uint64) (ui
 		req.Website,
 		req.Instagram,
 		req.Twitter,
+		req.Featured,
+		req.Active,
 	).Row().Scan(&resp)
 
 	if err != nil {

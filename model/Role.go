@@ -14,5 +14,5 @@ type Feature struct {
 	Id    int
 	Name  string
 	Breif string
-	Level uint
+	Level int
 }

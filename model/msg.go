@@ -17,6 +17,6 @@ type Inbox struct {
 
 type MsgReq struct {
 	FromId uint
-	ToId   uint
+	ToId   int
 	Msg    string
 }

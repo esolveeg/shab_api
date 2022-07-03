@@ -34,7 +34,7 @@ func (ur *ConsltuntsRepo) ConsultuntsListAll(isTeam bool) (*[]model.Consultunt, 
 			&rec.NameAr,
 			&rec.Title,
 			&rec.Skills,
-			&rec.Img,
+			&rec.Image,
 			&rec.IsTeam,
 			&rec.Breif,
 		)
@@ -42,7 +42,7 @@ func (ur *ConsltuntsRepo) ConsultuntsListAll(isTeam bool) (*[]model.Consultunt, 
 			utils.NewError(err)
 			return nil, err
 		}
-		rec.Img = config.Config("BASE_URL") + rec.Img
+		rec.Image = config.Config("BASE_URL") + rec.Image
 		resp = append(resp, rec)
 
 	}
@@ -59,7 +59,7 @@ func (ur *ConsltuntsRepo) ConsultuntsCreate(req *model.Consultunt) (string, erro
 		req.NameAr,
 		req.Title,
 		req.Skills,
-		req.Img,
+		req.Image,
 		req.IsTeam,
 		req.Breif,
 	).Rows()
@@ -78,7 +78,7 @@ func (ur *ConsltuntsRepo) ConsultuntsUpdate(req *model.Consultunt) (string, erro
 		req.NameAr,
 		req.Title,
 		req.Skills,
-		req.Img,
+		req.Image,
 		req.IsTeam,
 		req.Breif,
 	).Rows()
@@ -100,7 +100,7 @@ func (ur *ConsltuntsRepo) ConsultuntById(id int) (*model.Consultunt, error) {
 		&resp.NameAr,
 		&resp.Title,
 		&resp.Skills,
-		&resp.Img,
+		&resp.Image,
 		&resp.IsTeam,
 		&resp.Breif,
 	)

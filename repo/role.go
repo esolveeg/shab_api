@@ -155,7 +155,7 @@ func (ur *RoleRepo) FindFeatureById(id *int) (*model.Feature, error) {
 
 func (ur *RoleRepo) EditAddFeature(req *model.Feature) (*int, error) {
 	var resp int
-	err := ur.db.Raw("CALL FeaturesEditAdd(? , ? , ? , ?)", req.Id, req.Name, req.Breif, req.Level-1).Row().Scan(&resp)
+	err := ur.db.Raw("CALL FeaturesEditAdd(? , ? , ? , ?)", req.Id, req.Name, req.Breif, req.Level).Row().Scan(&resp)
 	if err != nil {
 		utils.NewError(err)
 		return nil, err

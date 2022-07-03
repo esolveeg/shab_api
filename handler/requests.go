@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"net/http"
 	"shab/model"
 	"shab/utils"
@@ -11,7 +12,7 @@ import (
 
 func (h *Handler) ServicesPendingListAll(c echo.Context) error {
 
-	r, err := h.userRepo.ListPendingServices()
+	r, err := h.requestRepo.ListPendingServices()
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
 	}
@@ -19,16 +20,17 @@ func (h *Handler) ServicesPendingListAll(c echo.Context) error {
 }
 
 func (h *Handler) UsersPendingListAll(c echo.Context) error {
-
-	r, err := h.userRepo.ListPendingUsers()
+	status := c.QueryParam("status")
+	r, err := h.requestRepo.ListPendingUsers(&status)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
 	}
 	return c.JSON(http.StatusOK, r)
 }
 func (h *Handler) UsersPendingUpgradeListAll(c echo.Context) error {
+	status := c.QueryParam("status")
 
-	r, err := h.userRepo.ListPendingUpgrades()
+	r, err := h.requestRepo.ListPendingUpgrades(&status)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
 	}
@@ -36,8 +38,8 @@ func (h *Handler) UsersPendingUpgradeListAll(c echo.Context) error {
 }
 
 func (h *Handler) ProjectsPendingListAll(c echo.Context) error {
-
-	r, err := h.userRepo.ListPendingProjects()
+	status := c.QueryParam("status")
+	r, err := h.requestRepo.ListPendingProjects(&status)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
 	}
@@ -46,7 +48,7 @@ func (h *Handler) ProjectsPendingListAll(c echo.Context) error {
 
 func (h *Handler) ArticlesPendingListAll(c echo.Context) error {
 
-	r, err := h.userRepo.ListPendingArticles()
+	r, err := h.requestRepo.ListPendingArticles()
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
 	}
@@ -64,22 +66,24 @@ func (h *Handler) ServicesPendingFind(c echo.Context) error {
 	return c.JSON(http.StatusOK, r)
 }
 
-func (h *Handler) ServicesPendingApprove(c echo.Context) error {
-	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
+func (h *Handler) ServicesPendingAction(c echo.Context) error {
+	action := c.Param("action")
+	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
 	}
 
-	req := new(model.ApproveServiceReq)
-	if err := c.Bind(req); err != nil {
-		return c.JSON(http.StatusUnprocessableEntity, utils.NewError(err))
-	}
+	// if err := c.Bind(req); err != nil {
+	// 	return c.JSON(http.StatusUnprocessableEntity, utils.NewError(err))
+	// }
 
-	r, err := h.userRepo.ApprovePendingService(id)
+	r, err := h.requestRepo.ApprovePendingService(&id, &action)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
 	}
-	r, err = h.userRepo.SendMsg(req)
+
+	req := model.MsgReq{FromId: 1, ToId: id, Msg: "تم قبول طلب الخدمة و سيتم التواصل معك "}
+	r, err = h.userRepo.SendMsg(&req)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
 	}
@@ -87,12 +91,15 @@ func (h *Handler) ServicesPendingApprove(c echo.Context) error {
 	return c.JSON(http.StatusOK, r)
 }
 
-func (h *Handler) UsersPendingApprove(c echo.Context) error {
+func (h *Handler) UsersPendingAction(c echo.Context) error {
 	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
 	}
-	r, err := h.userRepo.ApprovePendingUser(id)
+	action := c.Param("action")
+	fmt.Println("asd")
+	fmt.Println(action)
+	r, err := h.requestRepo.PendingUserAction(&id, &action)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
 	}
@@ -104,19 +111,20 @@ func (h *Handler) UsersUpgradeApprove(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
 	}
-	r, err := h.userRepo.ApproveUserUpgrade(id)
+	r, err := h.requestRepo.ApproveUserUpgrade(id)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
 	}
 	return c.JSON(http.StatusOK, r)
 }
 
-func (h *Handler) ProjectsPendingApprove(c echo.Context) error {
-	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
+func (h *Handler) ProjectsPendingAction(c echo.Context) error {
+	action := c.Param("action")
+	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
 	}
-	r, err := h.userRepo.ApprovePendingProject(id)
+	r, err := h.requestRepo.PendingProjectAction(&id, &action)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
 	}
@@ -128,7 +136,7 @@ func (h *Handler) ArticlesPendingApprove(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
 	}
-	r, err := h.userRepo.ApprovePendingArticle(id)
+	r, err := h.requestRepo.ApprovePendingArticle(id)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
 	}

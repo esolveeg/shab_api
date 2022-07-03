@@ -19,6 +19,8 @@ type Handler struct {
 	notificationRepo repo.NotificationRepo
 	msgRepo          repo.MsgRepo
 	reportsRepo      repo.ReportsRepo
+	globalRepo       repo.GlobalRepo
+	requestRepo      repo.RequestRepo
 }
 
 func NewHandler(userRepo repo.UserRepo,
@@ -35,6 +37,8 @@ func NewHandler(userRepo repo.UserRepo,
 	notificationRepo repo.NotificationRepo,
 	msgRepo repo.MsgRepo,
 	reportsRepo repo.ReportsRepo,
+	globalRepo repo.GlobalRepo,
+	requestRepo repo.RequestRepo,
 ) *Handler {
 	return &Handler{
 		userRepo:         userRepo,
@@ -51,5 +55,7 @@ func NewHandler(userRepo repo.UserRepo,
 		notificationRepo: notificationRepo,
 		msgRepo:          msgRepo,
 		reportsRepo:      reportsRepo,
+		globalRepo:       globalRepo,
+		requestRepo:      requestRepo,
 	}
 }

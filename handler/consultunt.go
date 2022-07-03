@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"net/http"
 	"shab/model"
 	"shab/utils"
@@ -34,6 +35,7 @@ func (h *Handler) ConsultuntsCreate(c echo.Context) error {
 }
 
 func (h *Handler) ConsultuntsUpdate(c echo.Context) error {
+	fmt.Println("hellow wo")
 	req := new(model.Consultunt)
 	var err error
 	req.Id, err = strconv.Atoi(c.Param("id"))

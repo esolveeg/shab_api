@@ -96,19 +96,10 @@ DROP PROCEDURE IF EXISTS UserListByRoleOrFeatured;
 DELIMITER //
 
 
-CREATE PROCEDURE UserListByRoleOrFeatured(IN role INT , IN featured BOOLEAN) 
+CREATE PROCEDURE UserListByRoleOrFeatured(IN role INT , IN featured BOOLEAN , IN admin BOOLEAN) 
 BEGIN
-DECLARE roleCond VARCHAR(50) DEFAULT '';
-DECLARE featuredCond VARCHAR(50) DEFAULT '';
-IF role != 0 THEN
-    SET roleCond = CONCAT('AND role_id = ' , role);
-END IF;
-IF featured THEN
-    SET featuredCond =' AND FEATURED = 1';
-END IF;
 
-    SET @query = CONCAT(
-        'SELECT 
+SELECT 
         u.id,
         u.name,
         u.name_ar,
@@ -123,13 +114,11 @@ END IF;
         r.color
         FROM users u
             JOIN roles r ON u.role_id = r.id
-            WHERE u.active = 1 ',
-        roleCond,
-        featuredCond, " ORDER BY RAND()");
-         
-    PREPARE stmt FROM @query;
-    EXECUTE stmt;
-    DEALLOCATE PREPARE stmt;
+            WHERE u.active = 1 
+            AND u.admin = admin
+            AND  (CASE WHEN role = 0 THEN '1' ELSE u.role_id = role END)
+            AND  (CASE WHEN featured = 0 THEN '1' ELSE u.featured = featured END);
+          
     END//
 DELIMITER ;
 
@@ -173,7 +162,8 @@ CREATE PROCEDURE ArticleCreate(
     IN Icategory_id INT,
     IN Ititle VARCHAR(250),
     IN Iimg VARCHAR(250),
-    IN Icontent TEXT
+    IN Icontent TEXT,
+    IN Istatus VARCHAR(250)
 ) BEGIN
 INSERT INTO
     articles (
@@ -181,7 +171,8 @@ INSERT INTO
         category_id,
         title,
         img,
-        content
+        content,
+        status
     )
 VALUES
     (
@@ -189,9 +180,15 @@ VALUES
         Icategory_id,
         Ititle,
         Iimg,
-        Icontent
+        Icontent,
+        Istatus
     );
 
+
+    IF Istatus = 'active' THEN
+        UPDATE articles SET published_at = NOW() WHERE id = LAST_INSERT_ID();
+    END IF;
+   
 
     SELECT LAST_INSERT_ID() id; 
 
@@ -206,7 +203,8 @@ CREATE PROCEDURE ArticleUpdate(
     IN Icategory_id INT,
     IN Ititle VARCHAR(250),
     IN Iimg VARCHAR(250),
-    IN Icontent TEXT
+    IN Icontent TEXT,
+    IN Istatus VARCHAR(250)
 ) BEGIN
 UPDATE
     articles
@@ -215,10 +213,12 @@ SET
     category_id = Icategory_id,
     title = Ititle,
     img = Iimg,
-    content = Icontent;
+    content = Icontent,
+    status = Istatus WHERE id =  Iid;
 
+    SELECT  Iid;
 END //
-DELIMITER ;
+
 
 DELIMITER ;
 DROP PROCEDURE IF EXISTS ArticleList;
@@ -442,7 +442,9 @@ CREATE PROCEDURE ProjectUpdate(
     IN Iemail VARCHAR(250),
     IN Iwebsite VARCHAR(250),
     IN Iinstagram VARCHAR(250),
-    IN Itwitter VARCHAR(250)
+    IN Itwitter VARCHAR(250),
+    IN Ifeatured VARCHAR(250),
+    IN Iactive VARCHAR(250)
 ) BEGIN
 UPDATE
     projects
@@ -462,7 +464,9 @@ SET
     email = Iemail,
     website = Iwebsite,
     instagram = Iinstagram,
-    twitter = Itwitter
+    twitter = Itwitter,
+    featured = Ifeatured,
+    active = Iactive
     WHERE id = Iid;
 
     SELECT LAST_INSERT_ID();
@@ -832,7 +836,7 @@ CREATE PROCEDURE UserUpgrade(
     IN Irole int
 ) BEGIN 
 SET @currentRole = (SELECT role_id  FROM users u WHERE u.id = Iuser);
-SET @amount =(SELECT price FROM roles r WHERE r.id = Irole) - (SELECT price FROM roles r WHERE r.id = @currentRole);
+SET @amount =(SELECT price FROM roles r WHERE r.id = Irole);
 SELECT @currentStartDate := us.start_at , @currentEndDate := us.end_at FROM user_subs us WHERE user_id = Iuser ORDER BY id DESC LIMIT 1;
 INSERT INTO user_subs (
         user_id,
@@ -856,28 +860,31 @@ DELIMITER ;
 
 
 
-
-DROP PROCEDURE IF EXISTS UserUpgradeApprove;
-DELIMITER // 
-CREATE PROCEDURE UserUpgradeApprove(IN Iid INT ) BEGIN
-    SELECT user_id , role_id , points INTO @userId ,  @newRole , @pointsToAdd FROM user_subs WHERE id = Iid;
-   UPDATE users u SET u.role_id = @newRole , points = (u.points + @pointsToAdd) WHERE id = @userId;
-   UPDATE user_subs us SET us.approved_at =NOW() WHERE id = Iid;
-   CALL MsgsCreate(1 , @userId , 'لقد تم قبول طلب عضويتك');
-   SELECT Iid id;
-END //
-DELIMITER ;
 DROP PROCEDURE IF EXISTS UsersPendingUpgrades;
 DELIMITER // 
-CREATE PROCEDURE UsersPendingUpgrades() BEGIN
-    SELECT us.id , u.name_ar , u.email , u.phone , cur_role.name  , u.role_id   , new_role.name , us.role_id , us.price , us.created_at FROM users u JOIN user_subs us ON u.id = us.user_id AND us.approved_at IS NULL JOIN roles cur_role ON u.role_id = cur_role.id JOIN roles new_role ON us.role_id = new_role.id;
+CREATE PROCEDURE UsersPendingUpgrades(Istatus VARCHAR(100)) BEGIN
+    SELECT u.id , u.name_ar , u.email , u.phone , cur_role.name  , u.role_id   , new_role.name , us.role_id , us.price , 
+    u.status , us.created_at 
+    FROM users u 
+    JOIN user_subs us 
+        ON u.id = us.user_id 
+    JOIN roles cur_role 
+        ON u.role_id = cur_role.id 
+    JOIN roles new_role ON us.role_id = new_role.id WHERE 
+    (CASE WHEN Istatus = '' THEN '1' ELSE u.status = Istatus END)
+    AND new_role.id != cur_role.id;
 END //
 DELIMITER ;
 
 DROP PROCEDURE IF EXISTS ContactRequestsList;
 DELIMITER // 
-CREATE PROCEDURE ContactRequestsList() BEGIN
-    SELECT id, IFNULL(user_id , 0 ) user_id , name , email , phone , IFNULL(subject , '') , msg , created_at FROM contact_requests;
+CREATE PROCEDURE ContactRequestsList(Istatus VARCHAR(100)) BEGIN
+    SELECT id, IFNULL(user_id , 0 ) user_id , 
+    name , email , phone , IFNULL(subject , '') ,
+     msg , status,
+    created_at 
+    FROM contact_requests
+    WHERE (CASE WHEN Istatus = '' THEN '1' ELSE status = Istatus END);
 END //
 DELIMITER ;
 
@@ -888,7 +895,16 @@ DELIMITER ;
 DROP PROCEDURE IF EXISTS UserFindUpgradeRequest;
 DELIMITER // 
 CREATE PROCEDURE UserFindUpgradeRequest(IN Iid INT ) BEGIN
-    SELECT us.id , u.name_ar , u.email , u.phone , cur_role.name , u.role_id  , new_role.name, us.role_id, us.price , us.created_at FROM users u JOIN user_subs us ON u.id = us.user_id AND us.approved_at IS NULL JOIN roles cur_role ON u.role_id = cur_role.id JOIN roles new_role ON us.role_id = new_role.id WHERE u.id = Iid;
+    SELECT  us.id , u.name_ar , u.email , u.phone , cur_role.name ,
+            u.role_id  , new_role.name, us.role_id, us.price , us.created_at 
+    FROM users u 
+    JOIN user_subs us 
+        ON u.id = us.user_id AND us.approved_at IS NULL 
+    JOIN roles cur_role 
+        ON u.role_id = cur_role.id 
+    JOIN roles new_role 
+        ON us.role_id = new_role.id 
+    WHERE u.id = Iid;
    
 END //
 DELIMITER ;
@@ -1026,8 +1042,14 @@ DELIMITER //
 CREATE  PROCEDURE `ConsultuntsListAll`(IN Iis_team BOOLEAN)
 BEGIN
     SELECT 
-       *
-     FROM consultunts WHERE is_team = Iis_team;
+        id,
+        name,
+        title,
+        skills,
+        img,
+        is_team,
+        breif
+     FROM consultunts WHERE is_team = Iis_team AND deleted_at IS NULL;
 END//
 
 
@@ -1125,7 +1147,9 @@ CREATE  PROCEDURE `ProjectsCreate`(
     IN Iemail VARCHAR(250),
     IN Iwebsite VARCHAR(250),
     IN Iinstagram VARCHAR(250),
-    IN Itwitter VARCHAR(250)
+    IN Itwitter VARCHAR(250),
+    IN Ifeatured VARCHAR(250),
+    IN Iactive VARCHAR(250)
 )
 BEGIN
 INSERT INTO
@@ -1146,7 +1170,9 @@ INSERT INTO
         email,
         website,
         instagram,
-        twitter
+        twitter,
+        featured,
+        active
     )
 VALUES
     (
@@ -1166,7 +1192,9 @@ VALUES
         Iemail,
         Iwebsite,
         Iinstagram,
-        Itwitter
+        Itwitter,
+        Ifeatured,
+        Iactive
     );
 
 
@@ -1275,6 +1303,20 @@ BEGIN
     SELECT Iid;
 END//
 DELIMITER ;
+DROP PROCEDURE IF EXISTS DeleteRecord;
+
+DELIMITER //
+CREATE  PROCEDURE `DeleteRecord`(IN Itable VARCHAR(30) , IN Iid INT)
+BEGIN
+    SET @query = CONCAT('UPDATE ' , Itable , ' SET deleted_at = "', NOW() , '" WHERE id = ' , Iid); 
+    PREPARE stmt FROM @query;
+    EXECUTE stmt;
+    DEALLOCATE PREPARE stmt;
+
+    SELECT 1 deleted;
+END//
+DELIMITER ;
+
 
 
 
@@ -1471,29 +1513,35 @@ BEGIN
     JOIN user_notifications un 
     ON n.id = un.notification_id 
     WHERE un.user_id = IId;
-    
 END//
 DELIMITER ;
 
 
 
 # requests
-DROP PROCEDURE IF EXISTS UsersPending;
+DROP PROCEDURE IF EXISTS UsersRequests;
 DELIMITER //
-CREATE  PROCEDURE `UsersPending`()
+CREATE  PROCEDURE `UsersRequests`(Istatus VARCHAR(100))
 BEGIN
-    SELECT 
+    SELECT DISTINCT
         u.id ,
         u.name_ar ,
         u.email ,
         IF(us.end_at < CURRENT_DATE() , 'تجديد عضوية' , 'عضوية جديدة') AS type ,
         u.phone ,
+        u.status ,
         u.created_at 
     FROM users u 
-    JOIN user_subs us 
-    ON u.id = us.user_id  
-    WHERE active = 0 
-    OR us.end_at < CURRENT_DATE();
+    JOIN user_subs us
+    ON u.id = us.user_id
+    JOIN roles cur_role 
+        ON u.role_id = cur_role.id 
+    JOIN roles new_role ON us.role_id = new_role.id 
+    WHERE  
+    (CASE WHEN Istatus = '' THEN '1' ELSE u.status = Istatus END)
+    AND  new_role.id = cur_role.id
+    AND  u.active = 0
+    ;
 END//
 DELIMITER ;
 
@@ -1512,9 +1560,12 @@ DELIMITER ;
 
 DROP PROCEDURE IF EXISTS ProjectPending;
 DELIMITER //
-CREATE  PROCEDURE `ProjectPending`()
+CREATE  PROCEDURE `ProjectPending`(Istatus VARCHAR(100))
 BEGIN
-    SELECT p.id, u.name_ar , u.email , p.title , p.phone , p.created_at FROM projects p JOIN users u ON p.user_id = u.id WHERE p.active = 0 AND p.deleted_at IS NULL;
+    SELECT p.id, u.name_ar , u.email , p.title , p.phone , p.status ,p.created_at 
+    FROM projects p JOIN users u ON p.user_id = u.id WHERE 
+    p.active = 0 AND p.deleted_at IS NULL
+    AND (CASE WHEN Istatus = "" THEN '1' ELSE p.status = Istatus END);
 END//
 DELIMITER ;
 
@@ -1543,10 +1594,14 @@ DELIMITER ;
 
 
 DROP PROCEDURE IF EXISTS ProjectPendingApprove;
+DROP PROCEDURE IF EXISTS ProjectPendingAction;
 DELIMITER //
-CREATE  PROCEDURE `ProjectPendingApprove`(Iid int)
+CREATE  PROCEDURE `ProjectPendingAction`(Iid int , action VARCHAR(100))
 BEGIN
-    UPDATE projects SET active = TRUE WHERE id = Iid;
+    UPDATE projects SET 
+        active = CASE WHEN action = "approved" THEN 1 ELSE 0 END,
+        status = action
+        WHERE id = Iid;
     SELECT Iid;
 END//
 DELIMITER ;
@@ -1564,20 +1619,26 @@ BEGIN
 END//
 DELIMITER ;
 
-DROP PROCEDURE IF EXISTS UserPendingApprove;
+DROP PROCEDURE IF EXISTS UserPendingAction;
 DELIMITER //
-CREATE  PROCEDURE `UserPendingApprove`(Iid int)
+CREATE  PROCEDURE `UserPendingAction`(Iid int , Istatus VARCHAR(100))
 BEGIN
-    UPDATE users SET active = 1  WHERE id = Iid;
+    UPDATE users u JOIN user_subs us ON u.id = us.user_id SET 
+    status = Istatus ,
+    u.role_id = CASE WHEN Istatus = "approved" THEN us.role_id ELSE u.role_id END  ,
+    active = CASE WHEN Istatus = "approved" THEN 1 ELSE 0 END,
+    approved_at = CASE WHEN Istatus = "approved" THEN NOW() ELSE NULL END  
+    WHERE u.id = Iid;
+     
     SELECT Iid;
 END//
 DELIMITER ;
 
 DROP PROCEDURE IF EXISTS ServiceRequestPendingApprove;
 DELIMITER //
-CREATE  PROCEDURE `ServiceRequestPendingApprove`(Iid int)
+CREATE  PROCEDURE `ServiceRequestPendingApprove`(Iid int , Istatus VARCHAR(100))
 BEGIN
-    UPDATE user_services SET seen_at = now() WHERE id = Iid;
+    UPDATE user_services SET seen_at = now() , status = Istatus WHERE id = Iid;
     SELECT LAST_INSERT_ID() id;
 
 END//

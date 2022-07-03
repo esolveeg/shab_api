@@ -18,19 +18,37 @@ func NewArticleRepo(db *gorm.DB) ArticleRepo {
 	}
 }
 
-func (ar *ArticleRepo) ArticleCreate(req model.ArticleCreateReq) (uint, error) {
+func (ar *ArticleRepo) ArticleCreate(req *model.ArticleCreateReq) (uint, error) {
 	var id uint
-	err := ar.db.Raw("CALL ArticleCreate(?,?,?,?,?);",
+	err := ar.db.Raw("CALL ArticleCreate(?,?,?,?,?,?);",
 		req.UserId,
-		req.CategoryId,
+		req.CatId,
 		req.Title,
 		req.Img,
 		req.Content,
+		req.Status,
 	).Row().Scan(&id)
 	if err != nil {
 		return 0, err
 	}
 	return id, nil
+}
+
+func (ar *ArticleRepo) ArticleUpdate(id *int, req *model.ArticleCreateReq) (*uint, error) {
+	var resp uint
+	err := ar.db.Raw("CALL ArticleUpdate(?,?,?,?,?,?,?);",
+		id,
+		req.UserId,
+		req.CatId,
+		req.Title,
+		req.Img,
+		req.Content,
+		req.Status,
+	).Row().Scan(&resp)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
 }
 
 func (ar *ArticleRepo) ListByCategoryUserSearch(category uint, user uint, search string) (*[]model.ArticleList, error) {
@@ -67,7 +85,7 @@ func (ar *ArticleRepo) ArticleRead(id uint64) (*model.Article, error) {
 	err := ar.db.Raw("CALL ArticleRead(?);", id).Row().Scan(
 		&article.Id,
 		&article.UserId,
-		&article.CategoryId,
+		&article.CatId,
 		&article.UserName,
 		&article.UserImg,
 		&article.CategoryName,
