@@ -723,7 +723,7 @@ END IF;
         FROM articles a
            JOIN users u ON u.id = a.user_id
              JOIN categories c ON c.id = a.category_id
-            WHERE status = "active" ',
+            WHERE a.status = "active" AND a.deleted_at IS NULL',
         userCond,
         categoryCond,
         searchCond);
@@ -1534,6 +1534,7 @@ BEGIN
         u.name_ar ,
         u.email ,
         IF(us.end_at < CURRENT_DATE() , 'تجديد عضوية' , 'عضوية جديدة') AS type ,
+        new_role.name,
         u.phone ,
         u.status ,
         u.created_at 
@@ -1568,7 +1569,7 @@ DROP PROCEDURE IF EXISTS ProjectPending;
 DELIMITER //
 CREATE  PROCEDURE `ProjectPending`(Istatus VARCHAR(100))
 BEGIN
-    SELECT p.id, u.name_ar , u.email , p.title , p.phone , p.status ,p.created_at 
+    SELECT p.id, u.id user_id ,u.name_ar , u.email , p.title , p.phone , p.status ,p.created_at 
     FROM projects p JOIN users u ON p.user_id = u.id WHERE 
     p.active = 0 AND p.deleted_at IS NULL
     AND (CASE WHEN Istatus = "" THEN '1' ELSE p.status = Istatus END);
@@ -1581,9 +1582,13 @@ DELIMITER ;
 
 DROP PROCEDURE IF EXISTS ArticlePending;
 DELIMITER //
-CREATE  PROCEDURE `ArticlePending`( )
+CREATE  PROCEDURE `ArticlePending`(Istatus VARCHAR(100))
 BEGIN
-    SELECT a.id, u.name_ar , u.email , a.title , a.created_at FROM articles a JOIN users u ON a.user_id = u.id WHERE published_at IS NULL AND a.deleted_at IS NULL ;
+    SELECT a.id, u.name_ar , u.email , a.title ,a.status, a.created_at 
+    FROM articles a JOIN users u ON a.user_id = u.id
+    WHERE published_at IS NULL 
+    AND (CASE WHEN Istatus = "" THEN '1' ELSE a.status = Istatus END)
+    AND a.deleted_at IS NULL;
 END//
 DELIMITER ;
 
@@ -1591,7 +1596,8 @@ DROP PROCEDURE IF EXISTS ServiceRequestsPending;
 DELIMITER //
 CREATE  PROCEDURE `ServiceRequestsPending`()
 BEGIN
-    SELECT s.id, u.name_ar , u.email , s.breif , s.created_at FROM user_services s JOIN users u ON s.user_id = u.id WHERE s.seen_at IS NULL ;
+    SELECT s.id, u.id ,u.name_ar , u.email , s.breif , s.status , s.created_at FROM 
+    user_services s JOIN users u ON s.user_id = u.id;
 END//
 DELIMITER ;
 
@@ -1616,14 +1622,18 @@ DELIMITER ;
 
 
 
-DROP PROCEDURE IF EXISTS ArticlePendingApprove;
+DROP PROCEDURE IF EXISTS ArticlePendingAction;
 DELIMITER //
-CREATE  PROCEDURE `ArticlePendingApprove`(Iid int)
+CREATE  PROCEDURE `ArticlePendingAction`(Iid INT , Istatus VARCHAR(100))
 BEGIN
-    UPDATE articles SET status = 'active' , published_at = now() WHERE id = Iid;
+    UPDATE articles SET 
+        status = CASE WHEN Istatus = "approved" THEN 'active' ELSE Istatus END ,
+        published_at = CASE WHEN Istatus = "approved" THEN NOW() ELSE NULL END 
+    WHERE id = Iid;
     SELECT Iid;
 END//
 DELIMITER ;
+
 
 DROP PROCEDURE IF EXISTS UserPendingAction;
 DELIMITER //
@@ -1640,9 +1650,9 @@ BEGIN
 END//
 DELIMITER ;
 
-DROP PROCEDURE IF EXISTS ServiceRequestPendingApprove;
+DROP PROCEDURE IF EXISTS ServiceRequestPendingAction;
 DELIMITER //
-CREATE  PROCEDURE `ServiceRequestPendingApprove`(Iid int , Istatus VARCHAR(100))
+CREATE  PROCEDURE `ServiceRequestPendingAction`(Iid int , Istatus VARCHAR(100))
 BEGIN
     UPDATE user_services SET seen_at = now() , status = Istatus WHERE id = Iid;
     SELECT LAST_INSERT_ID() id;

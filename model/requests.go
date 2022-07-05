@@ -5,6 +5,7 @@ type UserPending struct {
 	NameAr    string
 	Email     string
 	Type      string
+	RoleName  string
 	Phone     string
 	Status    string
 	CreatedAt string
@@ -20,9 +21,11 @@ type ArticlePending struct {
 	Email     string
 	Title     string
 	CreatedAt string
+	Status    string
 }
 type ProjectPending struct {
 	Id        int
+	UserId    int
 	NameAr    string
 	Email     string
 	Title     string
@@ -32,8 +35,10 @@ type ProjectPending struct {
 }
 type ServicePending struct {
 	Id        int
+	UserId    int
 	NameAr    string
 	Email     string
+	Status    string
 	Breif     string
 	CreatedAt string
 }

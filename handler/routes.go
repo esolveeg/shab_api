@@ -52,7 +52,7 @@ func (h *Handler) Register(v1 *echo.Group) {
 
 	requests := api.Group("/requests")
 	requests.GET("/services", h.ServicesPendingListAll)
-	requests.PUT("/services/:id", h.ServicesPendingAction)
+	requests.PUT("/services/:action/:id", h.ServicesPendingAction)
 	requests.GET("/services/:id", h.ServicesPendingFind)
 	requests.GET("/users", h.UsersPendingListAll)
 	requests.GET("/users/upgrades", h.UsersPendingUpgradeListAll)
@@ -61,7 +61,7 @@ func (h *Handler) Register(v1 *echo.Group) {
 	requests.GET("/projects", h.ProjectsPendingListAll)
 	requests.PUT("/projects/:action/:id", h.ProjectsPendingAction)
 	requests.GET("/articles", h.ArticlesPendingListAll)
-	requests.PUT("/articles/:id", h.ArticlesPendingApprove)
+	requests.PUT("/articles/:action/:id", h.ArticlesPendingAction)
 	requests.GET("/contacts", h.ContactsPendingListAll)
 
 	//email routes

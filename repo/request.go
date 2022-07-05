@@ -99,6 +99,7 @@ func (ur *RequestRepo) ListPendingUsers(status *string) (*[]model.UserPending, e
 			&u.NameAr,
 			&u.Email,
 			&u.Type,
+			&u.RoleName,
 			&u.Phone,
 			&u.Status,
 			&u.CreatedAt,
@@ -138,9 +139,9 @@ func (ur *RequestRepo) ListPendingUpgrades(status *string) (*[]model.UserPending
 	return &resp, nil
 }
 
-func (ur *RequestRepo) ListPendingArticles() (*[]model.ArticlePending, error) {
+func (ur *RequestRepo) ListPendingArticles(status *string) (*[]model.ArticlePending, error) {
 	var resp []model.ArticlePending
-	rows, err := ur.db.Raw("CALL ArticlePending();").Rows()
+	rows, err := ur.db.Raw("CALL ArticlePending(?);", status).Rows()
 	if err != nil {
 		utils.NewError(err)
 		return nil, err
@@ -153,6 +154,7 @@ func (ur *RequestRepo) ListPendingArticles() (*[]model.ArticlePending, error) {
 			&u.NameAr,
 			&u.Email,
 			&u.Title,
+			&u.Status,
 			&u.CreatedAt,
 		)
 		resp = append(resp, u)
@@ -173,6 +175,7 @@ func (ur *RequestRepo) ListPendingProjects(status *string) (*[]model.ProjectPend
 		var u model.ProjectPending
 		rows.Scan(
 			&u.Id,
+			&u.UserId,
 			&u.NameAr,
 			&u.Email,
 			&u.Title,
@@ -198,9 +201,11 @@ func (ur *RequestRepo) ListPendingServices() (*[]model.ServicePending, error) {
 		var u model.ServicePending
 		rows.Scan(
 			&u.Id,
+			&u.UserId,
 			&u.NameAr,
 			&u.Email,
 			&u.Breif,
+			&u.Status,
 			&u.CreatedAt,
 		)
 		resp = append(resp, u)
@@ -211,7 +216,7 @@ func (ur *RequestRepo) ListPendingServices() (*[]model.ServicePending, error) {
 
 func (ur *RequestRepo) ApprovePendingService(id *int, action *string) (*int, error) {
 	var resp int
-	err := ur.db.Raw("CALL ServiceRequestPendingApprove(? , ?);", id, action).Row().Scan(&resp)
+	err := ur.db.Raw("CALL ServiceRequestPendingAction(? , ?);", id, action).Row().Scan(&resp)
 	if err != nil {
 		utils.NewError(err)
 		return nil, err
@@ -248,9 +253,9 @@ func (ur *RequestRepo) PendingProjectAction(id *int, action *string) (*int, erro
 	return &resp, nil
 }
 
-func (ur *RequestRepo) ApprovePendingArticle(id uint64) (*int, error) {
+func (ur *RequestRepo) ApprovePendingArticle(id *int, action *string) (*int, error) {
 	var resp int
-	err := ur.db.Raw("CALL ArticlePendingApprove(?);", id).Row().Scan(&resp)
+	err := ur.db.Raw("CALL ArticlePendingAction(? , ?);", id, action).Row().Scan(&resp)
 	if err != nil {
 		utils.NewError(err)
 		return nil, err

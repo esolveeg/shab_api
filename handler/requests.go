@@ -47,8 +47,8 @@ func (h *Handler) ProjectsPendingListAll(c echo.Context) error {
 }
 
 func (h *Handler) ArticlesPendingListAll(c echo.Context) error {
-
-	r, err := h.requestRepo.ListPendingArticles()
+	status := c.QueryParam("status")
+	r, err := h.requestRepo.ListPendingArticles(&status)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
 	}
@@ -131,12 +131,13 @@ func (h *Handler) ProjectsPendingAction(c echo.Context) error {
 	return c.JSON(http.StatusOK, r)
 }
 
-func (h *Handler) ArticlesPendingApprove(c echo.Context) error {
-	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
+func (h *Handler) ArticlesPendingAction(c echo.Context) error {
+	action := c.Param("action")
+	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
 	}
-	r, err := h.requestRepo.ApprovePendingArticle(id)
+	r, err := h.requestRepo.ApprovePendingArticle(&id, &action)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
 	}
