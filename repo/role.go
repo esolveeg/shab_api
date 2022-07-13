@@ -20,9 +20,9 @@ func NewRoleRepo(db *gorm.DB) RoleRepo {
 	}
 }
 
-func (ur *RoleRepo) ListAll(active *bool) (*[]model.Role, error) {
+func (ur *RoleRepo) ListAll(active *bool, priceFrom int, priceTo int, name string) (*[]model.Role, error) {
 	var resp []model.Role
-	rows, err := ur.db.Raw("CALL RolesList(?)", active).Rows()
+	rows, err := ur.db.Raw("CALL RolesList(? , ? , ? , ?)", active, name, priceFrom, priceTo).Rows()
 	if err != nil {
 		utils.NewError(err)
 		return nil, err
@@ -117,9 +117,9 @@ func (ur *RoleRepo) ListAllFeatures() (*[]model.Feature, error) {
 	return &resp, nil
 }
 
-func (ur *RoleRepo) ListFeaturesByRole(role *int) (*[]model.Feature, error) {
+func (ur *RoleRepo) ListFeaturesByRole(role *int, name string) (*[]model.Feature, error) {
 	var resp []model.Feature
-	rows, err := ur.db.Raw("CALL FeaturesListByRole(?)", role).Rows()
+	rows, err := ur.db.Raw("CALL FeaturesListByRole(? , ? )", role, name).Rows()
 	if err != nil {
 		utils.NewError(err)
 		return nil, err

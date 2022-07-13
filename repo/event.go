@@ -20,8 +20,17 @@ func NewEventRepo(db *gorm.DB) EventRepo {
 	}
 }
 
-func (ur *EventRepo) ListAll() (*[]model.Event, error) {
-	rows, err := ur.db.Raw("CALL EventsList(0)").Rows()
+func (ur *EventRepo) ListAll(req *model.EventListReq) (*[]model.Event, error) {
+	rows, err := ur.db.Raw("CALL EventsList(? , ? ,? , ? , ? , ? , ? , ?)",
+		req.Featured,
+		req.Title,
+		req.Status,
+		req.Category,
+		req.DateFrom,
+		req.DateTo,
+		req.PriceFrom,
+		req.PriceTo,
+	).Rows()
 	if err != nil {
 		utils.NewError(err)
 		return nil, err

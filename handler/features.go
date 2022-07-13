@@ -15,7 +15,7 @@ func (h *Handler) FeaturesListByRole(c echo.Context) error {
 		r, _ := strconv.Atoi(c.QueryParam("Role_id"))
 		role = &r
 	}
-	features, err := h.roleRepo.ListFeaturesByRole(role)
+	features, err := h.roleRepo.ListFeaturesByRole(role, c.QueryParam("Name"))
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
 	}

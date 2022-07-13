@@ -51,9 +51,15 @@ func (ar *ArticleRepo) ArticleUpdate(id *int, req *model.ArticleCreateReq) (*uin
 	return &resp, nil
 }
 
-func (ar *ArticleRepo) ListByCategoryUserSearch(category uint, user uint, search string) (*[]model.ArticleList, error) {
+func (ar *ArticleRepo) ListByCategoryUserSearch(req *model.ArticlesListReq) (*[]model.ArticleList, error) {
 	var articles []model.ArticleList
-	rows, err := ar.db.Raw("CALL ArticleListByCategoryUserSearch(? , ? , ?);", category, user, search).Rows()
+	rows, err := ar.db.Raw("CALL ArticleListByCategoryUserSearch(? , ? , ? , ? , ?);",
+	req.Category,
+	req.UserName,
+	req.DateFrom,
+	req.DateTo,
+	req.Search,
+	).Rows()
 	defer rows.Close()
 	for rows.Next() {
 		var article model.ArticleList

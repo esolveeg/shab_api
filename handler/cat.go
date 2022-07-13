@@ -10,7 +10,7 @@ import (
 )
 
 func (h *Handler) CatsListByType(c echo.Context) error {
-	r, err := h.catRepo.CatListByType(c.QueryParam("Type"))
+	r, err := h.catRepo.CatListByType(c.QueryParam("type"))
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
 	}

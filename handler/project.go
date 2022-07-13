@@ -13,10 +13,10 @@ import (
 )
 
 func (h *Handler) ProjectListByCategoryUserSearch(c echo.Context) error {
-	category, _ := strconv.ParseUint(c.QueryParam("category"), 10, 64)
-	city, _ := strconv.ParseUint(c.QueryParam("city"), 10, 64)
+	category, _ := strconv.ParseUint(c.QueryParam("CatId"), 10, 64)
+	city, _ := strconv.ParseUint(c.QueryParam("CityId"), 10, 64)
 	user, _ := strconv.ParseUint(c.QueryParam("user"), 10, 64)
-	projects, err := h.projectRepo.ListByCategoryUserSearch(category, city, user, c.QueryParam("search"))
+	projects, err := h.projectRepo.ListByCategoryUserSearch(category, city, user, c.QueryParam("Name"), c.QueryParam("UserName"), c.QueryParam("Status"))
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
 	}

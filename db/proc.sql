@@ -308,7 +308,7 @@ DELIMITER ;
 DROP PROCEDURE IF EXISTS RichTextListByPage;
 DELIMITER //
 
-CREATE PROCEDURE RichTextListByPage(IN Ipage VARCHAR(100))
+CREATE PROCEDURE RichTextListByPage(IN Ipage VARCHAR(100) , IN Ititle  VARCHAR(250) , IN Ivalue  TEXT)
 BEGIN
     SELECT 
         r.id,
@@ -317,7 +317,9 @@ BEGIN
         IFNULL(r.image , "") image,
         IFNULL(r.icon , "") icon
         FROM rich_text r
-            WHERE page = Ipage;
+            WHERE page = Ipage
+            AND CASE WHEN Ititle = '' THEN 1 = 1 ELSE  title LIKE CONCAT('%' , Ititle , '%') END
+            AND CASE WHEN Ivalue = '' THEN 1 = 1 ELSE  value LIKE CONCAT('%' , Ivalue , '%') END;
 END //
 
 DELIMITER ;
@@ -351,11 +353,14 @@ DROP PROCEDURE IF EXISTS RolesList;
 
 
 DELIMITER //
-CREATE  PROCEDURE `RolesList`(IN active BOOLEAN)
+CREATE  PROCEDURE `RolesList`(IN active BOOLEAN , IN Iname VARCHAR(250), IN priceFrom FLOAT , IN priceTo FLOAT)
 BEGIN
     SELECT r.id ,r.name ,r.image ,r.breif ,r.price , r.color, r.active FROM roles r 
     WHERE 
-    (CASE WHEN active IS NULL THEN '1' ELSE r.active = active END);
+    (CASE WHEN active IS NULL THEN '1' ELSE r.active = active END)
+    AND CASE WHEN Iname = '' THEN 1 = 1 ELSE  r.name LIKE CONCAT('%' , Iname , '%') END
+    AND CASE WHEN priceFrom = 0 THEN 1 = 1 ELSE  r.price >= priceFrom END
+    AND CASE WHEN priceTo = 0 THEN 1 = 1 ELSE  r.price <= priceTo END;
 END//
 DELIMITER ;
 
@@ -366,19 +371,36 @@ DELIMITER ;
 DROP PROCEDURE IF EXISTS EventsList;
 DELIMITER //
 
-CREATE PROCEDURE EventsList(IN featured BOOLEAN)
+CREATE PROCEDURE EventsList(
+    IN Ifeatured BOOLEAN ,
+    IN Ititle VARCHAR(100) ,
+    IN Istatus VARCHAR(100) ,
+    IN Icategory INT,
+    IN dateFrom VARCHAR(100),
+    IN dateTo VARCHAR(100),
+    IN priceFrom FLOAT,
+    IN priceTo FLOAT
+ )
 BEGIN
-
-    IF featured THEN
-	SELECT e.id ,e.title,e.img ,IFNULL(e.breif,"") ,day(e.date) d,month(e.date) m,year(e.date) y, e.price ,e.featured ,e.created_at ,  c.name cat_name , c.id cat_id  FROM events e JOIN categories c on e.category_id = c.id WHERE e.featured = 1 AND  e.deleted_at IS NULL ORDER BY e.date DESC;
-    ELSE 
-	SELECT e.id ,e.title,e.img ,IFNULL(e.breif,"") ,day(e.date) d,month(e.date) m,year(e.date) y, e.price ,e.featured ,e.created_at ,  c.name cat_name , c.id cat_id  FROM events e JOIN categories c on e.category_id = c.id WHERE  e.deleted_at IS NULL ORDER BY e.date DESC;
-
-    END IF;
+	SELECT e.id ,e.title,e.img ,IFNULL(e.breif,"") ,day(e.date) d,
+    month(e.date) m,year(e.date) y, e.price ,e.featured ,e.created_at ,
+    c.name cat_name , c.id cat_id  
+    FROM events e 
+    JOIN categories c 
+        on e.category_id = c.id 
+    WHERE e.deleted_at IS NULL 
+    AND CASE WHEN Ititle = '' THEN 1 = 1 ELSE  title LIKE CONCAT('%' , Ititle , '%') END
+    AND CASE WHEN Ifeatured IS NULL THEN 1 = 1 ELSE  featured = Ifeatured END
+    AND CASE WHEN Icategory = 0 THEN 1 = 1 ELSE  category_id = Icategory  END
+    AND CASE WHEN dateFrom = '' THEN 1 = 1 ELSE  e.date >= dateFrom  END
+    AND CASE WHEN dateTo = '' THEN 1 = 1 ELSE  e.date <= dateTo  END
+    AND CASE WHEN priceFrom = 0 THEN 1 = 1 ELSE  e.price >= priceFrom  END
+    AND CASE WHEN priceTo = 0 THEN 1 = 1 ELSE  e.price <= priceTo  END
+    ORDER BY e.date DESC;
 END //
 
 DELIMITER ;
-
+CALL EventsList(NULL , '' ,'' , 0 , '' , '' , 0 , 0);
 # EventRead
 
 DELIMITER ;
@@ -524,9 +546,14 @@ DELIMITER ;
 DROP PROCEDURE IF EXISTS VideosListByCategory;
 
 DELIMITER //
-CREATE  PROCEDURE `VideosListByCategory`(IN ICategory INT)
+CREATE  PROCEDURE `VideosListByCategory`(IN ICategory INT , IN Iname VARCHAR(200))
 BEGIN
-    SELECT id , name ,url ,image ,breif , category_id FROM videos WHERE deleted_at IS NULL AND (CASE WHEN ICategory = 0 THEN '1' ELSE category_id = ICategory END);
+    SELECT v.id , v.name ,c.name category_name , v.url , v.image , v.breif , v.category_id 
+    FROM videos v 
+    JOIN categories c ON v.category_id = c.id
+    WHERE deleted_at IS NULL 
+    AND (CASE WHEN ICategory = 0 THEN '1' ELSE category_id = ICategory END)
+    AND (CASE WHEN Iname = '' THEN '1' ELSE v.name LIKE CONCAT('%' , Iname , '%') END);
 END//
 DELIMITER ;
 
@@ -598,21 +625,36 @@ END//
 DELIMITER ;
 DROP PROCEDURE IF EXISTS ProjectsListByCategoryUserSearch;
 DELIMITER //
-CREATE PROCEDURE ProjectsListByCategoryUserSearch(IN ICategory INT ,IN ICity INT , IN Iuser INT , IN search VARCHAR(200)) 
+CREATE PROCEDURE ProjectsListByCategoryUserSearch(
+    IN ICategory INT ,
+    IN ICity INT ,
+    IN Iuser INT ,
+    IN search VARCHAR(200),
+    IN userName VARCHAR(200),
+    IN Istatus VARCHAR(200)
+) 
 BEGIN
 
     SELECT 
-         id,
-         title,
-         status,
-         logo,
-         img
+         p.id,
+         p.title,
+         u.name user_name,
+         c.name category_name,
+         ci.name city_name,
+         p.status,
+         p.logo,
+         p.img
         FROM projects p
-            WHERE active = 1
+            JOIN users u ON p.user_id = u.id
+            JOIN categories c ON p.category_id = c.id
+            JOIN cities ci ON p.city_id = ci.id
+            WHERE p.active = 1
             AND p.user_id = CASE WHEN Iuser = 0 THEN p.user_id ELSE Iuser END
             AND p.category_id = CASE WHEN ICategory = 0 THEN p.category_id ELSE ICategory END
             AND p.city_id = CASE WHEN ICity = 0 THEN p.city_id ELSE ICity END
-            AND CASE WHEN search = '' THEN 1 = 1 ELSE  title LIKE CONCAT('"%' , search , '%"') END;
+            AND CASE WHEN search = '' THEN 1 = 1 ELSE  p.title LIKE CONCAT('%' , search , '%') END
+            AND CASE WHEN userName = '' THEN 1 = 1 ELSE  u.name LIKE CONCAT('%' , userName , '%') END
+            AND CASE WHEN Istatus = '' THEN 1 = 1 ELSE  p.status =  Istatus END;
 END//
 
 DELIMITER ;
@@ -695,23 +737,15 @@ DELIMITER ;
 
 DROP PROCEDURE IF EXISTS ArticleListByCategoryUserSearch;
 DELIMITER //
-CREATE PROCEDURE ArticleListByCategoryUserSearch(IN ICategory INT , IN Iuser INT , IN search VARCHAR(200)) 
+CREATE PROCEDURE ArticleListByCategoryUserSearch(
+    IN ICategory INT ,
+    IN IUserName VARCHAR(200),
+    IN dateFrom VARCHAR(200),
+    IN dateTo VARCHAR(200),
+    IN search VARCHAR(200)
+    ) 
 BEGIN
-DECLARE categoryCond VARCHAR(50) DEFAULT '';
-DECLARE userCond VARCHAR(50) DEFAULT '';
-DECLARE searchCond VARCHAR(50) DEFAULT '';
-IF ICategory != 0 THEN
-    SET categoryCond = CONCAT('AND category_id = ' , ICategory);
-END IF;
-IF Iuser != 0 THEN
-    SET userCond = CONCAT('AND user_id = ' , IUser);
-END IF;
-IF search != '' THEN
-    SET searchCond = CONCAT('AND title LIKE "%' , search , '%"');
-END IF;
-
-    SET @query = CONCAT(
-        'SELECT 
+    SELECT 
          a.id,
          c.name categoryName,
          u.name_ar userName,
@@ -723,22 +757,17 @@ END IF;
         FROM articles a
            JOIN users u ON u.id = a.user_id
              JOIN categories c ON c.id = a.category_id
-            WHERE a.status = "active" AND a.deleted_at IS NULL',
-        userCond,
-        categoryCond,
-        searchCond);
-         
-    PREPARE stmt FROM @query;
-    EXECUTE stmt;
-    DEALLOCATE PREPARE stmt;
+            WHERE a.status = "active" AND a.deleted_at IS NULL
+            AND CASE WHEN ICategory = 0 THEN 1 = 1 ELSE a.category_id = ICategory END
+            AND CASE WHEN search = '' THEN 1 = 1 ELSE  a.title LIKE CONCAT('%' , search , '%') END
+            AND CASE WHEN IUserName = '' THEN 1 = 1 ELSE  u.name_ar LIKE CONCAT('%' , IUserName , '%') END
+            AND CASE WHEN dateFrom = '' THEN 1 = 1 ELSE  a.Published_at >= dateFrom  END
+            AND CASE WHEN dateTo = '' THEN 1 = 1 ELSE  a.Published_at <= dateTo  END;
     END//
 
 DELIMITER ;
 
-
 DROP PROCEDURE IF EXISTS ArticleRead;
-
-
 DELIMITER //
 CREATE  PROCEDURE `ArticleRead`(IN Iid INT)
 BEGIN
@@ -1267,10 +1296,12 @@ DELIMITER ;
 DROP PROCEDURE IF EXISTS FeaturesListByRole;
 
 DELIMITER //
-CREATE  PROCEDURE `FeaturesListByRole`(IN role INT)
+CREATE  PROCEDURE `FeaturesListByRole`(IN role INT , IN Iname VARCHAR(250))
 BEGIN
-    
-    SELECT * from features WHERE (CASE WHEN role IS NULL THEN '1' ELSE level <= (role -1) END);
+    SELECT * from features WHERE 
+        (CASE WHEN role IS NULL THEN '1' ELSE level <= (role -1) END)
+        AND CASE WHEN Iname = '' THEN 1 = 1 ELSE  name LIKE CONCAT('%' , Iname , '%') END;
+
 END//
 DELIMITER ;
 
@@ -1330,9 +1361,14 @@ DELIMITER ;
 DROP PROCEDURE IF EXISTS ServicesListAll;
 
 DELIMITER //
-CREATE  PROCEDURE `ServicesListAll`()
+CREATE  PROCEDURE `ServicesListAll`(IN Iname VARCHAR(250))
 BEGIN
-    SELECT id,name,icon from services;
+    SELECT id,name,icon 
+    FROM services 
+    WHERE CASE WHEN Iname = '' THEN 1 = 1 ELSE
+      name LIKE CONCAT('%' , Iname , '%') 
+    END;
+    
 END//
 DELIMITER ;
 

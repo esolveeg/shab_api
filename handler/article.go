@@ -11,11 +11,11 @@ import (
 )
 
 func (h *Handler) ArticleListByCategoryUserSearch(c echo.Context) error {
-	req := new(model.ProjectListReq)
+	req := new(model.ArticlesListReq)
 	if err := c.Bind(req); err != nil {
 		return c.JSON(http.StatusUnprocessableEntity, utils.NewError(err))
 	}
-	articles, err := h.articleRepo.ListByCategoryUserSearch(req.Category, req.User, req.Search)
+	articles, err := h.articleRepo.ListByCategoryUserSearch(req)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
 	}

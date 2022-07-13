@@ -87,9 +87,9 @@ func (ur *RichTextRepo) GetByKey(key string) (*model.RichText, error) {
 	return &rec, nil
 }
 
-func (ur *RichTextRepo) ListByPage(page string) (*[]model.RichText, error) {
+func (ur *RichTextRepo) ListByPage(page string, title string, value string) (*[]model.RichText, error) {
 	var resp []model.RichText
-	rows, err := ur.db.Raw("CALL RichTextListByPage(?);", page).Rows()
+	rows, err := ur.db.Raw("CALL RichTextListByPage(? , ? , ?);", page, title, value).Rows()
 	if err != nil {
 		utils.NewError(err)
 		return nil, err

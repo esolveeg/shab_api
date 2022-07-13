@@ -17,6 +17,16 @@ type Event struct {
 	Video      string
 }
 
+type EventListReq struct {
+	Featured  *bool   `query:"Featured"`
+	Title     string  `query:"Title"`
+	Status    string  `query:"Status"`
+	Category  int     `query:"CatId"`
+	PriceFrom float64 `query:"PriceFrom"`
+	PriceTo   float64 `query:"PriceTo"`
+	DateFrom  string  `query:"DateFrom"`
+	DateTo    string  `query:"DateTo"`
+}
 type EventRequest struct {
 	Title    string
 	Img      string `json:"Image"`

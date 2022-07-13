@@ -16,6 +16,14 @@ type Article struct {
 	Views        int
 }
 
+
+type ArticlesListReq struct {
+	Category int `query:"CatId"`
+    UserName string `query:"UserName"`
+    DateFrom string `query:"DateFrom"`
+    DateTo string `query:"DateTo"`
+    Search string `query:"Name"`
+}
 type ArticleList struct {
 	Id           uint
 	CategoryName string

@@ -10,7 +10,7 @@ import (
 )
 
 func (h *Handler) ServicesListAll(c echo.Context) error {
-	services, err := h.serviceRepo.ListAllServicces()
+	services, err := h.serviceRepo.ListAllServicces(c.QueryParam("Name"))
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
 	}

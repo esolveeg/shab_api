@@ -42,9 +42,9 @@ func (pr *ProjectRepo) ListFeatured() (*[]model.ProjectList, error) {
 	return &resp, nil
 }
 
-func (pr *ProjectRepo) ListByCategoryUserSearch(category uint64, city uint64, user uint64, search string) (*[]model.ProjectList, error) {
+func (pr *ProjectRepo) ListByCategoryUserSearch(category uint64, city uint64, user uint64, search string, userName string, status string) (*[]model.ProjectList, error) {
 	var resp []model.ProjectList
-	rows, err := pr.db.Raw("CALL ProjectsListByCategoryUserSearch(? , ? , ? , ?);", category, city, user, search).Rows()
+	rows, err := pr.db.Raw("CALL ProjectsListByCategoryUserSearch(? , ? , ? , ? , ? , ?);", category, city, user, search, userName, status).Rows()
 	if err != nil {
 		utils.NewError(err)
 		return nil, err
@@ -52,13 +52,20 @@ func (pr *ProjectRepo) ListByCategoryUserSearch(category uint64, city uint64, us
 	defer rows.Close()
 	for rows.Next() {
 		var rec model.ProjectList
-		rows.Scan(
+		err = rows.Scan(
 			&rec.Id,
 			&rec.Title,
+			&rec.UserName,
+			&rec.CategoryName,
+			&rec.CityName,
 			&rec.Status,
 			&rec.Logo,
 			&rec.Img,
 		)
+		if err != nil {
+			utils.NewError(err)
+			return nil, err
+		}
 		rec.Img = config.Config("BASE_URL") + rec.Img
 		rec.Logo = config.Config("BASE_URL") + rec.Logo
 

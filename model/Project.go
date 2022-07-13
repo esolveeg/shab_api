@@ -1,11 +1,14 @@
 package model
 
 type ProjectList struct {
-	Id     uint
-	Title  string
-	Status string
-	Logo   string
-	Img    string
+	Id           uint
+	Title        string
+	UserName     string
+	CategoryName string
+	CityName     string
+	Status       string
+	Logo         string
+	Img          string
 }
 
 type Project struct {

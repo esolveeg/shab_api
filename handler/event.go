@@ -11,7 +11,12 @@ import (
 )
 
 func (h *Handler) EventsListAll(c echo.Context) error {
-	events, err := h.eventRepo.ListAll()
+	r := new(model.EventListReq)
+	if err := c.Bind(r); err != nil {
+		return c.JSON(http.StatusUnprocessableEntity, utils.NewError(err))
+	}
+	fmt.Println(r)
+	events, err := h.eventRepo.ListAll(r)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
 	}

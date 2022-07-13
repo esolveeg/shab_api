@@ -18,9 +18,9 @@ func NewServiceRepo(db *gorm.DB) ServiceRepo {
 	}
 }
 
-func (ur *ServiceRepo) ListAllServicces() (*[]model.Service, error) {
+func (ur *ServiceRepo) ListAllServicces(name string) (*[]model.Service, error) {
 	var resp []model.Service
-	rows, err := ur.db.Raw("CALL ServicesListAll()").Rows()
+	rows, err := ur.db.Raw("CALL ServicesListAll(?)", name).Rows()
 	if err != nil {
 		utils.NewError(err)
 		return nil, err
