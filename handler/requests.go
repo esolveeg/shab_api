@@ -11,8 +11,11 @@ import (
 )
 
 func (h *Handler) ServicesPendingListAll(c echo.Context) error {
-
-	r, err := h.requestRepo.ListPendingServices()
+	req := new(model.ServicePendingReq)
+	if err := c.Bind(req); err != nil {
+		return c.JSON(http.StatusUnprocessableEntity, utils.NewError(err))
+	}
+	r, err := h.requestRepo.ListPendingServices(req)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
 	}
@@ -20,17 +23,22 @@ func (h *Handler) ServicesPendingListAll(c echo.Context) error {
 }
 
 func (h *Handler) UsersPendingListAll(c echo.Context) error {
-	status := c.QueryParam("status")
-	r, err := h.requestRepo.ListPendingUsers(&status)
+	req := new(model.PendingUsersListReq)
+	if err := c.Bind(req); err != nil {
+		return c.JSON(http.StatusUnprocessableEntity, utils.NewError(err))
+	}
+	r, err := h.requestRepo.ListPendingUsers(req)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
 	}
 	return c.JSON(http.StatusOK, r)
 }
 func (h *Handler) UsersPendingUpgradeListAll(c echo.Context) error {
-	status := c.QueryParam("status")
-
-	r, err := h.requestRepo.ListPendingUpgrades(&status)
+	req := new(model.UsersUpgratedListReq)
+	if err := c.Bind(req); err != nil {
+		return c.JSON(http.StatusUnprocessableEntity, utils.NewError(err))
+	}
+	r, err := h.requestRepo.ListPendingUpgrades(req)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
 	}

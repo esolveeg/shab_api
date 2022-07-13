@@ -10,6 +10,31 @@ type UserPending struct {
 	Status    string
 	CreatedAt string
 }
+type UsersUpgratedListReq struct {
+	Status   string `query:"Status"`
+	Name     string `query:"Name"`
+	Email    string `query:"Email"`
+	Phone    string `query:"Phone"`
+	Role     int    `query:"Role_id"`
+	NewRole  int    `query:"NewRole"`
+	DateFrom string `query:"DateFrom"`
+	DateTo   string `query:"DateTo"`
+}
+type ServicePendingReq struct {
+	Name  string `query:"Name"`
+	Email string `query:"Email"`
+	Breif string `query:"Breif"`
+}
+type PendingUsersListReq struct {
+	Status   string `query:"Status"`
+	Name     string `query:"Name"`
+	Email    string `query:"Email"`
+	Role     int    `query:"Role_id"`
+	Phone    string `query:"Phone"`
+	DateFrom string `query:"DateFrom"`
+	DateTo   string `query:"DateTo"`
+}
+
 type ApproveServiceReq struct {
 	Msg    string
 	FromId int

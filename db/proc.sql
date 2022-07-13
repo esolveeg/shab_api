@@ -891,7 +891,17 @@ DELIMITER ;
 
 DROP PROCEDURE IF EXISTS UsersPendingUpgrades;
 DELIMITER // 
-CREATE PROCEDURE UsersPendingUpgrades(Istatus VARCHAR(100)) BEGIN
+CREATE PROCEDURE UsersPendingUpgrades(
+    Istatus VARCHAR(100),
+    Iname_ar VARCHAR(200),
+    Iemail VARCHAR(200),
+    Iphone VARCHAR(200),
+    Irole VARCHAR(200),
+    InewRole VARCHAR(200),
+    dateFrom VARCHAR(200),
+    dateTo VARCHAR(200)
+    
+    ) BEGIN
     SELECT u.id , u.name_ar , u.email , u.phone , cur_role.name  , u.role_id   , new_role.name , us.role_id , us.price , 
     u.status , us.created_at 
     FROM users u 
@@ -901,10 +911,16 @@ CREATE PROCEDURE UsersPendingUpgrades(Istatus VARCHAR(100)) BEGIN
         ON u.role_id = cur_role.id 
     JOIN roles new_role ON us.role_id = new_role.id WHERE 
     (CASE WHEN Istatus = '' THEN '1' ELSE u.status = Istatus END)
+    AND (CASE WHEN Iname_ar = '' THEN 1 = 1 ELSE  u.name_ar LIKE CONCAT('%' , Iname_ar , '%') END)
+    AND (CASE WHEN Iemail = '' THEN 1 = 1 ELSE  u.email LIKE CONCAT('%' , Iemail , '%') END)
+    AND (CASE WHEN Iphone = '' THEN 1 = 1 ELSE  u.phone LIKE CONCAT('%' , Iphone , '%') END)
+    AND (CASE WHEN Irole = 0 THEN 1 = 1 ELSE  cur_role.id = Irole END)
+    AND (CASE WHEN InewRole = 0 THEN 1 = 1 ELSE  new_role.id = InewRole END)
+    AND (CASE WHEN dateFrom = '' THEN '1' ELSE us.created_at >= dateFrom END)
+    AND (CASE WHEN dateTo = '' THEN '1' ELSE us.created_at <= dateTo END)
     AND new_role.id != cur_role.id;
 END //
 DELIMITER ;
-
 DROP PROCEDURE IF EXISTS ContactRequestsList;
 DELIMITER // 
 CREATE PROCEDURE ContactRequestsList(Istatus VARCHAR(100)) BEGIN
@@ -1560,10 +1576,19 @@ DELIMITER ;
 
 
 
+
 # requests
 DROP PROCEDURE IF EXISTS UsersRequests;
 DELIMITER //
-CREATE  PROCEDURE `UsersRequests`(Istatus VARCHAR(100))
+CREATE  PROCEDURE `UsersRequests`(
+    Istatus VARCHAR(100),
+    Iname_ar VARCHAR(200),
+    Iemail VARCHAR(100),
+    Irole INT,
+    Iphone VARCHAR(100),
+    dateFrom VARCHAR(100),
+    dateTo VARCHAR(100)
+)
 BEGIN
     SELECT DISTINCT
         u.id ,
@@ -1580,11 +1605,15 @@ BEGIN
     JOIN roles cur_role 
         ON u.role_id = cur_role.id 
     JOIN roles new_role ON us.role_id = new_role.id 
-    WHERE  
-    (CASE WHEN Istatus = '' THEN '1' ELSE u.status = Istatus END)
-    AND  new_role.id = cur_role.id
+    WHERE   new_role.id = cur_role.id
     AND  u.active = 0
-    ;
+    AND (CASE WHEN Istatus = '' THEN '1' ELSE u.status = Istatus END)
+    AND (CASE WHEN Iname_ar = '' THEN '1' ELSE u.name_ar LIKE CONCAT('%' ,Iname_ar , '%')  END)
+    AND (CASE WHEN Iemail = '' THEN '1' ELSE u.email LIKE CONCAT('%' ,Iemail , '%')  END)
+    AND (CASE WHEN Irole = 0 THEN '1' ELSE u.role_id  = Irole  END)
+    AND (CASE WHEN Iphone = '' THEN '1' ELSE u.phone LIKE CONCAT('%' ,Iphone , '%') END)
+    AND (CASE WHEN dateFrom = '' THEN '1' ELSE u.created_at >= dateFrom END)
+    AND (CASE WHEN dateTo = '' THEN '1' ELSE u.created_at <= dateTo END);
 END//
 DELIMITER ;
 
@@ -1630,18 +1659,19 @@ DELIMITER ;
 
 DROP PROCEDURE IF EXISTS ServiceRequestsPending;
 DELIMITER //
-CREATE  PROCEDURE `ServiceRequestsPending`()
+CREATE  PROCEDURE `ServiceRequestsPending`(Iname_ar VARCHAR(200),Iemail VARCHAR(100),Ibreif VARCHAR(100))
 BEGIN
+
     SELECT s.id, u.id ,u.name_ar , u.email , s.breif , s.status , s.created_at FROM 
-    user_services s JOIN users u ON s.user_id = u.id;
+    user_services s JOIN users u ON s.user_id = u.id 
+    WHERE
+    (CASE WHEN Iname_ar = '' THEN '1' ELSE u.name_ar LIKE CONCAT('%' ,Iname_ar , '%')  END)
+    AND (CASE WHEN Iemail = '' THEN '1' ELSE u.email LIKE CONCAT('%' ,Iemail , '%')  END)
+    AND (CASE WHEN Ibreif = '' THEN '1' ELSE s.breif LIKE CONCAT('%' ,Ibreif , '%')  END);
 END//
 DELIMITER ;
 
 
-
-
-
-DROP PROCEDURE IF EXISTS ProjectPendingApprove;
 DROP PROCEDURE IF EXISTS ProjectPendingAction;
 DELIMITER //
 CREATE  PROCEDURE `ProjectPendingAction`(Iid int , action VARCHAR(100))

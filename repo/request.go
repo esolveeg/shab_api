@@ -84,9 +84,17 @@ func (ur *RequestRepo) ListContactRequests(status *string) (*[]model.ContactPend
 	}
 	return &resp, nil
 }
-func (ur *RequestRepo) ListPendingUsers(status *string) (*[]model.UserPending, error) {
+func (ur *RequestRepo) ListPendingUsers(req *model.PendingUsersListReq) (*[]model.UserPending, error) {
 	var resp []model.UserPending
-	rows, err := ur.db.Raw("CALL UsersRequests(?);", status).Rows()
+	rows, err := ur.db.Raw("CALL UsersRequests(? , ? , ? , ? , ? , ? , ?);",
+		req.Status,
+		req.Name,
+		req.Email,
+		req.Role,
+		req.Phone,
+		req.DateFrom,
+		req.DateTo,
+	).Rows()
 	if err != nil {
 		utils.NewError(err)
 		return nil, err
@@ -110,9 +118,18 @@ func (ur *RequestRepo) ListPendingUsers(status *string) (*[]model.UserPending, e
 	return &resp, nil
 }
 
-func (ur *RequestRepo) ListPendingUpgrades(status *string) (*[]model.UserPendingUpgrades, error) {
+func (ur *RequestRepo) ListPendingUpgrades(req *model.UsersUpgratedListReq) (*[]model.UserPendingUpgrades, error) {
 	var resp []model.UserPendingUpgrades
-	rows, err := ur.db.Raw("CALL UsersPendingUpgrades(?);", status).Rows()
+	rows, err := ur.db.Raw("CALL UsersPendingUpgrades(? , ? , ? , ? , ? , ? , ? , ?);",
+		req.Status,
+		req.Name,
+		req.Email,
+		req.Phone,
+		req.Role,
+		req.NewRole,
+		req.DateFrom,
+		req.DateTo,
+	).Rows()
 	if err != nil {
 		utils.NewError(err)
 		return nil, err
@@ -189,9 +206,13 @@ func (ur *RequestRepo) ListPendingProjects(status *string) (*[]model.ProjectPend
 	return &resp, nil
 }
 
-func (ur *RequestRepo) ListPendingServices() (*[]model.ServicePending, error) {
+func (ur *RequestRepo) ListPendingServices(req *model.ServicePendingReq) (*[]model.ServicePending, error) {
 	var resp []model.ServicePending
-	rows, err := ur.db.Raw("CALL ServiceRequestsPending();").Rows()
+	rows, err := ur.db.Raw("CALL ServiceRequestsPending(? , ? , ?);",
+		req.Name,
+		req.Email,
+		req.Breif,
+	).Rows()
 	if err != nil {
 		utils.NewError(err)
 		return nil, err

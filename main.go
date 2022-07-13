@@ -7,8 +7,6 @@ import (
 	"shab/handler"
 	"shab/repo"
 	"shab/router"
-
-	"github.com/360EntSecGroup-Skylar/excelize"
 )
 
 func main() {
@@ -18,10 +16,6 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-
-	f := excelize.NewFile()
-
-	fmt.Println(f)
 
 	userRepo := repo.NewUserRepo(db)
 	richRepo := repo.NewRichTextRepo(db)
