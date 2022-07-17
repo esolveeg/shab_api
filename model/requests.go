@@ -10,6 +10,17 @@ type UserPending struct {
 	Status    string
 	CreatedAt string
 }
+
+type ProjectsPendingListReq struct {
+	Status   string `query:"Status"`
+	Name     string `query:"Name"`
+	Title    string `query:"Title"`
+	Phone    string `query:"Phone"`
+	Email    string `query:"Email"`
+	DateFrom string `query:"DateFrom"`
+	DateTo   string `query:"DateTo"`
+}
+
 type UsersUpgratedListReq struct {
 	Status   string `query:"Status"`
 	Name     string `query:"Name"`
@@ -40,9 +51,18 @@ type ApproveServiceReq struct {
 	FromId int
 	ToId   int
 }
+type ContactListReq struct {
+	Status   string `query:"Status"`
+	Name     string `query:"Name"`
+	Email    string `query:"Email"`
+	Phone    string `query:"Phone"`
+	DateFrom string `query:"DateFrom"`
+	DateTo   string `query:"DateTo"`
+}
 type ArticlePending struct {
 	Id        int
 	NameAr    string
+	Phone     string
 	Email     string
 	Title     string
 	CreatedAt string

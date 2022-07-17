@@ -54,9 +54,16 @@ func (ur *RequestRepo) FindUserUpgradeRequest(id uint) (*model.UserPendingUpgrad
 	return &resp, nil
 }
 
-func (ur *RequestRepo) ListContactRequests(status *string) (*[]model.ContactPending, error) {
+func (ur *RequestRepo) ListContactRequests(req *model.ContactListReq) (*[]model.ContactPending, error) {
 	var resp []model.ContactPending
-	rows, err := ur.db.Raw("CALL ContactRequestsList(?);", status).Rows()
+	rows, err := ur.db.Raw("CALL ContactRequestsList(? , ? , ? , ? , ? , ?);",
+		req.Status,
+		req.Name,
+		req.Email,
+		req.Phone,
+		req.DateFrom,
+		req.DateTo,
+	).Rows()
 	if err != nil {
 		utils.NewError(err)
 		return nil, err
@@ -156,9 +163,17 @@ func (ur *RequestRepo) ListPendingUpgrades(req *model.UsersUpgratedListReq) (*[]
 	return &resp, nil
 }
 
-func (ur *RequestRepo) ListPendingArticles(status *string) (*[]model.ArticlePending, error) {
+func (ur *RequestRepo) ListPendingArticles(req *model.ProjectsPendingListReq) (*[]model.ArticlePending, error) {
 	var resp []model.ArticlePending
-	rows, err := ur.db.Raw("CALL ArticlePending(?);", status).Rows()
+	rows, err := ur.db.Raw("CALL ArticlePending(? , ? , ? , ? , ? , ? , ? );",
+		req.Status,
+		req.Name,
+		req.Title,
+		req.Phone,
+		req.Email,
+		req.DateFrom,
+		req.DateTo,
+	).Rows()
 	if err != nil {
 		utils.NewError(err)
 		return nil, err
@@ -169,6 +184,7 @@ func (ur *RequestRepo) ListPendingArticles(status *string) (*[]model.ArticlePend
 		rows.Scan(
 			&u.Id,
 			&u.NameAr,
+			&u.Phone,
 			&u.Email,
 			&u.Title,
 			&u.Status,
@@ -180,9 +196,17 @@ func (ur *RequestRepo) ListPendingArticles(status *string) (*[]model.ArticlePend
 	return &resp, nil
 }
 
-func (ur *RequestRepo) ListPendingProjects(status *string) (*[]model.ProjectPending, error) {
+func (ur *RequestRepo) ListPendingProjects(req *model.ProjectsPendingListReq) (*[]model.ProjectPending, error) {
 	var resp []model.ProjectPending
-	rows, err := ur.db.Raw("CALL ProjectPending(?);", status).Rows()
+	rows, err := ur.db.Raw("CALL ProjectPending(? , ? , ? , ? , ? , ? , ?);",
+		req.Status,
+		req.Name,
+		req.Title,
+		req.Phone,
+		req.Email,
+		req.DateFrom,
+		req.DateTo,
+	).Rows()
 	if err != nil {
 		utils.NewError(err)
 		return nil, err

@@ -46,8 +46,11 @@ func (h *Handler) UsersPendingUpgradeListAll(c echo.Context) error {
 }
 
 func (h *Handler) ProjectsPendingListAll(c echo.Context) error {
-	status := c.QueryParam("status")
-	r, err := h.requestRepo.ListPendingProjects(&status)
+	req := new(model.ProjectsPendingListReq)
+	if err := c.Bind(req); err != nil {
+		return c.JSON(http.StatusUnprocessableEntity, utils.NewError(err))
+	}
+	r, err := h.requestRepo.ListPendingProjects(req)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
 	}
@@ -55,8 +58,11 @@ func (h *Handler) ProjectsPendingListAll(c echo.Context) error {
 }
 
 func (h *Handler) ArticlesPendingListAll(c echo.Context) error {
-	status := c.QueryParam("status")
-	r, err := h.requestRepo.ListPendingArticles(&status)
+	req := new(model.ProjectsPendingListReq)
+	if err := c.Bind(req); err != nil {
+		return c.JSON(http.StatusUnprocessableEntity, utils.NewError(err))
+	}
+	r, err := h.requestRepo.ListPendingArticles(req)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
 	}

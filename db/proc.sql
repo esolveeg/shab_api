@@ -400,7 +400,6 @@ BEGIN
 END //
 
 DELIMITER ;
-CALL EventsList(NULL , '' ,'' , 0 , '' , '' , 0 , 0);
 # EventRead
 
 DELIMITER ;
@@ -923,16 +922,26 @@ END //
 DELIMITER ;
 DROP PROCEDURE IF EXISTS ContactRequestsList;
 DELIMITER // 
-CREATE PROCEDURE ContactRequestsList(Istatus VARCHAR(100)) BEGIN
+CREATE PROCEDURE ContactRequestsList(
+    Istatus VARCHAR(100),
+    Iname_ar VARCHAR(200),
+    Iemail VARCHAR(200),
+    Iphone VARCHAR(200),
+    dateFrom VARCHAR(200),
+    dateTo VARCHAR(200)) BEGIN
     SELECT id, IFNULL(user_id , 0 ) user_id , 
     name , email , phone , IFNULL(subject , '') ,
      msg , status,
     created_at 
     FROM contact_requests
-    WHERE (CASE WHEN Istatus = '' THEN '1' ELSE status = Istatus END);
+    WHERE (CASE WHEN Istatus = '' THEN '1' ELSE status = Istatus END)
+     AND (CASE WHEN Iname_ar = '' THEN 1 = 1 ELSE  name LIKE CONCAT('%' , Iname_ar , '%') END)
+    AND (CASE WHEN Iemail = '' THEN 1 = 1 ELSE  email LIKE CONCAT('%' , Iemail , '%') END)
+    AND (CASE WHEN Iphone = '' THEN 1 = 1 ELSE  phone LIKE CONCAT('%' , Iphone , '%') END)
+    AND (CASE WHEN dateFrom = '' THEN '1' ELSE created_at >= dateFrom END)
+    AND (CASE WHEN dateTo = '' THEN '1' ELSE created_at <= dateTo END);
 END //
 DELIMITER ;
-
 
 
 
@@ -1632,28 +1641,54 @@ DELIMITER ;
 
 DROP PROCEDURE IF EXISTS ProjectPending;
 DELIMITER //
-CREATE  PROCEDURE `ProjectPending`(Istatus VARCHAR(100))
+CREATE  PROCEDURE `ProjectPending`(
+    Istatus VARCHAR(100),
+    Iname_ar VARCHAR(200),
+    Ititle VARCHAR(200),
+    Iphone VARCHAR(200),
+    Iemail VARCHAR(200),
+    dateFrom VARCHAR(200),
+    dateTo VARCHAR(200)
+    )
 BEGIN
     SELECT p.id, u.id user_id ,u.name_ar , u.email , p.title , p.phone , p.status ,p.created_at 
     FROM projects p JOIN users u ON p.user_id = u.id WHERE 
     p.active = 0 AND p.deleted_at IS NULL
-    AND (CASE WHEN Istatus = "" THEN '1' ELSE p.status = Istatus END);
+    AND (CASE WHEN Istatus = "" THEN '1' ELSE p.status = Istatus END)
+    AND (CASE WHEN Iname_ar = "" THEN '1' ELSE u.name_ar LIKE CONCAT('%' , Iname_ar , '%') END)
+    AND (CASE WHEN Ititle = "" THEN '1' ELSE p.title LIKE CONCAT('%' , Ititle , '%') END)
+    AND (CASE WHEN Iphone = "" THEN '1' ELSE u.phone LIKE CONCAT('%' , Iphone , '%') END)
+    AND (CASE WHEN Iemail = "" THEN '1' ELSE u.email LIKE CONCAT('%' , Iemail , '%') END)
+    AND (CASE WHEN dateFrom = "" THEN '1' ELSE p.created_at >= dateFrom END)
+    AND (CASE WHEN dateTo = "" THEN '1' ELSE p.created_at <= dateTo END);
 END//
 DELIMITER ;
 
 
 
 
-
 DROP PROCEDURE IF EXISTS ArticlePending;
 DELIMITER //
-CREATE  PROCEDURE `ArticlePending`(Istatus VARCHAR(100))
+CREATE  PROCEDURE `ArticlePending`(
+    Istatus VARCHAR(100),
+    Iname_ar VARCHAR(200),
+    Ititle VARCHAR(200),
+    Iphone VARCHAR(200),
+    Iemail VARCHAR(200),
+    dateFrom VARCHAR(200),
+    dateTo VARCHAR(200))
 BEGIN
-    SELECT a.id, u.name_ar , u.email , a.title ,a.status, a.created_at 
+    SELECT a.id, u.name_ar , u.phone , u.email , a.title ,a.status, a.created_at 
     FROM articles a JOIN users u ON a.user_id = u.id
     WHERE published_at IS NULL 
+    AND a.deleted_at IS NULL
     AND (CASE WHEN Istatus = "" THEN '1' ELSE a.status = Istatus END)
-    AND a.deleted_at IS NULL;
+    AND (CASE WHEN Iname_ar = "" THEN '1' ELSE u.name_ar LIKE CONCAT('%' , Iname_ar , '%') END)
+    AND (CASE WHEN Ititle = "" THEN '1' ELSE a.title LIKE CONCAT('%' , Ititle , '%') END)
+    AND (CASE WHEN Iphone = "" THEN '1' ELSE u.phone LIKE CONCAT('%' , Iphone , '%') END)
+    AND (CASE WHEN Iemail = "" THEN '1' ELSE u.email LIKE CONCAT('%' , Iemail , '%') END)
+    AND (CASE WHEN dateFrom = "" THEN '1' ELSE a.created_at >= dateFrom END)
+    AND (CASE WHEN dateTo = "" THEN '1' ELSE a.created_at <= dateTo END);
 END//
 DELIMITER ;
 
