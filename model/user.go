@@ -57,6 +57,15 @@ type UserResponse struct {
 	User  User
 	Token string
 }
+type UserListReq struct {
+	Role int `query:"Role_id"`
+	Featured bool `query:"Featured"`
+	Admin bool `query:"Admin"`
+	Name string `query:"Name"`
+	Phone string `query:"Phone"`
+	Email string `query:"Email"`
+	Serial string `query:"Serial"`
+}
 
 type User struct {
 	Id       uint

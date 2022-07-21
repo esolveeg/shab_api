@@ -121,19 +121,11 @@ func (h *Handler) UserListAll(c echo.Context) error {
 
 func (h *Handler) UsersDownloadExcel(c echo.Context) error {
 
-	featured, err := strconv.ParseBool(c.QueryParam("Featured"))
-	if err != nil {
-		featured = false
+	req := new(model.UserListReq)
+	if err := c.Bind(req); err != nil {
+		return c.JSON(http.StatusUnprocessableEntity, utils.NewError(err))
 	}
-	admin, err := strconv.Atoi(c.QueryParam("Admin"))
-	if err != nil {
-		admin = 0
-	}
-	role, err := strconv.ParseUint(c.QueryParam("Role_id"), 10, 32)
-	if err != nil {
-		role = 0
-	}
-	users, err := h.userRepo.ListByRoleOrFeatured(&role, &featured, &admin)
+	users, err := h.userRepo.ListByRoleOrFeatured(req)
 
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
@@ -173,19 +165,11 @@ func (h *Handler) UsersDownloadExcel(c echo.Context) error {
 	// return c.JSON(http.StatusOK, users)
 }
 func (h *Handler) UserListByRoleOrFeatured(c echo.Context) error {
-	featured, err := strconv.ParseBool(c.QueryParam("Featured"))
-	if err != nil {
-		featured = false
+	req := new(model.UserListReq)
+	if err := c.Bind(req); err != nil {
+		return c.JSON(http.StatusUnprocessableEntity, utils.NewError(err))
 	}
-	admin, err := strconv.Atoi(c.QueryParam("Admin"))
-	if err != nil {
-		admin = 0
-	}
-	role, err := strconv.ParseUint(c.QueryParam("Role_id"), 10, 32)
-	if err != nil {
-		role = 0
-	}
-	users, err := h.userRepo.ListByRoleOrFeatured(&role, &featured, &admin)
+	users, err := h.userRepo.ListByRoleOrFeatured(req)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
 	}

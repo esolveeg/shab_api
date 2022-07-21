@@ -202,7 +202,7 @@ func scanUserResult(rows *sql.Rows) ([]model.User, error) {
 }
 
 func (ur *UserRepo) ListAll() ([]model.User, error) {
-	rows, err := ur.db.Raw("CALL UserListByRoleOrFeatured(? , ?);", 0, 0).Rows()
+	rows, err := ur.db.Raw("CALL UserListByRoleOrFeatured(? , ? , ? , ? , ? , ?);",0,0,0,"","","","","").Rows()
 	if err != nil {
 		utils.NewError(err)
 		return nil, err
@@ -216,8 +216,16 @@ func (ur *UserRepo) ListAll() ([]model.User, error) {
 
 	return result, nil
 }
-func (ur *UserRepo) ListByRoleOrFeatured(role *uint64, featured *bool, admin *int) ([]model.User, error) {
-	rows, err := ur.db.Raw("CALL UserListByRoleOrFeatured(? , ? , ?);", role, featured, admin).Rows()
+func (ur *UserRepo) ListByRoleOrFeatured(req *model.UserListReq) ([]model.User, error) {
+	rows, err := ur.db.Raw("CALL UserListByRoleOrFeatured(? , ? , ? ,  ? , ? , ? , ?);",
+		req.Role,
+		req.Featured,
+		req.Admin,
+		req.Name,
+		req.Phone,
+		req.Email,
+		req.Serial,
+	).Rows()
 	if err != nil {
 		utils.NewError(err)
 		return nil, err

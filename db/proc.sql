@@ -96,7 +96,15 @@ DROP PROCEDURE IF EXISTS UserListByRoleOrFeatured;
 DELIMITER //
 
 
-CREATE PROCEDURE UserListByRoleOrFeatured(IN role INT , IN featured BOOLEAN , IN admin BOOLEAN) 
+CREATE PROCEDURE UserListByRoleOrFeatured(
+    IN role INT ,
+    IN featured BOOLEAN ,
+    IN admin BOOLEAN ,
+    IN Iname VARCHAR(100),
+    IN Iphone VARCHAR(100),
+    IN Iemail VARCHAR(100),
+    IN Iserial VARCHAR(100)
+ ) 
 BEGIN
 
 SELECT 
@@ -117,8 +125,11 @@ SELECT
             WHERE u.active = 1 
             AND u.admin = admin
             AND  (CASE WHEN role = 0 THEN '1' ELSE u.role_id = role END)
-            AND  (CASE WHEN featured = 0 THEN '1' ELSE u.featured = featured END);
-          
+            AND  (CASE WHEN featured = 0 THEN '1' ELSE u.featured = featured END)
+            AND  (CASE WHEN Iname = '' THEN '1' ELSE u.name_ar LIKE CONCAT('%' ,  Iname , '%') END)
+            AND  (CASE WHEN Iphone = '' THEN '1' ELSE u.phone LIKE CONCAT('%' ,  Iphone , '%') END)
+            AND  (CASE WHEN Iemail = '' THEN '1' ELSE u.email LIKE CONCAT('%' ,  Iemail , '%') END)
+            AND  (CASE WHEN Iserial = '' THEN '1' ELSE u.serial LIKE CONCAT('%' ,  Iserial , '%') END);
     END//
 DELIMITER ;
 
