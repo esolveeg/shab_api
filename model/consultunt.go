@@ -9,7 +9,12 @@ type Consultunt struct {
 	Image  string
 	Breif  string
 }
-
+type ConsultuntListReq struct {
+	Name   string `query:"Name"`
+	Title  string `query:"Title"`
+	Skills string `query:"Skills"`
+	IsTeam bool   `query:"IsTeam"`
+}
 type ConsultuntCreateReq struct {
 	Name   string
 	Title  string

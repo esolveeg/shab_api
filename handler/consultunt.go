@@ -11,11 +11,12 @@ import (
 )
 
 func (h *Handler) ConsultuntsListAll(c echo.Context) error {
-	var isTeam bool
-	if c.QueryParam("type") == "team" {
-		isTeam = true
+	req := new(model.ConsultuntListReq)
+	if err := c.Bind(req); err != nil {
+		return c.JSON(http.StatusUnprocessableEntity, utils.NewError(err))
 	}
-	consultunts, err := h.consltuntsRepo.ConsultuntsListAll(isTeam)
+
+	consultunts, err := h.consltuntsRepo.ConsultuntsListAll(req)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
 	}

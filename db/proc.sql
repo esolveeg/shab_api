@@ -1104,7 +1104,12 @@ DROP PROCEDURE IF EXISTS ConsultuntsListAll;
 
 
 DELIMITER //
-CREATE  PROCEDURE `ConsultuntsListAll`(IN Iis_team BOOLEAN)
+CREATE  PROCEDURE `ConsultuntsListAll`(
+    IN Iis_team BOOLEAN ,
+    IN Iname VARCHAR(200) ,
+    IN Ititle VARCHAR(200) ,
+    IN Iskills VARCHAR(200) 
+)
 BEGIN
     SELECT 
         id,
@@ -1114,8 +1119,14 @@ BEGIN
         img,
         is_team,
         breif
-     FROM consultunts WHERE is_team = Iis_team AND deleted_at IS NULL;
+     FROM consultunts WHERE 
+        is_team = Iis_team 
+        AND CASE WHEN Iname = '' THEN 1 = 1 ELSE  name LIKE CONCAT('%' , Iname , '%') END
+        AND CASE WHEN Ititle = '' THEN 1 = 1 ELSE  title LIKE CONCAT('%' , Ititle , '%') END
+        AND CASE WHEN Iskills = '' THEN 1 = 1 ELSE  skills LIKE CONCAT('%' , Iskills , '%') END
+        AND deleted_at IS NULL;
 END//
+
 
 
 

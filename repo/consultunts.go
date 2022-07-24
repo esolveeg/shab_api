@@ -19,8 +19,8 @@ func NewConsultuntsRepo(db *gorm.DB) ConsltuntsRepo {
 	}
 }
 
-func (ur *ConsltuntsRepo) ConsultuntsListAll(isTeam bool) (*[]model.Consultunt, error) {
-	rows, err := ur.db.Raw("CALL ConsultuntsListAll(?);", isTeam).Rows()
+func (ur *ConsltuntsRepo) ConsultuntsListAll(req *model.ConsultuntListReq) (*[]model.Consultunt, error) {
+	rows, err := ur.db.Raw("CALL ConsultuntsListAll(? , ? , ? , ?);", req.IsTeam, req.Name, req.Title, req.Skills).Rows()
 	if err != nil {
 		utils.NewError(err)
 		return nil, err
