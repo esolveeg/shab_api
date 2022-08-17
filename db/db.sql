@@ -1,9 +1,9 @@
 
-DROP DATABASE IF EXISTS alshab_staging;
+DROP DATABASE IF EXISTS alshab_staging2;
 
-CREATE DATABASE alshab_staging CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE DATABASE alshab_staging2 CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
-USE alshab_staging;
+USE alshab_staging2;
 
 DROP TABLE IF EXISTS cities;
 
@@ -143,6 +143,7 @@ CREATE TABLE articles(
     `status` ENUM('pending', 'active', 'declined') DEFAULT 'pending',
     `content` TEXT,
     `views` int DEFAULT 0 NOT NULL,
+    `views_count_rate` int DEFAULT 3 NOT NULL,
     `created_at` datetime DEFAULT now(),
     `published_at` datetime DEFAULT NULL,
     `deleted_at` datetime

@@ -11,7 +11,9 @@ import (
 func New() *echo.Echo {
 	e := echo.New()
 	fs := http.FileServer(http.Dir("assets"))
+	bo_client := http.FileServer(http.Dir("dist"))
 
+	e.GET("/dist/*", echo.WrapHandler(http.StripPrefix("/dist/", bo_client)))
 	e.GET("/assets/*", echo.WrapHandler(http.StripPrefix("/assets/", fs)))
 
 	e.Logger.SetLevel(log.DEBUG)

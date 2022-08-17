@@ -1,4 +1,4 @@
-USE alshab_staging;
+USE alshab_staging2;
 
 # procedures\\
 #/// users////
@@ -171,6 +171,7 @@ DELIMITER //
 CREATE PROCEDURE ArticleCreate(
     IN Iuser_id INT,
     IN Icategory_id INT,
+    IN Iviews_count_rate INT,
     IN Ititle VARCHAR(250),
     IN Iimg VARCHAR(250),
     IN Icontent TEXT,
@@ -180,6 +181,7 @@ INSERT INTO
     articles (
         user_id,
         category_id,
+        views_count_rate,
         title,
         img,
         content,
@@ -189,6 +191,7 @@ VALUES
     (
         Iuser_id,
         Icategory_id,
+        Iviews_count_rate,
         Ititle,
         Iimg,
         Icontent,
@@ -212,6 +215,7 @@ CREATE PROCEDURE ArticleUpdate(
     IN Iid INT,
     IN Iuser_id INT,
     IN Icategory_id INT,
+    IN Iviews_count_rate INT,
     IN Ititle VARCHAR(250),
     IN Iimg VARCHAR(250),
     IN Icontent TEXT,
@@ -222,6 +226,7 @@ UPDATE
 SET
     user_id = Iuser_id,
     category_id = Icategory_id,
+    views_count_rate = Iviews_count_rate,
     title = Ititle,
     img = Iimg,
     content = Icontent,
@@ -758,6 +763,7 @@ BEGIN
     SELECT 
          a.id,
          c.name categoryName,
+         a.views_count_rate,
          u.name_ar userName,
          u.img userImg,
          a.title,
@@ -783,13 +789,14 @@ CREATE  PROCEDURE `ArticleRead`(IN Iid INT)
 BEGIN
 
 
-    UPDATE articles set views = views + 3 WHERE id = Iid;
+    UPDATE articles set views = views + views_count_rate WHERE id = Iid;
     SELECT 
        a.id,
        a.user_id,
        a.category_id,
+       a.views_count_rate,
        u.name userName,
-       u.img userImg,
+       u.img userImg,   
        c.name categoryName,
        a.title,
        a.img,
@@ -1716,15 +1723,24 @@ DELIMITER ;
 
 DROP PROCEDURE IF EXISTS ServiceRequestsPending;
 DELIMITER //
-CREATE  PROCEDURE `ServiceRequestsPending`(Iname_ar VARCHAR(200),Iemail VARCHAR(100),Ibreif VARCHAR(100))
+CREATE  PROCEDURE `ServiceRequestsPending`(Iname_ar VARCHAR(200), service_id INT  ,role_id INT ,Iemail VARCHAR(100),Ibreif VARCHAR(100))
 BEGIN
 
-    SELECT s.id, u.id ,u.name_ar , u.email , s.breif , s.status , s.created_at FROM 
-    user_services s JOIN users u ON s.user_id = u.id 
+    SELECT us.id, u.id ,u.name_ar ,s.name , r.name  ,  u.email , us.breif , us.status , us.created_at FROM 
+    user_services us 
+    JOIN users u 
+        ON us.user_id = u.id
+    JOIN roles r
+        ON u.role_id = r.id
+    JOIN services s 
+        ON us.service_id = s.id 
     WHERE
     (CASE WHEN Iname_ar = '' THEN '1' ELSE u.name_ar LIKE CONCAT('%' ,Iname_ar , '%')  END)
     AND (CASE WHEN Iemail = '' THEN '1' ELSE u.email LIKE CONCAT('%' ,Iemail , '%')  END)
-    AND (CASE WHEN Ibreif = '' THEN '1' ELSE s.breif LIKE CONCAT('%' ,Ibreif , '%')  END);
+    AND (CASE WHEN Ibreif = '' THEN '1' ELSE us.breif LIKE CONCAT('%' ,Ibreif , '%')  END)
+    AND (CASE WHEN role_id = 0 THEN '1' ELSE r.id = role_id END)
+    AND (CASE WHEN role_id = 0 THEN '1' ELSE r.id = role_id END);
+    
 END//
 DELIMITER ;
 

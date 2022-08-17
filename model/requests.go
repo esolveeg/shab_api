@@ -32,9 +32,11 @@ type UsersUpgratedListReq struct {
 	DateTo   string `query:"DateTo"`
 }
 type ServicePendingReq struct {
-	Name  string `query:"Name"`
-	Email string `query:"Email"`
-	Breif string `query:"Breif"`
+	Name       string `query:"Name"`
+	Email      string `query:"Email"`
+	Breif      string `query:"Breif"`
+	Role_id    int    `query:"Role_id"`
+	Service_id int    `query:"Service_id"`
 }
 type PendingUsersListReq struct {
 	Status   string `query:"Status"`
@@ -79,11 +81,13 @@ type ProjectPending struct {
 	CreatedAt string
 }
 type ServicePending struct {
-	Id        int
-	UserId    int
-	NameAr    string
-	Email     string
-	Status    string
-	Breif     string
-	CreatedAt string
+	Id          int
+	UserId      int
+	NameAr      string
+	RoleName    string
+	ServiceName string
+	Email       string
+	Status      string
+	Breif       string
+	CreatedAt   string
 }

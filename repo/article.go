@@ -20,9 +20,10 @@ func NewArticleRepo(db *gorm.DB) ArticleRepo {
 
 func (ar *ArticleRepo) ArticleCreate(req *model.ArticleCreateReq) (uint, error) {
 	var id uint
-	err := ar.db.Raw("CALL ArticleCreate(?,?,?,?,?,?);",
+	err := ar.db.Raw("CALL ArticleCreate(?,? ,?,?,?,?,?);",
 		req.UserId,
 		req.CatId,
+		req.ViewsCounter,
 		req.Title,
 		req.Img,
 		req.Content,
@@ -36,10 +37,11 @@ func (ar *ArticleRepo) ArticleCreate(req *model.ArticleCreateReq) (uint, error) 
 
 func (ar *ArticleRepo) ArticleUpdate(id *int, req *model.ArticleCreateReq) (*uint, error) {
 	var resp uint
-	err := ar.db.Raw("CALL ArticleUpdate(?,?,?,?,?,?,?);",
+	err := ar.db.Raw("CALL ArticleUpdate(?,?,?,?,?,?,?,?);",
 		id,
 		req.UserId,
 		req.CatId,
+		req.ViewsCounter,
 		req.Title,
 		req.Img,
 		req.Content,
@@ -54,11 +56,11 @@ func (ar *ArticleRepo) ArticleUpdate(id *int, req *model.ArticleCreateReq) (*uin
 func (ar *ArticleRepo) ListByCategoryUserSearch(req *model.ArticlesListReq) (*[]model.ArticleList, error) {
 	var articles []model.ArticleList
 	rows, err := ar.db.Raw("CALL ArticleListByCategoryUserSearch(? , ? , ? , ? , ?);",
-	req.Category,
-	req.UserName,
-	req.DateFrom,
-	req.DateTo,
-	req.Search,
+		req.Category,
+		req.UserName,
+		req.DateFrom,
+		req.DateTo,
+		req.Search,
 	).Rows()
 	defer rows.Close()
 	for rows.Next() {
@@ -66,6 +68,7 @@ func (ar *ArticleRepo) ListByCategoryUserSearch(req *model.ArticlesListReq) (*[]
 		rows.Scan(
 			&article.Id,
 			&article.CategoryName,
+			&article.ViewsCounter,
 			&article.UserName,
 			&article.UserImg,
 			&article.Title,
@@ -92,6 +95,7 @@ func (ar *ArticleRepo) ArticleRead(id uint64) (*model.Article, error) {
 		&article.Id,
 		&article.UserId,
 		&article.CatId,
+		&article.ViewsCounter,
 		&article.UserName,
 		&article.UserImg,
 		&article.CategoryName,

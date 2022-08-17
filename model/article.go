@@ -4,6 +4,7 @@ type Article struct {
 	Id           uint
 	UserId       uint
 	CatId        uint
+	ViewsCounter uint
 	CategoryName string
 	UserImg      string
 	UserName     string
@@ -16,17 +17,17 @@ type Article struct {
 	Views        int
 }
 
-
 type ArticlesListReq struct {
-	Category int `query:"CatId"`
-    UserName string `query:"UserName"`
-    DateFrom string `query:"DateFrom"`
-    DateTo string `query:"DateTo"`
-    Search string `query:"Name"`
+	Category int    `query:"CatId"`
+	UserName string `query:"UserName"`
+	DateFrom string `query:"DateFrom"`
+	DateTo   string `query:"DateTo"`
+	Search   string `query:"Name"`
 }
 type ArticleList struct {
 	Id           uint
 	CategoryName string
+	ViewsCounter int
 	UserName     string
 	UserImg      string
 	Title        string
@@ -36,10 +37,11 @@ type ArticleList struct {
 }
 
 type ArticleCreateReq struct {
-	UserId  uint
-	CatId   uint64
-	Img     string
-	Content string
-	Title   string
-	Status  string
+	UserId       uint
+	CatId        uint64
+	ViewsCounter int
+	Img          string
+	Content      string
+	Title        string
+	Status       string
 }

@@ -232,8 +232,10 @@ func (ur *RequestRepo) ListPendingProjects(req *model.ProjectsPendingListReq) (*
 
 func (ur *RequestRepo) ListPendingServices(req *model.ServicePendingReq) (*[]model.ServicePending, error) {
 	var resp []model.ServicePending
-	rows, err := ur.db.Raw("CALL ServiceRequestsPending(? , ? , ?);",
+	rows, err := ur.db.Raw("CALL ServiceRequestsPending(? , ? , ? , ? , ?);",
 		req.Name,
+		req.Role_id,
+		req.Service_id,
 		req.Email,
 		req.Breif,
 	).Rows()
@@ -248,6 +250,8 @@ func (ur *RequestRepo) ListPendingServices(req *model.ServicePendingReq) (*[]mod
 			&u.Id,
 			&u.UserId,
 			&u.NameAr,
+			&u.ServiceName,
+			&u.RoleName,
 			&u.Email,
 			&u.Breif,
 			&u.Status,
