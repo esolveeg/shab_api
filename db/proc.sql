@@ -823,7 +823,8 @@ CREATE  PROCEDURE `Register`(
     IN IEmail VARCHAR(250),
     IN IPassword VARCHAR(250),
     IN IPhone VARCHAR(250),
-    IN IRole INT
+    IN IRole INT,
+    IN IAdmin BOOLEAN
 )
 BEGIN
 
@@ -837,7 +838,9 @@ BEGIN
         `password`,
         phone,
         role_id,
-        `serial`
+        `serial`,
+        admin,
+        active
    )
    VALUES (
         IName,
@@ -846,7 +849,9 @@ BEGIN
         IPassword,
         IPhone,
         IRole,
-        @maxSerial + 1
+        @maxSerial + 1,
+        IAdmin,
+        IAdmin
    );
 
 
@@ -1819,6 +1824,8 @@ BEGIN
     ELSE
         SELECT id , name_ar , img FROM users WHERE id = @toId ;
     END IF;
+
+    SELECT id , name_ar , img FROM users WHERE id != Iuser_id;
 END//
 DELIMITER ;
 

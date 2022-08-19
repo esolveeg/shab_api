@@ -18,8 +18,11 @@ func NewMsgRepo(db *gorm.DB) MsgRepo {
 	}
 }
 
-func (ur *MsgRepo) ListAll(id uint) (*[]model.Inbox, error) {
-	var resp []model.Inbox
+func (ur *MsgRepo) ListAll(id uint) (*model.ChatListResp, error) {
+	var resp model.ChatListResp
+
+	var chats []model.Inbox
+	var users []model.Inbox
 	rows, err := ur.db.Raw("CALL MsgsList(?)", id).Rows()
 	if err != nil {
 		utils.NewError(err)
@@ -38,12 +41,30 @@ func (ur *MsgRepo) ListAll(id uint) (*[]model.Inbox, error) {
 			return nil, err
 		}
 		rec.Img = config.Config("BASE_URL") + rec.Img
-		resp = append(resp, rec)
+		chats = append(chats, rec)
 	}
 	if err != nil {
 		utils.NewError(err)
 		return nil, err
 	}
+	if rows.NextResultSet() {
+		for rows.Next() {
+			var rec model.Inbox
+			err := rows.Scan(
+				&rec.Id,
+				&rec.Name,
+				&rec.Img,
+			)
+			if err != nil {
+				utils.NewError(err)
+				return nil, err
+			}
+
+			users = append(users, rec)
+		}
+	}
+	resp.Chats = chats
+	resp.Users = users
 	return &resp, nil
 }
 

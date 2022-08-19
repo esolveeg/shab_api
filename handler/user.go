@@ -181,6 +181,9 @@ func (h *Handler) RegisterUser(c echo.Context) error {
 	if err := c.Bind(req); err != nil {
 		return c.JSON(http.StatusUnprocessableEntity, utils.NewError(err))
 	}
+	if req.Name_ar == "" {
+		req.Name_ar = req.Name
+	}
 	u, err := h.userRepo.Register(req)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, utils.NewError(err))

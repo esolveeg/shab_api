@@ -39,13 +39,14 @@ func (ur *UserRepo) SendMsg(req *model.MsgReq) (*int, error) {
 }
 func (ur *UserRepo) Register(req *model.UserRegisterRequest) (*int, error) {
 	var resp int
-	err := ur.db.Raw("CALL Register(? , ? , ? ,? , ?,?);",
+	err := ur.db.Raw("CALL Register(? , ? , ? ,? , ?,? , ?);",
 		req.Name,
 		req.Name_ar,
 		req.Email,
 		req.Password,
 		req.Phone,
 		req.Role_id,
+		req.Admin,
 	).Row().Scan(&resp)
 	if err != nil {
 		fmt.Println("error calling proc" + err.Error())
@@ -202,7 +203,7 @@ func scanUserResult(rows *sql.Rows) ([]model.User, error) {
 }
 
 func (ur *UserRepo) ListAll() ([]model.User, error) {
-	rows, err := ur.db.Raw("CALL UserListByRoleOrFeatured(? , ? , ? , ? , ? , ?);",0,0,0,"","","","","").Rows()
+	rows, err := ur.db.Raw("CALL UserListByRoleOrFeatured(? , ? , ? , ? , ? , ?);", 0, 0, 0, "", "", "", "", "").Rows()
 	if err != nil {
 		utils.NewError(err)
 		return nil, err

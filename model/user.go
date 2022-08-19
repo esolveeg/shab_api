@@ -42,6 +42,7 @@ type UserRegisterRequest struct {
 	Role_id  uint
 	City_id  uint
 	Breif    string
+	Admin    bool
 }
 type UserListRequest struct {
 	Role_id  uint
@@ -58,13 +59,13 @@ type UserResponse struct {
 	Token string
 }
 type UserListReq struct {
-	Role int `query:"Role_id"`
-	Featured bool `query:"Featured"`
-	Admin bool `query:"Admin"`
-	Name string `query:"Name"`
-	Phone string `query:"Phone"`
-	Email string `query:"Email"`
-	Serial string `query:"Serial"`
+	Role     int    `query:"Role_id"`
+	Featured bool   `query:"Featured"`
+	Admin    bool   `query:"Admin"`
+	Name     string `query:"Name"`
+	Phone    string `query:"Phone"`
+	Email    string `query:"Email"`
+	Serial   string `query:"Serial"`
 }
 
 type User struct {

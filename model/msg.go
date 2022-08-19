@@ -8,7 +8,10 @@ type Msg struct {
 	CreatedAt string
 	Seen      string
 }
-
+type ChatListResp struct {
+	Chats []Inbox `json:"chats"`
+	Users []Inbox `json:"users"`
+}
 type Inbox struct {
 	Id   uint
 	Name string

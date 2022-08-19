@@ -271,7 +271,6 @@ VALUES
     ("الاحساء"),
     ("القصيم");
 
-
 #rich text
 INSERT INTO
     `rich_text` (
@@ -1054,3 +1053,17 @@ INSERT INTO user_subs (
         end_at,
         approved_at
     ) SELECT u.id , u.role_id , r.price , 'cash' , r.price , '2022-01-01 00:00:00' , '2022-12-31 00:00:00' , '2022-01-01 00:00:00'  FROM users u JOIN roles r ON u.role_id = r.id WHERE admin = 0 AND u.active = 0;
+
+
+
+
+
+INSERT INTO msgs (
+    from_id,
+    to_id,
+    `breif`
+) VALUES (
+    1,
+    2,
+    'مرحبا'
+);
