@@ -34,6 +34,7 @@ type UsersUpgratedListReq struct {
 type ServicePendingReq struct {
 	Name       string `query:"Name"`
 	Email      string `query:"Email"`
+	Status     string `query:"Status"`
 	Breif      string `query:"Breif"`
 	Role_id    int    `query:"Role_id"`
 	Service_id int    `query:"Service_id"`
@@ -84,6 +85,7 @@ type ServicePending struct {
 	Id          int
 	UserId      int
 	NameAr      string
+	Stat        string
 	RoleName    string
 	ServiceName string
 	Email       string

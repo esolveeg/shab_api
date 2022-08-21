@@ -5,6 +5,7 @@ import (
 	"shab/config"
 	"shab/model"
 	"shab/utils"
+	"strings"
 
 	"github.com/jinzhu/gorm"
 )
@@ -42,6 +43,8 @@ func (ur *ConsltuntsRepo) ConsultuntsListAll(req *model.ConsultuntListReq) (*[]m
 			utils.NewError(err)
 			return nil, err
 		}
+		rec.Skills = strings.TrimRight(rec.Skills, ",")
+
 		rec.Image = config.Config("BASE_URL") + rec.Image
 		resp = append(resp, rec)
 
@@ -104,6 +107,16 @@ func (ur *ConsltuntsRepo) ConsultuntById(id int) (*model.Consultunt, error) {
 		&resp.IsTeam,
 		&resp.Breif,
 	)
+
+	splitted := strings.Split(resp.Skills, ",")
+	resp.Skills1 = splitted[0]
+	resp.Skills2 = splitted[1]
+	resp.Skills3 = splitted[2]
+	fmt.Println("Asdasd")
+	fmt.Println(resp.Skills1)
+	fmt.Println(splitted)
+	fmt.Println(splitted[0])
+	fmt.Println(resp.Skills)
 	if err != nil {
 		fmt.Println("error calling proc" + err.Error())
 		utils.NewError(err)

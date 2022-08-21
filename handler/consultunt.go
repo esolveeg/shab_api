@@ -28,6 +28,8 @@ func (h *Handler) ConsultuntsCreate(c echo.Context) error {
 	if err := c.Bind(req); err != nil {
 		return c.JSON(http.StatusUnprocessableEntity, utils.NewError(err))
 	}
+	req.Skills = fmt.Sprintf("%s,%s,%s", req.Skills1, req.Skills2, req.Skills3)
+
 	u, err := h.consltuntsRepo.ConsultuntsCreate(req)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
@@ -45,6 +47,13 @@ func (h *Handler) ConsultuntsUpdate(c echo.Context) error {
 	}
 	if err = c.Bind(req); err != nil {
 		return c.JSON(http.StatusUnprocessableEntity, utils.NewError(err))
+	}
+	req.Skills = req.Skills1
+	if req.Skills2 != "" {
+		req.Skills += "," + req.Skills2
+	}
+	if req.Skills3 != "" {
+		req.Skills += "," + req.Skills3
 	}
 	u, err := h.consltuntsRepo.ConsultuntsUpdate(req)
 	if err != nil {

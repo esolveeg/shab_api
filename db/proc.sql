@@ -1728,7 +1728,7 @@ DELIMITER ;
 
 DROP PROCEDURE IF EXISTS ServiceRequestsPending;
 DELIMITER //
-CREATE  PROCEDURE `ServiceRequestsPending`(Iname_ar VARCHAR(200), service_id INT  ,role_id INT ,Iemail VARCHAR(100),Ibreif VARCHAR(100))
+CREATE  PROCEDURE `ServiceRequestsPending`(Iname_ar VARCHAR(200),Istatus VARCHAR(200), service_id INT  ,role_id INT ,Iemail VARCHAR(100),Ibreif VARCHAR(100))
 BEGIN
 
     SELECT us.id, u.id ,u.name_ar ,s.name , r.name  ,  u.email , us.breif , us.status , us.created_at FROM 
@@ -1744,6 +1744,7 @@ BEGIN
     AND (CASE WHEN Iemail = '' THEN '1' ELSE u.email LIKE CONCAT('%' ,Iemail , '%')  END)
     AND (CASE WHEN Ibreif = '' THEN '1' ELSE us.breif LIKE CONCAT('%' ,Ibreif , '%')  END)
     AND (CASE WHEN role_id = 0 THEN '1' ELSE r.id = role_id END)
+    AND (CASE WHEN Istatus = "" THEN '1' ELSE us.status = Istatus END)
     AND (CASE WHEN role_id = 0 THEN '1' ELSE r.id = role_id END);
     
 END//
