@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"shab/config"
 	"shab/model"
 	"shab/utils"
 
@@ -143,7 +142,7 @@ func (ur *UserRepo) GetByEmailOrPhone(emailOrPhone string) (*model.User, error) 
 		&user.Color,
 		&user.Password,
 	)
-	user.Img = config.Config("BASE_URL") + user.Img
+	// user.Img = config.Config("BASE_URL") + user.Img
 
 	if err != nil {
 		utils.NewError(err)
@@ -167,7 +166,7 @@ func (ur *UserRepo) GetById(id uint) (*model.User, error) {
 		&user.Role,
 		&user.Color,
 	)
-	user.Img = config.Config("BASE_URL") + user.Img
+	// user.Img = config.Config("BASE_URL") + user.Img
 
 	if err != nil {
 		utils.NewError(err)
@@ -194,7 +193,7 @@ func scanUserResult(rows *sql.Rows) ([]model.User, error) {
 			&rec.Role,
 			&rec.Color,
 		)
-		rec.Img = config.Config("BASE_URL") + rec.Img
+		// rec.Img = config.Config("BASE_URL") + rec.Img
 
 		resp = append(resp, rec)
 	}

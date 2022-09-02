@@ -3,7 +3,6 @@ package handler
 import (
 	"fmt"
 	"net/http"
-	"shab/config"
 	"shab/model"
 	"shab/utils"
 	"strconv"
@@ -13,7 +12,7 @@ import (
 )
 
 func (h *Handler) ProjectListByCategoryUserSearch(c echo.Context) error {
-	category, _ := strconv.ParseUint(c.QueryParam("CatId"), 10, 64)
+	category, _ := strconv.ParseUint(c.QueryParam("category"), 10, 64)
 	city, _ := strconv.ParseUint(c.QueryParam("CityId"), 10, 64)
 	user, _ := strconv.ParseUint(c.QueryParam("user"), 10, 64)
 	projects, err := h.projectRepo.ListByCategoryUserSearch(category, city, user, c.QueryParam("Name"), c.QueryParam("UserName"), c.QueryParam("Status"))
@@ -44,9 +43,9 @@ func (h *Handler) ProjectRead(c echo.Context) error {
 
 	// imgs
 	imgs := strings.Split(project.Imgs, ",")
-	for i := range imgs {
-		imgs[i] = config.Config("BASE_URL") + imgs[i]
-	}
+	// for i := range imgs {
+	// 	imgs[i] = config.Config("BASE_URL") + imgs[i]
+	// }
 	project.Imgs = strings.Join(imgs, ",")
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, utils.NewError(err))

@@ -1,12 +1,12 @@
-USE  alshab_st;
+USE  alshab_staging2;
 DROP PROCEDURE IF EXISTS MergeRoles;
 
 DELIMITER //
 
 CREATE PROCEDURE MergeRoles()
 BEGIN
-    INSERT INTO alshab_st.features(name , breif , level ) SELECT name , breif , level  FROM alshab_staging.features;
-    INSERT INTO alshab_st.roles(name , image , breif , price , color) SELECT name , image , breif , price , color FROM alshab_staging.roles;
+    INSERT INTO alshab_staging2.features(name , breif , level ) SELECT name , breif , level  FROM alshab_staging.features;
+    INSERT INTO alshab_staging2.roles(name , image , breif , price , color) SELECT name , image , breif , price , color FROM alshab_staging.roles;
 END //
 DELIMITER ;
 
@@ -17,7 +17,7 @@ DELIMITER //
 
 CREATE PROCEDURE MergeRich()
 BEGIN
-     INSERT INTO alshab_st.rich_text(`key`  , `value` , title , image , `group` , icon) SELECT `key`  , `value` , title , image , `group` , icon FROM alshab_staging.rich_text;
+     INSERT INTO alshab_staging2.rich_text(`key`  , `value` , title , image , `group` , icon) SELECT `key`  , `value` , title , image , `group` , icon FROM alshab_staging.rich_text;
 END //
 DELIMITER ;
 
@@ -29,7 +29,7 @@ DELIMITER //
 
 CREATE PROCEDURE MergeCities()
 BEGIN
-    INSERT INTO alshab_st.cities(name) SELECT name FROM alshab_staging.cities;
+    INSERT INTO alshab_staging2.cities(name) SELECT name FROM alshab_staging.cities;
 END //
 DELIMITER ;
 
@@ -40,7 +40,7 @@ DELIMITER //
 
 CREATE PROCEDURE MergeCats()
 BEGIN
-    INSERT INTO alshab_st.categories(name , icon , type) SELECT name , icon , type FROM alshab_staging.categories;
+    INSERT INTO alshab_staging2.categories(name , icon , type) SELECT name , icon , type FROM alshab_staging.categories;
 END //
 DELIMITER ;
 
@@ -53,7 +53,7 @@ DELIMITER //
 
 CREATE PROCEDURE MergeServices()
 BEGIN
-    INSERT INTO alshab_st.services(name , icon) SELECT name , icon FROM alshab_staging.services;
+    INSERT INTO alshab_staging2.services(name , icon) SELECT name , icon FROM alshab_staging.services;
 END //
 DELIMITER ;
 
@@ -66,7 +66,7 @@ DELIMITER //
 
 CREATE PROCEDURE MergeConsultunts()
 BEGIN
-    INSERT INTO alshab_st.consultunts(name , title , skills , img , is_team , breif) SELECT name , title , skills , img , is_team , breif FROM alshab_staging.consultunts;
+    INSERT INTO alshab_staging2.consultunts(name , title , skills , img , is_team , breif) SELECT name , title , skills , img , is_team , breif FROM alshab_staging.consultunts;
 END //
 DELIMITER ;
 
@@ -79,7 +79,7 @@ DELIMITER //
 
 CREATE PROCEDURE MergeVideos()
 BEGIN
-    INSERT INTO alshab_st.videos(name , url , image , Breif , category_id) SELECT v.name , v.url , v.image , v.Breif , (SELECT id FROM alshab_st.categories WHERE name = c.name LIMIT 1) FROM alshab_staging.videos v JOIN alshab_staging.categories c ON v.category_id = c.id;
+    INSERT INTO alshab_staging2.videos(name , url , image , Breif , category_id) SELECT v.name , v.url , v.image , v.Breif , (SELECT id FROM alshab_staging2.categories WHERE name = c.name LIMIT 1) FROM alshab_staging.videos v JOIN alshab_staging.categories c ON v.category_id = c.id;
 END //
 DELIMITER ;
 
@@ -91,7 +91,7 @@ DELIMITER //
 
 CREATE PROCEDURE MergeEvents()
 BEGIN
-    INSERT INTO alshab_st.events(title , img , video , breif , `date` , price , featured , category_id) SELECT title , img , video , breif , `date` , price , featured , (SELECT id FROM alshab_st.categories WHERE name = c.name LIMIT 1) FROM alshab_staging.events e JOIN alshab_staging.categories c ON e.category_id = c.id;
+    INSERT INTO alshab_staging2.events(title , img , video , breif , `date` , price , featured , category_id) SELECT title , img , video , breif , `date` , price , featured , (SELECT id FROM alshab_staging2.categories WHERE name = c.name LIMIT 1) FROM alshab_staging.events e JOIN alshab_staging.categories c ON e.category_id = c.id;
 END //
 DELIMITER ;
 
@@ -103,7 +103,7 @@ DELIMITER //
 
 CREATE PROCEDURE MergeUsers()
 BEGIN
-    INSERT INTO alshab_st.users(
+    INSERT INTO alshab_staging2.users(
         name ,
         name_ar ,
         email ,
@@ -143,7 +143,7 @@ BEGIN
     LEFT JOIN alshab_staging.cities c ON u.city_id = c.id;
 
 
-    INSERT INTO alshab_st.user_subs( 
+    INSERT INTO alshab_staging2.user_subs( 
         user_id,
         role_id ,
 
@@ -154,7 +154,7 @@ BEGIN
         start_at,
         end_at ) 
     SELECT 
-        (SELECT id FROM alshab_st.users WHERE phone = u.phone),
+        (SELECT id FROM alshab_staging2.users WHERE phone = u.phone),
         (SELECT id FROM roles WHERE name = r.name LIMIT 1) ,
         us.price,
         us.method,
@@ -169,7 +169,7 @@ BEGIN
 
 
     
-    INSERT INTO alshab_st.user_events(
+    INSERT INTO alshab_staging2.user_events(
         user_id,
         event_id,
         price,
@@ -177,7 +177,7 @@ BEGIN
         points
     ) 
     SELECT 
-        (SELECT id FROM alshab_st.users WHERE phone = u.phone),
+        (SELECT id FROM alshab_staging2.users WHERE phone = u.phone),
         (SELECT id FROM events WHERE title = e.title LIMIT 1) ,
         ue.price,
         ue.method,
@@ -189,7 +189,7 @@ BEGIN
     ON ue.event_id = e.id;
 
 
-    INSERT INTO alshab_st.user_services(
+    INSERT INTO alshab_staging2.user_services(
         user_id,
         breif,
         service_id,
@@ -197,9 +197,9 @@ BEGIN
         created_at
     ) 
     SELECT 
-        (SELECT id FROM alshab_st.users WHERE phone = u.phone),
+        (SELECT id FROM alshab_staging2.users WHERE phone = u.phone),
         us.breif,
-        (SELECT id FROM alshab_st.services WHERE name = s.name LIMIT 1),
+        (SELECT id FROM alshab_staging2.services WHERE name = s.name LIMIT 1),
         us.seen_at,
         us.created_at 
     FROM alshab_staging.user_services us 
@@ -218,7 +218,7 @@ DELIMITER //
 
 CREATE PROCEDURE MergeArticles()
 BEGIN
-    INSERT INTO alshab_st.articles(
+    INSERT INTO alshab_staging2.articles(
         user_id,
         category_id,
         title,
@@ -231,8 +231,8 @@ BEGIN
         deleted_at
     ) 
     SELECT 
-        (SELECT id FROM alshab_st.users WHERE phone = u.phone),
-        (SELECT id FROM alshab_st.categories WHERE name = c.name LIMIT 1),
+        (SELECT id FROM alshab_staging2.users WHERE phone = u.phone),
+        (SELECT id FROM alshab_staging2.categories WHERE name = c.name LIMIT 1),
         ua.title,
         ua.img,
         ua.status,
@@ -260,7 +260,7 @@ DELIMITER //
 
 CREATE PROCEDURE MergeProjects()
 BEGIN
-    INSERT INTO alshab_st.projects(
+    INSERT INTO alshab_staging2.projects(
         user_id,
         category_id,
         city_id,
@@ -284,9 +284,9 @@ BEGIN
         deleted_at
     ) 
     SELECT 
-        (SELECT id FROM alshab_st.users WHERE phone = u.phone),
-        (SELECT id FROM alshab_st.categories WHERE name = ca.name LIMIT 1),
-        (SELECT id FROM alshab_st.cities WHERE name = ci.name LIMIT 1),
+        (SELECT id FROM alshab_staging2.users WHERE phone = u.phone),
+        (SELECT id FROM alshab_staging2.categories WHERE name = ca.name LIMIT 1),
+        (SELECT id FROM alshab_staging2.cities WHERE name = ci.name LIMIT 1),
         up.title,
         up.logo,
         up.img,
@@ -325,7 +325,7 @@ DELIMITER //
 
 CREATE PROCEDURE MergeNotifications()
 BEGIN
-    INSERT INTO alshab_st.notifications(
+    INSERT INTO alshab_staging2.notifications(
         title,
         breif,
         link
@@ -348,7 +348,7 @@ DELIMITER //
 
 CREATE PROCEDURE MergeMsgs()
 BEGIN
-    INSERT INTO alshab_st.msgs(
+    INSERT INTO alshab_staging2.msgs(
         from_id,
         to_id,
         created_at,
@@ -356,8 +356,8 @@ BEGIN
         seen
     ) 
     SELECT 
-        (SELECT id FROM alshab_st.users WHERE phone = fr.phone),
-        (SELECT id FROM alshab_st.users WHERE phone = t.phone),
+        (SELECT id FROM alshab_staging2.users WHERE phone = fr.phone),
+        (SELECT id FROM alshab_staging2.users WHERE phone = t.phone),
         now(),
         m.breif,
         m.seen 

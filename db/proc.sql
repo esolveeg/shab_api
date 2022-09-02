@@ -1068,6 +1068,7 @@ BEGIN
 END//
 DELIMITER ;
 
+DROP PROCEDURE IF EXISTS CategoryFind;
 
 DELIMITER //
 CREATE  PROCEDURE `CategoryFind`(IN Iid INT)
@@ -1474,7 +1475,7 @@ END//
 DELIMITER ;
 
 
-
+/* 
 
 
 
@@ -1551,7 +1552,7 @@ DELIMITER ;
 
       
 
-
+ */
 
 
 DROP PROCEDURE IF EXISTS NotificationCreate;

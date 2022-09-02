@@ -76,8 +76,8 @@ func (ar *ArticleRepo) ListByCategoryUserSearch(req *model.ArticlesListReq) (*[]
 			&article.Views,
 			&article.Published_at,
 		)
-		article.Img = config.Config("BASE_URL") + article.Img
-		article.UserImg = config.Config("BASE_URL") + article.UserImg
+		// article.Img = config.Config("BASE_URL") + article.Img
+		// article.UserImg = config.Config("BASE_URL") + article.UserImg
 
 		articles = append(articles, article)
 

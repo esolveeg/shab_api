@@ -31,7 +31,16 @@ func (h *Handler) HomeGetAllData(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
 	}
-	users, err := h.userRepo.ListFeatured()
+	req := model.UserListReq{
+		Role:     0,
+		Featured: true,
+		Admin:    false,
+		Name:     "",
+		Phone:    "",
+		Email:    "",
+		Serial:   "",
+	}
+	users, err := h.userRepo.ListByRoleOrFeatured(&req)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
 	}

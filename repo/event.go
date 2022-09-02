@@ -113,7 +113,17 @@ func (ur *EventRepo) Create(req *model.EventRequest) (*int, error) {
 }
 
 func (er *EventRepo) ListFeatured() (*[]model.Event, error) {
-	rows, err := er.db.Raw("CALL EventsList(1)").Rows()
+	// req := new(model.EventListReq)
+	var req model.EventListReq
+	rows, err := er.db.Raw("CALL EventsList(1 , ? ,? , ? , ? , ? , ? , ?)",
+		req.Title,
+		req.Status,
+		req.Category,
+		req.DateFrom,
+		req.DateTo,
+		req.PriceFrom,
+		req.PriceTo,
+	).Rows()
 	if err != nil {
 		utils.NewError(err)
 		return nil, err
