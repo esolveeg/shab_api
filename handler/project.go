@@ -22,6 +22,18 @@ func (h *Handler) ProjectListByCategoryUserSearch(c echo.Context) error {
 	return c.JSON(http.StatusOK, projects)
 }
 
+func (h *Handler) ProjectsDownloadExcel(c echo.Context) error {
+	category, _ := strconv.ParseUint(c.QueryParam("category"), 10, 64)
+	city, _ := strconv.ParseUint(c.QueryParam("CityId"), 10, 64)
+	user, _ := strconv.ParseUint(c.QueryParam("user"), 10, 64)
+	projects, err := h.projectRepo.ListByCategoryUserSearch(category, city, user, c.QueryParam("Name"), c.QueryParam("UserName"), c.QueryParam("Status"))
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
+	}
+	file := utils.GenerateExcel(*projects)
+	return c.JSON(http.StatusOK, file)
+}
+
 func (h *Handler) ProjectDelete(c echo.Context) error {
 	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {

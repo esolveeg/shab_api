@@ -53,8 +53,8 @@ func (ar *ArticleRepo) ArticleUpdate(id *int, req *model.ArticleCreateReq) (*uin
 	return &resp, nil
 }
 
-func (ar *ArticleRepo) ListByCategoryUserSearch(req *model.ArticlesListReq) (*[]model.ArticleList, error) {
-	var articles []model.ArticleList
+func (ar *ArticleRepo) ListByCategoryUserSearch(req *model.ArticlesListReq) (*[]interface{}, error) {
+	var articles []interface{}
 	rows, err := ar.db.Raw("CALL ArticleListByCategoryUserSearch(? , ? , ? , ? , ?);",
 		req.Category,
 		req.UserName,

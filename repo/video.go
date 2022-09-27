@@ -18,8 +18,8 @@ func NewVideoRepo(db *gorm.DB) VideoRepo {
 	}
 }
 
-func (ur *VideoRepo) ListByCategory(cat int, name string) (*[]model.Video, error) {
-	var videos []model.Video
+func (ur *VideoRepo) ListByCategory(cat int, name string) (*[]interface{}, error) {
+	var videos []interface{}
 	rows, err := ur.db.Raw("CALL VideosListByCategory(? , ?);", cat, name).Rows()
 	if err != nil {
 		utils.NewError(err)

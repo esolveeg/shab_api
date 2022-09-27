@@ -20,8 +20,8 @@ func NewRoleRepo(db *gorm.DB) RoleRepo {
 	}
 }
 
-func (ur *RoleRepo) ListAll(active *bool, priceFrom int, priceTo int, name string) (*[]model.Role, error) {
-	var resp []model.Role
+func (ur *RoleRepo) ListAll(active *bool, priceFrom int, priceTo int, name string) (*[]interface{}, error) {
+	var resp []interface{}
 	rows, err := ur.db.Raw("CALL RolesList(? , ? , ? , ?)", active, name, priceFrom, priceTo).Rows()
 	if err != nil {
 		utils.NewError(err)
@@ -56,7 +56,7 @@ func (ur *RoleRepo) Edit(id *int, req *model.Role) (*int, error) {
 	return &resp, nil
 }
 
-func scanRoleResut(rows *sql.Rows, resp *[]model.Role, row *sql.Row, rec *model.Role) error {
+func scanRoleResut(rows *sql.Rows, resp *[]interface{}, row *sql.Row, rec *model.Role) error {
 	if row != nil {
 		err := row.Scan(
 			&rec.Id,
@@ -117,8 +117,8 @@ func (ur *RoleRepo) ListAllFeatures() (*[]model.Feature, error) {
 	return &resp, nil
 }
 
-func (ur *RoleRepo) ListFeaturesByRole(role *int, name string) (*[]model.Feature, error) {
-	var resp []model.Feature
+func (ur *RoleRepo) ListFeaturesByRole(role *int, name string) (*[]interface{}, error) {
+	var resp []interface{}
 	rows, err := ur.db.Raw("CALL FeaturesListByRole(? , ? )", role, name).Rows()
 	if err != nil {
 		utils.NewError(err)

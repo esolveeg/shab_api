@@ -54,8 +54,8 @@ func (ur *RequestRepo) FindUserUpgradeRequest(id uint) (*model.UserPendingUpgrad
 	return &resp, nil
 }
 
-func (ur *RequestRepo) ListContactRequests(req *model.ContactListReq) (*[]model.ContactPending, error) {
-	var resp []model.ContactPending
+func (ur *RequestRepo) ListContactRequests(req *model.ContactListReq) (*[]interface{}, error) {
+	var resp []interface{}
 	rows, err := ur.db.Raw("CALL ContactRequestsList(? , ? , ? , ? , ? , ?);",
 		req.Status,
 		req.Name,
@@ -91,8 +91,8 @@ func (ur *RequestRepo) ListContactRequests(req *model.ContactListReq) (*[]model.
 	}
 	return &resp, nil
 }
-func (ur *RequestRepo) ListPendingUsers(req *model.PendingUsersListReq) (*[]model.UserPending, error) {
-	var resp []model.UserPending
+func (ur *RequestRepo) ListPendingUsers(req *model.PendingUsersListReq) (*[]interface{}, error) {
+	var resp []interface{}
 	rows, err := ur.db.Raw("CALL UsersRequests(? , ? , ? , ? , ? , ? , ?);",
 		req.Status,
 		req.Name,
@@ -125,8 +125,8 @@ func (ur *RequestRepo) ListPendingUsers(req *model.PendingUsersListReq) (*[]mode
 	return &resp, nil
 }
 
-func (ur *RequestRepo) ListPendingUpgrades(req *model.UsersUpgratedListReq) (*[]model.UserPendingUpgrades, error) {
-	var resp []model.UserPendingUpgrades
+func (ur *RequestRepo) ListPendingUpgrades(req *model.UsersUpgratedListReq) (*[]interface{}, error) {
+	var resp []interface{}
 	rows, err := ur.db.Raw("CALL UsersPendingUpgrades(? , ? , ? , ? , ? , ? , ? , ?);",
 		req.Status,
 		req.Name,
@@ -163,8 +163,8 @@ func (ur *RequestRepo) ListPendingUpgrades(req *model.UsersUpgratedListReq) (*[]
 	return &resp, nil
 }
 
-func (ur *RequestRepo) ListPendingArticles(req *model.ProjectsPendingListReq) (*[]model.ArticlePending, error) {
-	var resp []model.ArticlePending
+func (ur *RequestRepo) ListPendingArticles(req *model.ProjectsPendingListReq) (*[]interface{}, error) {
+	var resp []interface{}
 	rows, err := ur.db.Raw("CALL ArticlePending(? , ? , ? , ? , ? , ? , ? );",
 		req.Status,
 		req.Name,
@@ -196,8 +196,8 @@ func (ur *RequestRepo) ListPendingArticles(req *model.ProjectsPendingListReq) (*
 	return &resp, nil
 }
 
-func (ur *RequestRepo) ListPendingProjects(req *model.ProjectsPendingListReq) (*[]model.ProjectPending, error) {
-	var resp []model.ProjectPending
+func (ur *RequestRepo) ListPendingProjects(req *model.ProjectsPendingListReq) (*[]interface{}, error) {
+	var resp []interface{}
 	rows, err := ur.db.Raw("CALL ProjectPending(? , ? , ? , ? , ? , ? , ?);",
 		req.Status,
 		req.Name,
@@ -230,8 +230,8 @@ func (ur *RequestRepo) ListPendingProjects(req *model.ProjectsPendingListReq) (*
 	return &resp, nil
 }
 
-func (ur *RequestRepo) ListPendingServices(req *model.ServicePendingReq) (*[]model.ServicePending, error) {
-	var resp []model.ServicePending
+func (ur *RequestRepo) ListPendingServices(req *model.ServicePendingReq) (*[]interface{}, error) {
+	var resp []interface{}
 	rows, err := ur.db.Raw("CALL ServiceRequestsPending(? ,?, ? , ? , ? , ?);",
 		req.Name,
 		req.Status,

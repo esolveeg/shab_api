@@ -9,6 +9,14 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
+func (h *Handler) ServicesDownloadExcel(c echo.Context) error {
+	services, err := h.serviceRepo.ListAllServicces(c.QueryParam("Name"))
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
+	}
+	file := utils.GenerateExcel(*services)
+	return c.JSON(http.StatusOK, file)
+}
 func (h *Handler) ServicesListAll(c echo.Context) error {
 	services, err := h.serviceRepo.ListAllServicces(c.QueryParam("Name"))
 	if err != nil {

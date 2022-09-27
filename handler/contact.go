@@ -42,3 +42,16 @@ func (h *Handler) ContactsPendingListAll(c echo.Context) error {
 	}
 	return c.JSON(http.StatusOK, r)
 }
+
+func (h *Handler) ContactsRequestsDownloadExcel(c echo.Context) error {
+	req := new(model.ContactListReq)
+	if err := c.Bind(req); err != nil {
+		return c.JSON(http.StatusUnprocessableEntity, utils.NewError(err))
+	}
+	r, err := h.requestRepo.ListContactRequests(req)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
+	}
+	file := utils.GenerateExcel(*r)
+	return c.JSON(http.StatusOK, file)
+}

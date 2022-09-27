@@ -51,7 +51,7 @@ func (h *Handler) HomeGetAllData(c echo.Context) error {
 	return c.JSON(http.StatusOK, newHomeResponse(banner, goals, roles, users, projects, events, features))
 }
 
-func newHomeResponse(banner *model.RichText, goals *[]model.RichText, roles *[]model.Role, users []model.User, projects *[]model.ProjectList, events *[]model.Event, features *[]model.Feature) *model.HomeResponse {
+func newHomeResponse(banner *model.RichText, goals *[]model.RichText, roles *[]interface{}, users []interface{}, projects *[]model.ProjectList, events *[]interface{}, features *[]model.Feature) *model.HomeResponse {
 	r := new(model.HomeResponse)
 	r.Banner = *banner
 	r.Goals = *goals

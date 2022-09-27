@@ -23,6 +23,35 @@ func (h *Handler) ConsultuntsListAll(c echo.Context) error {
 	return c.JSON(http.StatusOK, consultunts)
 }
 
+func (h *Handler) TeamList(c echo.Context) error {
+	req := new(model.ConsultuntListReq)
+	if err := c.Bind(req); err != nil {
+		return c.JSON(http.StatusUnprocessableEntity, utils.NewError(err))
+	}
+
+	req.IsTeam = true
+	consultunts, err := h.consltuntsRepo.ConsultuntsListAll(req)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
+	}
+	return c.JSON(http.StatusOK, consultunts)
+}
+
+func (h *Handler) TeamDownloadExcel(c echo.Context) error {
+	req := new(model.ConsultuntListReq)
+	if err := c.Bind(req); err != nil {
+		return c.JSON(http.StatusUnprocessableEntity, utils.NewError(err))
+	}
+
+	req.IsTeam = true
+	consultunts, err := h.consltuntsRepo.ConsultuntsListAll(req)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
+	}
+	fileName := utils.GenerateExcel(consultunts)
+	return c.JSON(http.StatusOK, fileName)
+}
+
 func (h *Handler) ConsultuntsCreate(c echo.Context) error {
 	req := new(model.Consultunt)
 	if err := c.Bind(req); err != nil {
@@ -37,6 +66,24 @@ func (h *Handler) ConsultuntsCreate(c echo.Context) error {
 	return c.JSON(http.StatusOK, u)
 }
 
+func (h *Handler) ConsultuntsDownloadExcel(c echo.Context) error {
+	req := new(model.ConsultuntListReq)
+	if err := c.Bind(req); err != nil {
+		return c.JSON(http.StatusUnprocessableEntity, utils.NewError(err))
+	}
+
+	consultunts, err := h.consltuntsRepo.ConsultuntsListAll(req)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
+	}
+
+	fileName := utils.GenerateExcel(consultunts)
+	fmt.Println(fileName)
+
+	return c.JSON(http.StatusOK, fileName)
+
+	// return c.JSON(http.StatusOK, users)
+}
 func (h *Handler) ConsultuntsUpdate(c echo.Context) error {
 	fmt.Println("hellow wo")
 	req := new(model.Consultunt)

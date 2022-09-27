@@ -23,6 +23,19 @@ func (h *Handler) EventsListAll(c echo.Context) error {
 	return c.JSON(http.StatusOK, events)
 }
 
+func (h *Handler) EventsDownloadExcel(c echo.Context) error {
+	r := new(model.EventListReq)
+	if err := c.Bind(r); err != nil {
+		return c.JSON(http.StatusUnprocessableEntity, utils.NewError(err))
+	}
+	events, err := h.eventRepo.ListAll(r)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
+	}
+	file := utils.GenerateExcel(*events)
+	return c.JSON(http.StatusOK, file)
+}
+
 func (h *Handler) EventRead(c echo.Context) error {
 	id, _ := strconv.ParseInt(c.Param("id"), 10, 64)
 	events, err := h.eventRepo.Read(id)

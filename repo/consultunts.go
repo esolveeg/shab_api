@@ -20,14 +20,14 @@ func NewConsultuntsRepo(db *gorm.DB) ConsltuntsRepo {
 	}
 }
 
-func (ur *ConsltuntsRepo) ConsultuntsListAll(req *model.ConsultuntListReq) (*[]model.Consultunt, error) {
+func (ur *ConsltuntsRepo) ConsultuntsListAll(req *model.ConsultuntListReq) ([]interface{}, error) {
 	rows, err := ur.db.Raw("CALL ConsultuntsListAll(? , ? , ? , ?);", req.IsTeam, req.Name, req.Title, req.Skills).Rows()
 	if err != nil {
 		utils.NewError(err)
 		return nil, err
 	}
 	defer rows.Close()
-	var resp []model.Consultunt
+	var resp []interface{}
 	for rows.Next() {
 		var rec model.Consultunt
 		err = rows.Scan(
@@ -54,7 +54,7 @@ func (ur *ConsltuntsRepo) ConsultuntsListAll(req *model.ConsultuntListReq) (*[]m
 		return nil, err
 	}
 
-	return &resp, nil
+	return resp, nil
 }
 
 func (ur *ConsltuntsRepo) ConsultuntsCreate(req *model.Consultunt) (string, error) {

@@ -22,6 +22,20 @@ func (h *Handler) ArticleListByCategoryUserSearch(c echo.Context) error {
 	return c.JSON(http.StatusOK, articles)
 }
 
+func (h *Handler) ArticlesDownloadExcel(c echo.Context) error {
+	req := new(model.ArticlesListReq)
+	if err := c.Bind(req); err != nil {
+		return c.JSON(http.StatusUnprocessableEntity, utils.NewError(err))
+	}
+	articles, err := h.articleRepo.ListByCategoryUserSearch(req)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
+	}
+
+	file := utils.GenerateExcel(*articles)
+	return c.JSON(http.StatusOK, file)
+}
+
 func (h *Handler) ArticleDelete(c echo.Context) error {
 	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {

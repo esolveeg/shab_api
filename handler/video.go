@@ -20,6 +20,25 @@ func (h *Handler) VideosFind(c echo.Context) error {
 	}
 	return c.JSON(http.StatusOK, r)
 }
+
+func (h *Handler) VideosDownloadExcel(c echo.Context) error {
+	var cat int
+	var err error
+	if c.QueryParam("CatId") != "" {
+		cat, err = strconv.Atoi(c.QueryParam("CatId"))
+		if err != nil {
+			return c.JSON(http.StatusInternalServerError, utils.NewError(err))
+		}
+
+	}
+	r, err := h.videoRepo.ListByCategory(cat, c.QueryParam("Name"))
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
+	}
+
+	file := utils.GenerateExcel(*r)
+	return c.JSON(http.StatusOK, file)
+}
 func (h *Handler) VideosListByCategory(c echo.Context) error {
 	var cat int
 	var err error

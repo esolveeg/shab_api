@@ -20,7 +20,7 @@ func NewEventRepo(db *gorm.DB) EventRepo {
 	}
 }
 
-func (ur *EventRepo) ListAll(req *model.EventListReq) (*[]model.Event, error) {
+func (ur *EventRepo) ListAll(req *model.EventListReq) (*[]interface{}, error) {
 	rows, err := ur.db.Raw("CALL EventsList(? , ? ,? , ? , ? , ? , ? , ?)",
 		req.Featured,
 		req.Title,
@@ -112,7 +112,7 @@ func (ur *EventRepo) Create(req *model.EventRequest) (*int, error) {
 	return &resp, nil
 }
 
-func (er *EventRepo) ListFeatured() (*[]model.Event, error) {
+func (er *EventRepo) ListFeatured() (*[]interface{}, error) {
 	// req := new(model.EventListReq)
 	var req model.EventListReq
 	rows, err := er.db.Raw("CALL EventsList(1 , ? ,? , ? , ? , ? , ? , ?)",
@@ -138,7 +138,7 @@ func (er *EventRepo) ListFeatured() (*[]model.Event, error) {
 	return result, nil
 }
 
-func (er *EventRepo) ListByCategorySearch(category uint, search string) (*[]model.Event, error) {
+func (er *EventRepo) ListByCategorySearch(category uint, search string) (*[]interface{}, error) {
 	rows, err := er.db.Raw("CALL EventsListByCategorySearch(? , ?);", category, search).Rows()
 	if err != nil {
 		utils.NewError(err)
@@ -153,8 +153,8 @@ func (er *EventRepo) ListByCategorySearch(category uint, search string) (*[]mode
 	return result, nil
 }
 
-func scanResult(rows *sql.Rows) (*[]model.Event, error) {
-	var resp []model.Event
+func scanResult(rows *sql.Rows) (*[]interface{}, error) {
+	var resp []interface{}
 	for rows.Next() {
 		var rec model.Event
 		rows.Scan(

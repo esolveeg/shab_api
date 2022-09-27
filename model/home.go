@@ -3,9 +3,9 @@ package model
 type HomeResponse struct {
 	Banner   RichText
 	Goals    []RichText
-	Roles    []Role
-	Events   []Event
-	Users    []User
+	Roles    []interface{}
+	Events   []interface{}
+	Users    []interface{}
 	Projects []ProjectList
 	Features []Feature
 }

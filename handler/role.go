@@ -9,6 +9,29 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
+func (h *Handler) RolesDownloadExcel(c echo.Context) error {
+	var active *bool
+	var priceFrom int
+	var priceTo int
+	if c.QueryParam("active") != "" {
+		filter, _ := strconv.ParseBool(c.QueryParam("active"))
+		active = &filter
+	}
+	if c.QueryParam("PriceFrom") != "" {
+		priceFrom, _ = strconv.Atoi(c.QueryParam("PriceFrom"))
+	}
+	if c.QueryParam("PriceTo") != "" {
+		priceTo, _ = strconv.Atoi(c.QueryParam("PriceTo"))
+	}
+
+	r, err := h.roleRepo.ListAll(active, priceFrom, priceTo, c.QueryParam("Name"))
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
+	}
+
+	file := utils.GenerateExcel(*r)
+	return c.JSON(http.StatusOK, file)
+}
 func (h *Handler) RolesListAll(c echo.Context) error {
 	var active *bool
 	var priceFrom int

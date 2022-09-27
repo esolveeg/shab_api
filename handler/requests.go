@@ -22,6 +22,19 @@ func (h *Handler) ServicesPendingListAll(c echo.Context) error {
 	return c.JSON(http.StatusOK, r)
 }
 
+func (h *Handler) ServicesRequestsDownloadExcel(c echo.Context) error {
+	req := new(model.ServicePendingReq)
+	if err := c.Bind(req); err != nil {
+		return c.JSON(http.StatusUnprocessableEntity, utils.NewError(err))
+	}
+	r, err := h.requestRepo.ListPendingServices(req)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
+	}
+	file := utils.GenerateExcel(*r)
+	return c.JSON(http.StatusOK, file)
+}
+
 func (h *Handler) UsersPendingListAll(c echo.Context) error {
 	req := new(model.PendingUsersListReq)
 	if err := c.Bind(req); err != nil {
@@ -33,6 +46,19 @@ func (h *Handler) UsersPendingListAll(c echo.Context) error {
 	}
 	return c.JSON(http.StatusOK, r)
 }
+
+func (h *Handler) UsersRequestsDownloadExcel(c echo.Context) error {
+	req := new(model.PendingUsersListReq)
+	if err := c.Bind(req); err != nil {
+		return c.JSON(http.StatusUnprocessableEntity, utils.NewError(err))
+	}
+	r, err := h.requestRepo.ListPendingUsers(req)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
+	}
+	file := utils.GenerateExcel(*r)
+	return c.JSON(http.StatusOK, file)
+}
 func (h *Handler) UsersPendingUpgradeListAll(c echo.Context) error {
 	req := new(model.UsersUpgratedListReq)
 	if err := c.Bind(req); err != nil {
@@ -43,6 +69,20 @@ func (h *Handler) UsersPendingUpgradeListAll(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
 	}
 	return c.JSON(http.StatusOK, r)
+}
+
+func (h *Handler) UsersUpgradesDownloadExcel(c echo.Context) error {
+	req := new(model.UsersUpgratedListReq)
+	if err := c.Bind(req); err != nil {
+		return c.JSON(http.StatusUnprocessableEntity, utils.NewError(err))
+	}
+	r, err := h.requestRepo.ListPendingUpgrades(req)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
+	}
+
+	file := utils.GenerateExcel(*r)
+	return c.JSON(http.StatusOK, file)
 }
 
 func (h *Handler) ProjectsPendingListAll(c echo.Context) error {
@@ -57,6 +97,20 @@ func (h *Handler) ProjectsPendingListAll(c echo.Context) error {
 	return c.JSON(http.StatusOK, r)
 }
 
+func (h *Handler) ProjectsRequestsDownloadExcel(c echo.Context) error {
+	req := new(model.ProjectsPendingListReq)
+	if err := c.Bind(req); err != nil {
+		return c.JSON(http.StatusUnprocessableEntity, utils.NewError(err))
+	}
+	r, err := h.requestRepo.ListPendingProjects(req)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
+	}
+	file := utils.GenerateExcel(*r)
+
+	return c.JSON(http.StatusOK, file)
+}
+
 func (h *Handler) ArticlesPendingListAll(c echo.Context) error {
 	req := new(model.ProjectsPendingListReq)
 	if err := c.Bind(req); err != nil {
@@ -67,6 +121,19 @@ func (h *Handler) ArticlesPendingListAll(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
 	}
 	return c.JSON(http.StatusOK, r)
+}
+
+func (h *Handler) ArticleRequestsDownloadExcel(c echo.Context) error {
+	req := new(model.ProjectsPendingListReq)
+	if err := c.Bind(req); err != nil {
+		return c.JSON(http.StatusUnprocessableEntity, utils.NewError(err))
+	}
+	r, err := h.requestRepo.ListPendingArticles(req)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
+	}
+	file := utils.GenerateExcel(*r)
+	return c.JSON(http.StatusOK, file)
 }
 func (h *Handler) ServicesPendingFind(c echo.Context) error {
 	id, err := strconv.ParseUint(c.Param("id"), 10, 32)

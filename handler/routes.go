@@ -34,8 +34,13 @@ func (h *Handler) Register(v1 *echo.Group) {
 	features.POST("/editadd", h.FeaturesEditAdd)
 	features.PUT("/editadd/:id", h.FeaturesEditAdd)
 
+	// admins routes
+	admins := api.Group("/admins")
+	admins.GET("", h.AdminsList)
+	admins.POST("/excel", h.AdminsDownloadExcel)
 	// users routes
 	users := api.Group("/users")
+
 	users.GET("", h.UserListByRoleOrFeatured)
 	users.POST("/excel", h.UsersDownloadExcel)
 	users.GET("/:id", h.UserFindById)
@@ -115,6 +120,22 @@ func (h *Handler) Register(v1 *echo.Group) {
 	services.POST("/editadd", h.ServiceCreate)
 	services.PUT("/editadd/:id", h.ServiceUpdate)
 	services.DELETE("/:id", h.ServiceDelete)
+	//pages excel routes
+	api.POST("/pages-home/excel", h.RichDownloadExcel)
+	api.POST("/pages-roles/excel", h.RolesDownloadExcel)
+	api.POST("/pages-features/excel", h.FeaturesDownloadExcel)
+	api.POST("/pages-events/excel", h.EventsDownloadExcel)
+	api.POST("/services/excel", h.ServicesDownloadExcel)
+	api.POST("/services/excel", h.ServicesDownloadExcel)
+	api.POST("/projects/excel", h.ProjectsDownloadExcel)
+	api.POST("/articles/excel", h.ArticlesDownloadExcel)
+	api.POST("/videos/excel", h.VideosDownloadExcel)
+	api.POST("/contact/excel", h.ContactsRequestsDownloadExcel)
+	api.POST("/articles-pending/excel", h.ArticleRequestsDownloadExcel)
+	api.POST("/services-pending/excel", h.ServicesRequestsDownloadExcel)
+	api.POST("/users-pending/excel", h.UsersRequestsDownloadExcel)
+	api.POST("/users-upgrades/excel", h.UsersUpgradesDownloadExcel)
+	api.POST("/projects-pending/excel", h.ProjectsRequestsDownloadExcel)
 
 	// rich text routes
 	rich := api.Group("/rich")
@@ -126,10 +147,15 @@ func (h *Handler) Register(v1 *echo.Group) {
 	rich.GET("", h.RichListByGroup)
 	rich.GET("/key", h.RichGetByKey)
 
+	team := api.Group("/team")
+	team.GET("", h.TeamList)
+	team.POST("/excel", h.TeamDownloadExcel)
 	//consultunts routes
 	consultunts := api.Group("/consultunts")
 
 	consultunts.GET("", h.ConsultuntsListAll)
+	consultunts.POST("/excel", h.ConsultuntsDownloadExcel)
+
 	consultunts.POST("/editadd", h.ConsultuntsCreate)
 	consultunts.PUT("/editadd/:id", h.ConsultuntsUpdate)
 	// consultunts.PUT("/:id", h.ConsultuntsUpdate)
